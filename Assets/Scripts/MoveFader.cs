@@ -1,18 +1,17 @@
 using UnityEngine;
 using System.Collections;
-
 public class MoveFader : MonoBehaviour
 {
-    public float movedownY = 0.0f;
+    private float movedownY = 0.0f;
 
     public float sensitivityY = 1f;
 
-    public AudioController instrument;
+    public AudioController audioController;
 
     // Use this for initialization
     void Start()
     {
-        instrument = GetComponent<AudioController>();
+       // audioController = GetComponent<AudioController>();
     }
 
 // Update is called once per frame
@@ -25,20 +24,21 @@ void Update () {
     {
         movedownY += Input.GetAxis("Mouse Y") * sensitivityY;
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) &&  transform.localPosition.z >= -10f && movedownY > 0)
         {
-
             transform.Translate(Vector3.back * movedownY);
-
         }
-        Debug.Log(transform.position.z);
+        else if (Input.GetMouseButton(0) && transform.localPosition.z <= 1.3f && movedownY < 0)
+        {
+            transform.Translate(Vector3.back * movedownY);
+        }
         movedownY = 0.0f;
-        
+        audioController.SetChannelLevel("MasterVol", transform.localPosition.z);
     }
 
     private void UpdateSound()
     {
-        //instrument.SetLevel()
+        
 
     }
 

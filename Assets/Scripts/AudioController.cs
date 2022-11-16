@@ -140,6 +140,10 @@ public class AudioController : MonoBehaviour
                 break;
         }
     }
+    public void SetChannelLevel(string channel, float level)
+    {
+        mixer.SetFloat(channel, level);
+    }
 
     // Update is called once per frame
     void Update()
