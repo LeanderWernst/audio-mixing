@@ -23,7 +23,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: White Light
-    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+    second: {fileID: 2100000, guid: 38cc7981dc962c54db60f55e7eaba2c6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
