@@ -24,13 +24,13 @@ void Update () {
     {
         movedownY += Input.GetAxis("Mouse Y") * sensitivityY;
 
-        if (Input.GetMouseButton(0) &&  transform.localPosition.z >= -10f && movedownY > 0)
+        if (Input.GetMouseButton(0) &&  transform.localPosition.x >= -0.057f  && movedownY > 0)
         {
-            transform.Translate(Vector3.back * movedownY);
+            transform.Translate(Vector3.up * movedownY);
         }
-        else if (Input.GetMouseButton(0) && transform.localPosition.z <= 1.3f && movedownY < 0)
+        else if (Input.GetMouseButton(0) && transform.localPosition.x <= -0.012f && movedownY < 0)
         {
-            transform.Translate(Vector3.back * movedownY);
+            transform.Translate(Vector3.up * movedownY);
         }
         movedownY = 0.0f;
         audioController.SetChannelLevel("MasterVol", transform.localPosition.z);
