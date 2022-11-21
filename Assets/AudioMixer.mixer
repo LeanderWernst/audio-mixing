@@ -146,26 +146,6 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
---- !u!244 &-3472525168106880227
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: c3362e69e1a1a9445ba9e7a6fb0e1972
-  m_EffectName: ParamEQ
-  m_MixLevel: 6f7530d1381303b42945879096049861
-  m_Parameters:
-  - m_ParameterName: Center freq
-    m_GUID: 02530ebebda08cf4496fc155f1b496ee
-  - m_ParameterName: Octave range
-    m_GUID: 4c1a633bebfcb5b479e670813a3b17bb
-  - m_ParameterName: Frequency gain
-    m_GUID: 1255a90a1d480304499be1a4bdde4afd
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
 --- !u!244 &-1700184367239750873
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -246,12 +226,6 @@ AudioMixerController:
     name: SnareEqHigh
   - guid: 55453b506ce4af64dac7f44144b6fa88
     name: MasterVol
-  - guid: 4c1a633bebfcb5b479e670813a3b17bb
-    name: EqQ
-  - guid: 1255a90a1d480304499be1a4bdde4afd
-    name: EqGain
-  - guid: 02530ebebda08cf4496fc155f1b496ee
-    name: EqFrq
   m_AudioMixerGroupViews:
   - guids:
     - dff87ae81d15ddf4cb342b987ff90c11
@@ -279,7 +253,6 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: 24400004}
-  - {fileID: -3472525168106880227}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -333,6 +306,7 @@ AudioMixerSnapshotController:
     999ea0bd74bb1a34aad45dc2dc187001: 3500
     02530ebebda08cf4496fc155f1b496ee: 494
     82b1366f9a5df0347ba0d4948ee7046c: 0.99
+    9b7102dfbdcc2314890eb43872c9ebc0: -0.7478243
   m_TransitionOverrides: {}
 --- !u!244 &571428345417581027
 AudioMixerEffectController:
