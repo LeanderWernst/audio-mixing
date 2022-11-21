@@ -4,7 +4,7 @@ public class MoveFader : MonoBehaviour
 {
     private float movedownY = 0.0f;
 
-    public float sensitivityY = 1f;
+    [SerializeField] private float sensitivityY = 0.05f;
 
     public AudioController audioController;
 
@@ -33,7 +33,7 @@ void Update () {
             transform.Translate(Vector3.up * movedownY);
         }
         movedownY = 0.0f;
-        audioController.SetChannelLevel("MasterVol", transform.localPosition.z);
+        //audioController.SetChannelLevel("MasterVol", transform.localPosition.z);
     }
 
     private void UpdateSound()
