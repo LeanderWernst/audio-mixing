@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class AudioLevel : MonoBehaviour
 {
-    public float audioLevel;
+    public float audioLevelLeft;
+    public float audioLevelRight;
     public float max;
     public float min;
     public int channelCount;
@@ -22,15 +23,20 @@ public class AudioLevel : MonoBehaviour
         
     }
 
-    public float GetLevel()
+    public float GetLevelLeft()
     {
-        if (-0.1f < audioLevel && audioLevel < 0.1f ) return -0.54f; else return audioLevel;
+        return Mathf.Abs(audioLevelLeft);
+    }
+    public float GetLevelRight()
+    {
+        return Mathf.Abs(audioLevelRight);
     }
 
     private void OnAudioFilterRead(float[] data, int channels)
     {
         int i = 0; // 0 for left channel 1 for right channel
-        audioLevel = data[i];
+        audioLevelLeft = data[i];
+        audioLevelRight = data[1];
         channelCount = channels;
         if (data[i] > max)
         {
