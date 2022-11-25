@@ -12,7 +12,17 @@ public class MoveKnob : MonoBehaviour
 
     private void Start()
     {
-        angle = transform.localEulerAngles.z;
+        angle = transform.localEulerAngles.z;        
+    }
+
+    private void Update()
+    {
+        if (isClicked) 
+        {
+            angle += Input.mouseScrollDelta.y * rotationSpeed;
+            angle = Mathf.Clamp(angle, minRotation, maxRotation);
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
+        }
     }
 
     void OnMouseDrag()
@@ -20,5 +30,18 @@ public class MoveKnob : MonoBehaviour
         angle += Input.GetAxis("Mouse Y") * rotationSpeed;
         angle = Mathf.Clamp(angle, minRotation, maxRotation);
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
+        Debug.Log("Knobvalue from 0-100: " + GetKnobValue(0, 100));
+    }
+
+    // Returns calculated knob value base on given min-max-scale
+    // Get values between 0-100: min = 0, max = 100
+    float GetKnobValue(float min, float max)
+    {
+        var angle = transform.localEulerAngles.z;
+        angle = angle > maxRotation ? angle - 360 : angle;
+        if (minRotation != maxRotation)
+            return (angle - minRotation) * (max - min) / (maxRotation - minRotation) + min;
+        else
+            return 0;
     }
 }
