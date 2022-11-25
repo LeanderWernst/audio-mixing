@@ -32,35 +32,37 @@ public class SelectionManager : MonoBehaviour
 
     void HighlightOnHover() 
     {
-
-        // Turn off emission when not selected
-        if (currentSelection != null && currentSelection != clickedObject)
-        {
-            var selectionRenderer = currentSelection.GetComponent<Renderer>();
-            selectionRenderer.material.DisableKeyword("_EMISSION");
-            currentSelection = null;
-        }
-
-        // Send ray to mouse position
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        // if ray hits something
-        if (Physics.Raycast(ray, out hit))
-        {
-            Debug.DrawLine(ray.origin, hit.point, Color.green); // DEBUG
-            var selection = hit.transform;
-            // check if selected object has tag contained in array
-            if (TransformWithTagIsMovable(selectableTags, selection))
+        if (!Input.GetMouseButton(0))
+        { 
+            // Turn off emission when not selected
+            if (currentSelection != null && currentSelection != clickedObject)
             {
-                // get renderer and if not undefined enable emission
-                var selectionRenderer = selection.GetComponent<Renderer>();
-                if (selectionRenderer != null)
+                var selectionRenderer = currentSelection.GetComponent<Renderer>();
+                selectionRenderer.material.DisableKeyword("_EMISSION");
+                currentSelection = null;
+            }
+
+            // Send ray to mouse position
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            // if ray hits something
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.DrawLine(ray.origin, hit.point, Color.green); // DEBUG
+                var selection = hit.transform;
+                // check if selected object has tag contained in array
+                if (TransformWithTagIsMovable(selectableTags, selection))
                 {
-                    selectionRenderer.material.EnableKeyword("_EMISSION");
-                    selectionRenderer.material.SetColor("_EmissionColor", Color.white);
+                    // get renderer and if not undefined enable emission
+                    var selectionRenderer = selection.GetComponent<Renderer>();
+                    if (selectionRenderer != null)
+                    {
+                        selectionRenderer.material.EnableKeyword("_EMISSION");
+                        selectionRenderer.material.SetColor("_EmissionColor", Color.white);
+                    }
+                    // currentSelection is highlighted
+                    currentSelection = selectionRenderer == null ? null : selection;
                 }
-                // currentSelection is highlighted
-                currentSelection = selectionRenderer == null ? null : selection;
             }
         }
     }
