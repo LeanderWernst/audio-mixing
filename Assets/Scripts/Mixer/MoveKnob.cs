@@ -4,19 +4,21 @@ public class MoveKnob : MonoBehaviour
 {
 	public bool isClicked = false;
 
-	float rotationSpeed = 0.2f;
+	[SerializeField] private float minRotation = -105.0f;
+	[SerializeField] private float maxRotation = 185.0f;
+	[SerializeField] private float rotationSpeed = 4.0f;
 
-	void OnMouseDrag()
+	private float angle;
+
+    private void Start()
+    {
+        angle = transform.localEulerAngles.z;
+    }
+
+    void OnMouseDrag()
 	{
-		float XaxisRotation = Input.GetAxis("Mouse X") * rotationSpeed;
-		float YaxisRotation = Input.GetAxis("Mouse Y") * rotationSpeed;
-		// select the axis by which you want to rotate the GameObject
-		//transform.RotateAround(Vector3.down, XaxisRotation);
-		//transform.RotateAround(Vector3.right, YaxisRotation);
-		//transform.RotateAroundLocal(axis: Vector3.up, angle: YaxisRotation);
-
-		transform.Rotate(axis: Vector3.up, angle: YaxisRotation);
-
-		
-	}
+        angle += Input.GetAxis("Mouse Y") * rotationSpeed;
+        angle = Mathf.Clamp(angle, minRotation, maxRotation);
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
+    }
 }
