@@ -8,6 +8,7 @@ public class MoveButton : MonoBehaviour
     public bool isClicked = false;
     private bool isMoving = false;
     private bool hasLED = false;
+    [SerializeField] private string LEDTag = "Light";
 
     private Vector3 startPosition;
     private Vector3 endPosition;
@@ -20,7 +21,7 @@ public class MoveButton : MonoBehaviour
     {
         startPosition = transform.position;
         endPosition = transform.TransformPoint(new Vector3(0, 0, -0.00057567f));
-        hasLED = transform.parent != null;
+        hasLED = transform.parent != null && transform.parent.tag == LEDTag;
         if (hasLED)
             transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
     }
@@ -46,7 +47,7 @@ public class MoveButton : MonoBehaviour
             if (hasLED && isOn) // Turn on LED
                 transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
             else
-            transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+                transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
     }
 
 }

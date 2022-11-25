@@ -57,7 +57,7 @@ public class SelectionManager : MonoBehaviour
                 if (selectionRenderer != null)
                 {
                     selectionRenderer.material.EnableKeyword("_EMISSION");
-                    selectionRenderer.material.SetColor("_EmissionColor", Color.yellow);
+                    selectionRenderer.material.SetColor("_EmissionColor", Color.white);
                 }
                 // currentSelection is highlighted
                 currentSelection = selectionRenderer == null ? null : selection;
@@ -91,7 +91,7 @@ public class SelectionManager : MonoBehaviour
                 clickedObject = selection;
                 var selectionRenderer = clickedObject.GetComponent<Renderer>();
                 selectionRenderer.material.EnableKeyword("_EMISSION");
-                selectionRenderer.material.SetColor("_EmissionColor", Color.yellow);
+                selectionRenderer.material.SetColor("_EmissionColor", Color.white);
                 if (clickedObject.GetComponent<MoveFader>() != null)
                     clickedObject.GetComponent<MoveFader>().isClicked = true;
                 else if (clickedObject.GetComponent<MoveButton>() != null)
