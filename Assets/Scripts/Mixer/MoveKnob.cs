@@ -6,20 +6,20 @@ public class MoveKnob : MonoBehaviour
 
 	[SerializeField] private float minRotation = -105.0f;
 	[SerializeField] private float maxRotation = 185.0f;
-	[SerializeField] private float rotationSpeed = 4.0f;
+	[SerializeField] private float rotationSpeed = 250.0f;
 
 	private float angle;
 
     private void Start()
     {
-        angle = transform.localEulerAngles.z;        
+        angle = transform.localEulerAngles.z;
     }
 
     private void Update()
     {
         if (isClicked) 
         {
-            angle += Input.mouseScrollDelta.y * rotationSpeed;
+            angle += Input.mouseScrollDelta.y * rotationSpeed*2 * Time.deltaTime;
             angle = Mathf.Clamp(angle, minRotation, maxRotation);
             transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
         }
@@ -27,7 +27,7 @@ public class MoveKnob : MonoBehaviour
 
     void OnMouseDrag()
 	{
-        angle += Input.GetAxis("Mouse Y") * rotationSpeed;
+        angle += Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime;
         angle = Mathf.Clamp(angle, minRotation, maxRotation);
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
         Debug.Log("Knobvalue from 0-100: " + GetKnobValue(0, 100));
