@@ -1,19 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using TMPro;
+
 public class MoveFader : MonoBehaviour
 {
 
     [SerializeField] private float upperPosBoundary = -0.0570576f;
     [SerializeField] private float lowerPosBoundary = -0.01277522f;
     [SerializeField] private float sensitivityY = 0.05f;
-    private PositionValueRelation[] pvr = new PositionValueRelation[] 
-        {
-            new PositionValueRelation(new float[]{-0.0570576f, -0.02687608f}, new float[]{10f, -15f}),
-            new PositionValueRelation(new float[]{-0.02687608f, -0.0224244f}, new float[]{-15f, -20f}),
-            new PositionValueRelation(new float[]{-0.0224244f, -0.018016f}, new float[]{-20f, -30f}),
-            new PositionValueRelation(new float[]{-0.018016f, -0.01534911f}, new float[]{-30f, -40f}),
-            new PositionValueRelation(new float[]{-0.01534911f, -0.01277522f}, new float[]{-40f, -1000f})
-        };
+    private PositionValueRelation[] faderPvr = FaderPvr.relation;
 
     private float verticalMovement;
        
@@ -24,7 +19,6 @@ public class MoveFader : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -36,6 +30,7 @@ public class MoveFader : MonoBehaviour
             float posX = transform.localPosition.x - verticalMovement;
             float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
             transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
+
         }
 
     }
@@ -46,13 +41,13 @@ public class MoveFader : MonoBehaviour
         float posX = transform.localPosition.x - verticalMovement;
         float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
         transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
-        Debug.Log(GetNonLinearFaderValue(pvr));
+        Debug.Log(GetNonLinearFaderValue(faderPvr));
     }
 
     float GetNonLinearFaderValue(PositionValueRelation[] pvr)
     {
         var pos = transform.localPosition.x;
-        foreach (var relation in pvr)
+        foreach (var relation in faderPvr)
         {
             if (pos >= relation.positions[0] && pos <= relation.positions[1])
             {
