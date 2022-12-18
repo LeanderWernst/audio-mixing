@@ -46,7 +46,7 @@ public class MoveButton : MonoBehaviour
             isMoving = true;
             if (hasLED && isOn) // Turn on LED
                 transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
-            else
+            else if (hasLED && !isOn)
                 transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
     }
 
