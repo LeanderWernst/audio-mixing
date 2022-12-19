@@ -5,8 +5,8 @@ using TMPro;
 public class MoveFader : MonoBehaviour
 {
 
-    [SerializeField] private float upperPosBoundary = -0.0570576f;
-    [SerializeField] private float lowerPosBoundary = -0.01277522f;
+    [SerializeField] private float upperPosBoundary = 0.0236f;
+    [SerializeField] private float lowerPosBoundary = 0.06782f;
     [SerializeField] private float sensitivityY = 0.05f;
     private PositionValueRelation[] faderPvr = FaderPvr.relation;
 
@@ -30,7 +30,6 @@ public class MoveFader : MonoBehaviour
             float posX = transform.localPosition.x - verticalMovement;
             float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
             transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
-
         }
 
     }

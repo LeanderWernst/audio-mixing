@@ -35,15 +35,15 @@ public static class FaderPvr
 {
     public static readonly PositionValueRelation[] relation = new PositionValueRelation[]
         {
-            new PositionValueRelation(new float[]{-0.0570576f, -0.05134094f}, new float[]{10f, 5f}),
-            new PositionValueRelation(new float[]{-0.05134094f, -0.04557673f}, new float[]{5f, 0f}),
-            new PositionValueRelation(new float[]{-0.04557673f, -0.03935221f}, new float[]{0f, -5f}),
-            new PositionValueRelation(new float[]{-0.03935221f, -0.03313654f}, new float[]{-5f, -10f}),
-            new PositionValueRelation(new float[]{-0.03313654f, -0.02687608f}, new float[]{-10f, -15f}),
-            new PositionValueRelation(new float[]{-0.02687608f, -0.0224244f}, new float[]{-15f, -20f}),
-            new PositionValueRelation(new float[]{-0.0224244f, -0.018016f}, new float[]{-20f, -30f}),
-            new PositionValueRelation(new float[]{-0.018016f, -0.01534911f}, new float[]{-30f, -40f}),
-            new PositionValueRelation(new float[]{-0.01534911f, -0.01277522f}, new float[]{-40f, -1000f})
+            new PositionValueRelation(new float[]{0.0236f, 0.02932f}, new float[]{10f, 5f}),
+            new PositionValueRelation(new float[]{0.02932f, 0.0351f}, new float[]{5f, 0f}),
+            new PositionValueRelation(new float[]{0.0351f, 0.04132f}, new float[]{0f, -5f}),
+            new PositionValueRelation(new float[]{0.04132f, 0.04752f}, new float[]{-5f, -10f}),
+            new PositionValueRelation(new float[]{0.04752f, 0.05374f}, new float[]{-10f, -15f}),
+            new PositionValueRelation(new float[]{0.05374f, 0.05819f}, new float[]{-15f, -20f}),
+            new PositionValueRelation(new float[]{0.05819f, 0.06265f}, new float[]{-20f, -30f}),
+            new PositionValueRelation(new float[]{0.06265f, 0.06527f}, new float[]{-30f, -40f}),
+            new PositionValueRelation(new float[]{0.06527f, 0.06782f}, new float[]{-40f, -80f})
         };
 }
 
