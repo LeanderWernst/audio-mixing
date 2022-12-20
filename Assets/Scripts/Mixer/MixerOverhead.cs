@@ -5,37 +5,37 @@ using UnityEngine;
 public class MixerOverhead : MonoBehaviour
 {
 
-    ChannelScript channel1;
-    ChannelScript channel2;
-    ChannelScript channel3;
-    ChannelScript channel4;
-    ChannelScript channel5;
-    ChannelScript channel6;
-    ChannelScript channel7;
-    ChannelScript channel8;
-    ChannelScript channel9;
-    ChannelScript channel10;
-    ChannelScript channel11;
-    ChannelScript channel12;
-    ChannelScript channel13;
-    ChannelScript channel14;
-    ChannelScript channel15;
-    ChannelScript channel16;
-    ChannelScript channel17;
-    ChannelScript channel18;
-    ChannelScript channel19;
-    ChannelScript channel20;
-    ChannelScript channel21;
-    ChannelScript channel22;
-    ChannelScript channel23;
-    ChannelScript channel24;
+    public ChannelScript channel1;
+    public ChannelScript channel2;
+    public ChannelScript channel3;
+    public ChannelScript channel4;
+    public ChannelScript channel5;
+    public ChannelScript channel6;
+    public ChannelScript channel7;
+    public ChannelScript channel8;
+    public ChannelScript channel9;
+    public ChannelScript channel10;
+    public ChannelScript channel11;
+    public ChannelScript channel12;
+    public ChannelScript channel13;
+    public ChannelScript channel14;
+    public ChannelScript channel15;
+    public ChannelScript channel16;
+    public ChannelScript channel17;
+    public ChannelScript channel18;
+    public ChannelScript channel19;
+    public ChannelScript channel20;
+    public ChannelScript channel21;
+    public ChannelScript channel22;
+    public ChannelScript channel23;
+    public ChannelScript channel24;
 
-    StereoInputScript stereoLine1;
-    StereoInputScript stereoLine2;
-    StereoInputScript stereoLine3;
-    StereoInputScript stereoLine4;
+    public StereoInputScript stereoLine1;
+    public StereoInputScript stereoLine2;
+    public StereoInputScript stereoLine3;
+    public StereoInputScript stereoLine4;
 
-    MasterScript masterChannel;
+    public MasterScript masterChannel;
 
     private void Awake()
     {
@@ -75,7 +75,7 @@ public class MixerOverhead : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        
+
     }
 
     // Update is called once per frame
