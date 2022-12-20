@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using TMPro;
 
-public class MoveFader : MonoBehaviour
+public class Fader : MonoBehaviour
 {
 
     [SerializeField] private float upperPosBoundary = 0.0236f;

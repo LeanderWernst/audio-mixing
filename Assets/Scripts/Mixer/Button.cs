@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveButton : MonoBehaviour
+public class Button : MonoBehaviour
 {
     private bool isOn = false;
     public bool isClicked = false;

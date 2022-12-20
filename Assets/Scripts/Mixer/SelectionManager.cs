@@ -82,36 +82,36 @@ public class SelectionManager : MonoBehaviour
                 if (clickedBefore != null)
                 {
                     clickedBefore.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-                    if (clickedBefore.GetComponent<MoveFader>() != null)
-                        clickedBefore.GetComponent<MoveFader>().isClicked = false;
-                    else if (clickedBefore.GetComponent<MoveButton>() != null)
-                        clickedBefore.GetComponent<MoveButton>().isClicked = false;
-                    else if (clickedBefore.GetComponent<MoveKnob>() != null)
-                        clickedBefore.GetComponent<MoveKnob>().isClicked = false;
+                    if (clickedBefore.GetComponent<Fader>() != null)
+                        clickedBefore.GetComponent<Fader>().isClicked = false;
+                    else if (clickedBefore.GetComponent<Button>() != null)
+                        clickedBefore.GetComponent<Button>().isClicked = false;
+                    else if (clickedBefore.GetComponent<Knob>() != null)
+                        clickedBefore.GetComponent<Knob>().isClicked = false;
                 }
 
                 clickedObject = selection;
                 var selectionRenderer = clickedObject.GetComponent<Renderer>();
                 selectionRenderer.material.EnableKeyword("_EMISSION");
                 selectionRenderer.material.SetColor("_EmissionColor", Color.white);
-                if (clickedObject.GetComponent<MoveFader>() != null)
-                    clickedObject.GetComponent<MoveFader>().isClicked = true;
-                else if (clickedObject.GetComponent<MoveButton>() != null)
-                    clickedObject.GetComponent<MoveButton>().isClicked = true;
-                else if (clickedObject.GetComponent<MoveKnob>() != null)
-                    clickedObject.GetComponent<MoveKnob>().isClicked = true;
+                if (clickedObject.GetComponent<Fader>() != null)
+                    clickedObject.GetComponent<Fader>().isClicked = true;
+                else if (clickedObject.GetComponent<Button>() != null)
+                    clickedObject.GetComponent<Button>().isClicked = true;
+                else if (clickedObject.GetComponent<Knob>() != null)
+                    clickedObject.GetComponent<Knob>().isClicked = true;
             }
             else
             {
                 if (clickedObject != null)
                 { 
                     clickedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-                    if (clickedObject.GetComponent<MoveFader>() != null)
-                        clickedObject.GetComponent<MoveFader>().isClicked = false;
-                    else if (clickedObject.GetComponent<MoveButton>() != null)
-                        clickedObject.GetComponent<MoveButton>().isClicked = false;
-                    else if (clickedObject.GetComponent<MoveKnob>() != null)
-                        clickedObject.GetComponent<MoveKnob>().isClicked = false;
+                    if (clickedObject.GetComponent<Fader>() != null)
+                        clickedObject.GetComponent<Fader>().isClicked = false;
+                    else if (clickedObject.GetComponent<Button>() != null)
+                        clickedObject.GetComponent<Button>().isClicked = false;
+                    else if (clickedObject.GetComponent<Knob>() != null)
+                        clickedObject.GetComponent<Knob>().isClicked = false;
                     clickedObject = null;
                 }
             }

@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
  
-public class MoveKnob : MonoBehaviour
+public class Knob : MonoBehaviour
 {
 	public bool isClicked = false;
 
