@@ -9,6 +9,9 @@ TagManager:
   - Knob
   - Light
   - ValueText
+  - Channel
+  - StereoInputChannel
+  - Master
   layers:
   - Default
   - TransparentFX
