@@ -6,45 +6,45 @@ public class ChannelScript : MonoBehaviour
 {
     string channelName;
 
-    Button btnPower;
-    Button btnPad;
-    Button btnMic;
-    Button btn80Hz;
-    Button btnInput;
-    Button btnPrePostEq;
-    Button btnInsert;
-    Button btnMuteEq;
-    Button btnPreEq;
-    Button btnGroup1;
-    Button btnGroup2;
-    Button btnGroup3;
-    Button btnGroup4;
-    Button btnGroupMono;
-    Button btnGroupStero;
-    Button btnPanToGroups;
-    Button btnMute;
-    Button btnSolo;
+    public Button btnPower;
+    public Button btnPad;
+    public Button btnMic;
+    public Button btn80Hz;
+    public Button btnInput;
+    public Button btnPrePostEq;
+    public Button btnInsert;
+    public Button btnMuteEq;
+    public Button btnPreEq;
+    public Button btnGroup1;
+    public Button btnGroup2;
+    public Button btnGroup3;
+    public Button btnGroup4;
+    public Button btnGroupMono;
+    public Button btnGroupStero;
+    public Button btnPanToGroups;
+    public Button btnMute;
+    public Button btnSolo;
 
-    Knob knobMicGain;
-    Knob knobTrebleGain;
-    Knob knobTrebleFreq;
-    Knob knobHiMidGain;
-    Knob knobHiMidFreq;
-    Knob knobLoMidGain;
-    Knob knobLoMidFreq;
-    Knob knobBassGain;
-    Knob knobBassFreq;
-    Knob knobHiMidWidth;
-    Knob knobLoMidWidth;
-    Knob knobMon1;
-    Knob knobMon2;
-    Knob knobAux1;
-    Knob knobAux2;
-    Knob knobAux3;
-    Knob knobAux4;
-    Knob knobPan;
+    public Knob knobMicGain;
+    public Knob knobTrebleGain;
+    public Knob knobTrebleFreq;
+    public Knob knobHiMidGain;
+    public Knob knobHiMidFreq;
+    public Knob knobLoMidGain;
+    public Knob knobLoMidFreq;
+    public Knob knobBassGain;
+    public Knob knobBassFreq;
+    public Knob knobHiMidWidth;
+    public Knob knobLoMidWidth;
+    public Knob knobMon1;
+    public Knob knobMon2;
+    public Knob knobAux1;
+    public Knob knobAux2;
+    public Knob knobAux3;
+    public Knob knobAux4;
+    public Knob knobPan;
 
-    Fader fader;
+    public Fader fader;
 
     private void Awake()
     {

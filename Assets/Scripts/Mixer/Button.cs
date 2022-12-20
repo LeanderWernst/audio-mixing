@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Button : MonoBehaviour
 {
-    private bool isOn = false;
+    public bool isOn = false;
     public bool isClicked = false;
     private bool isMoving = false;
     private bool hasLED = false;
