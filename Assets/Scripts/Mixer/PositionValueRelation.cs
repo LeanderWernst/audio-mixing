@@ -124,21 +124,21 @@ public static class KnobPvr
             case KnobType.InfTo6DbControl:
                 return new PositionValueRelation[]
                 {
-                    new PositionValueRelation(new float[]{-105f, 6.797f}, new float[]{-1000f, -6f}),
+                    new PositionValueRelation(new float[]{-105f, 6.797f}, new float[]{-80f, -6f}),
                     new PositionValueRelation(new float[]{6.797f, 81.073f}, new float[]{-6f, 0f}),
                     new PositionValueRelation(new float[]{81.073f, 185f}, new float[]{0f, 6f})
                 };
             case KnobType.InfTo10DbControl:
                 return new PositionValueRelation[]
                 {
-                    new PositionValueRelation(new float[]{-105f, 6.797f}, new float[]{-1000f, -6f}),
+                    new PositionValueRelation(new float[]{-105f, 6.797f}, new float[]{-80f, -6f}),
                     new PositionValueRelation(new float[]{6.797f, 81.073f}, new float[]{-6f, 0f}),
                     new PositionValueRelation(new float[]{81.073f, 185f}, new float[]{0f, 10f})
                 };
             case KnobType.InfTo20DbControl:
                 return new PositionValueRelation[]
                 {
-                    new PositionValueRelation(new float[]{-105f, 6.797f}, new float[]{-1000f, -6f}),
+                    new PositionValueRelation(new float[]{-105f, 6.797f}, new float[]{-80f, -6f}),
                     new PositionValueRelation(new float[]{6.797f, 44.874f}, new float[]{-6f, 0f}),
                     new PositionValueRelation(new float[]{44.874f, 185f}, new float[]{0f, 20f})
                 };

@@ -8,39 +8,41 @@ public class MoveFader : MonoBehaviour
     [SerializeField] private float upperPosBoundary = 0.0236f;
     [SerializeField] private float lowerPosBoundary = 0.06782f;
     [SerializeField] private float sensitivityY = 0.05f;
+    
     private PositionValueRelation[] faderPvr = FaderPvr.relation;
-
+    public float value;
     private float verticalMovement;
-       
     public bool isClicked = false;
-
     public AudioController audioController;
+    TextMeshProUGUI canvasValueText;
 
-    // Use this for initialization
+    private void Awake()
+    {
+        canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
+    }
+
     void Start()
     {
+        
     }
 
     // Update is called once per frame
     void Update () 
     {
         if (isClicked)
-        { 
-            verticalMovement = Input.mouseScrollDelta.y * sensitivityY*2 * Time.deltaTime;
-            float posX = transform.localPosition.x - verticalMovement;
-            float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
-            transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
+        {
+            SlideFader(Input.mouseScrollDelta.y * 2);
         }
-
     }
 
     private void OnMouseDrag()
     {
-        verticalMovement = Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;
-        float posX = transform.localPosition.x - verticalMovement;
-        float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
-        transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
-        Debug.Log(GetNonLinearFaderValue(faderPvr));
+        SlideFader(Input.GetAxis("Mouse Y"));
+    }
+
+    private void OnMouseDown()
+    {
+
     }
 
     float GetNonLinearFaderValue(PositionValueRelation[] pvr)
@@ -70,6 +72,24 @@ public class MoveFader : MonoBehaviour
         var pos = transform.localPosition.x;
         return (pos - lowerBound) * (scaleMax - scaleMin) / (upperBound - lowerBound) + scaleMin;
 
+    }
+
+    private void SlideFader(float inputForce)
+    {
+        verticalMovement = inputForce * sensitivityY * Time.deltaTime;
+        float posX = transform.localPosition.x - verticalMovement;
+        float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
+        transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
+        value = GetNonLinearFaderValue(faderPvr);
+        ChangeValueText();
+    }
+
+    private void ChangeValueText()
+    {
+        if (value == -80)
+            canvasValueText.text = "-" + "\u221E" + " dB";
+        else
+            canvasValueText.text = value.ToString("F2") + " dB";
     }
 
     private void UpdateSound()

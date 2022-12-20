@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using TMPro;
 using UnityEngine;
  
 public class MoveKnob : MonoBehaviour
@@ -12,30 +13,76 @@ public class MoveKnob : MonoBehaviour
 	private float angle;
     private KnobType knobType;
     private PositionValueRelation[] knobPvr;
+    public float value;
+    TextMeshProUGUI canvasValueText;
 
+    private void Awake()
+    {
+        canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
+    }
     private void Start()
     {
         angle = transform.localEulerAngles.z;
+        angle = angle > maxRotation ? angle - 360 : angle;
         knobType = GetKnobType();
         knobPvr = KnobPvr.Relation(knobType);
+        value = GetNonLinearFaderValue(knobPvr);
     }
 
     private void Update()
     {
         if (isClicked) 
         {
-            angle += Input.mouseScrollDelta.y * rotationSpeed*2 * Time.deltaTime;
-            angle = Mathf.Clamp(angle, minRotation, maxRotation);
-            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
+            TurnKnob(Input.mouseScrollDelta.y * 2);
         }
     }
 
     void OnMouseDrag()
 	{
-        angle += Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime;
+        TurnKnob(Input.GetAxis("Mouse Y"));
+    }
+
+    private void TurnKnob(float inputForce)
+    {
+        angle += inputForce * rotationSpeed * Time.deltaTime;
         angle = Mathf.Clamp(angle, minRotation, maxRotation);
+        angle = angle > maxRotation ? angle - 360 : angle;
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
-        Debug.Log(GetNonLinearFaderValue(knobPvr));
+        value = GetNonLinearFaderValue(knobPvr);
+        ChangeValueText();
+    }
+
+    private void ChangeValueText() 
+    {
+        switch (knobType)
+        {
+            case KnobType.MicGain:
+            case KnobType.EqGain:
+            case KnobType.DSEqControl:
+                canvasValueText.text = value.ToString("F2") + " dB";
+                break;
+            case KnobType.TrebleFreq:
+            case KnobType.HiMidFreq:
+            case KnobType.LoMidFreq:
+            case KnobType.BassFreq:
+                if (value >= 1)
+                    canvasValueText.text = value.ToString("F2") + " kHz";
+                else
+                    canvasValueText.text = (value * 1000).ToString("F2") + " Hz";
+                break;
+            case KnobType.EqWidth:
+            case KnobType.MinusOnePlusOne:
+                canvasValueText.text = value.ToString("F2");
+                break;
+            case KnobType.InfTo6DbControl:
+            case KnobType.InfTo10DbControl:
+            case KnobType.InfTo20DbControl:
+                if (value == -80)
+                    canvasValueText.text = "-" + "\u221E" + " dB";
+                else
+                    canvasValueText.text = value.ToString("F2") + " dB";
+                break;
+        }
     }
 
     float GetNonLinearFaderValue(PositionValueRelation[] pvr)
