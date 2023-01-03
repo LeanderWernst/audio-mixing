@@ -15,29 +15,31 @@ public class AudioController : MonoBehaviour
         drum_bass = Resources.Load<AudioClip>("drum_bass");
         drum_hihat = Resources.Load<AudioClip>("drum_hihat");
         drum_snare = Resources.Load<AudioClip>("drum_snare");
+        AudiSrcBass.volume = 0;
+        AudiSrcHihat.volume = 0;
+        AudiSrcSnare.volume = 0;
     }
 
     public void SetMasterVolume(float sliderValue)
     {
         mixer.SetFloat("MasterVol", sliderValue);
     }
+    public void SetBassdrumGain(float gain){
+        AudiSrcBass.volume = gain;
+    }
     // functions to controll bassdrum eq
     public void SetBassLowEqGain(float sliderValue)
     {
         mixer.SetFloat("BassDrumEqLow", sliderValue);
-        
     }
     public void SetBassMidEqGain(float sliderValue)
     {
         mixer.SetFloat("BassDrumEqMid", sliderValue);
-
     }
     public void SetBassHighEqGain(float sliderValue)
     {
         mixer.SetFloat("BassDrumEqHigh", sliderValue);
-
     }
-
     bool bassCutOffStatus = false;
     public void SetBassCutOff()
     {
@@ -51,22 +53,22 @@ public class AudioController : MonoBehaviour
     }
 
     // functions to controll snaredrum eq
+    public void SetSnaredrumGain(float gain)
+    {
+        AudiSrcSnare.volume = gain;
+    }
     public void SetSnareLowEqGain(float sliderValue)
     {
         mixer.SetFloat("SnareEqLow", sliderValue);
-
     }
     public void SetSnareMidEqGain(float sliderValue)
     {
         mixer.SetFloat("SnareEqMid", sliderValue);
-
     }
     public void SetSnareHighEqGain(float sliderValue)
     {
         mixer.SetFloat("SnareEqHigh", sliderValue);
-
     }
-
     bool snareCutOffStatus = false;
     public void SetSnareCutOff()
     {
@@ -78,24 +80,23 @@ public class AudioController : MonoBehaviour
             mixer.SetFloat("SnareCutOff", 0);
         }
     }
-
     // functions to controll hihat eq
+    public void SetHiHatGain(float gain)
+    {
+        AudiSrcHihat.volume = gain;
+    }
     public void SetHihatLowEqGain(float sliderValue)
     {
         mixer.SetFloat("HihatEqLow", sliderValue);
-
     }
     public void SetHihatMidEqGain(float sliderValue)
     {
         mixer.SetFloat("HihatEqMid", sliderValue);
-
     }
     public void SetHihatHighEqGain(float sliderValue)
     {
         mixer.SetFloat("HihatEqHigh", sliderValue);
-
     }
-
     bool hihatCutOffStatus = false;
     public void SetHihatCutOff()
     {
@@ -137,6 +138,14 @@ public class AudioController : MonoBehaviour
                 AudiSrcSnare.Play();
                 AudiSrcBass.Play();
                 AudiSrcHihat.Play();
+                break;
+            case "stop":
+                AudiSrcSnare.clip = drum_snare;
+                AudiSrcBass.clip = drum_bass;
+                AudiSrcHihat.clip = drum_hihat;
+                AudiSrcSnare.Stop();
+                AudiSrcBass.Stop();
+                AudiSrcHihat.Stop();
                 break;
         }
     }
