@@ -1,0 +1,75 @@
+step 0
+Willkommen
+[Willkomen im Mixing Tutorial von UW-Audio]
+{Dieses Tutorial soll dazu dienen das Mischen eines Schlagzeugs an einem 
+analogen Live-Mischpult zu erlennen.}
+
+Durch das Klicken auf die gewünschte Klangquelle
+kannst du deren Sound starten und Stoppen.
+
+Um das ganze Set gleichzeitig zu hören drücke: xyz
+
+Erklärung Kanalzug:
+
+GainSektion
+
+EQ Sektion
+
+Aux Sektion
+
+Gruppen und Fader
+
+
+step 1
+Bassdrum Pegel
+[Regele den Pegel für die Bassdrum auf ein angemessens Level]
+{In der Kanalliste kannst du sehen auf welchem Kanal die Bassdrum liegt.
+Drücke die PFL Taste am Kanal 1.
+Drehe am Kanal 1 den Roten Regeler ganz oben bis die Pegelanzeige 
+einen maximal Ausschlag von ca. 0 dB zeigt.
+Schiebe nun den Kanal-Fader langsam richtung 0 dB,
+stoppe wenn die Bassdrum laut genug zu hören ist. 
+Anschließend Kanal muten}
+
+step 2 
+Snardrum und Hihat Pegel
+[Regele den Pegel für Snardrum und Hihat auf ein angemessens Level]
+{Wiederhole was die bereits für Kanal 1 getan hast für Kanal 2 und 3.
+Zur erinnerung:
+- Drücken der PFL Taste
+- Gain Regler (Rot ganz oben) drhen}
+- Pegelanzeige bei ca. 0 dB 
+- Kanalfader langsam hoch ziehen
+
+step 3
+Bassdrum EQ
+[Nutze den Kanal Equelizer um den Sound der Bassdrum ein zu stellen]
+{ Im Oberen bereich des kanal Zuges befindet sich die EQ Sektion.
+Die Bassdrum kann für mehr "druck" bei 60Hz ein bisschen angehoben werden
+und für mehr Kick bei ca. 3.5 kHz. Eine Absenkung bei ca. 400 Hz räumt das Signal etwas auf}
+
+
+step 4
+Snardrum EQ
+[nutze den kanal Equelizer um den Sound der Snardrum ein zu stellen.]
+{ Für die Snardrum empfielt sich ein LowCut um die ungewollten tiefen frequenzen heraus zu filtern.
+Roter Druckknopf am oberen ende des Kanalzuges (/´´80Hz)
+Eine Leichte anhebung bei 300 Hz gibt der Snare "Raum/Resonanz"
+eine anhebung bei ca 4 kHz sorgt für mehr brillianz}
+
+step 5 
+HiHat Eq
+[Nutze den Kanal Equelizer um den Sound der HiHat ein zu stellen]
+{Auch für die Hihat empfielt sich als erstes einen LowCut zu benutzen
+eine leichte anhebung um die ??? Hz fürt zu mehr brillianz
+und eine absenkung bei ??? Hz räumt das signal etwas auf}
+
+step 6
+Mischung
+[Mische alle drei Quellen zu einem angenehmen Mix]
+{Finde durch das Verschieben der kanalfader einen Mischung die dir als angenehm erscheint}
+
+step 7 (Bonus)
+Kanal Gruppen
+[lege eine kanalgruppe für die 3 Schlagzeugs Kanäle an]
+
