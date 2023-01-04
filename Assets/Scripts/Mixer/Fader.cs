@@ -23,7 +23,7 @@ public class Fader : MonoBehaviour
 
     void Start()
     {
-        
+        audioController = GameObject.Find("MasterVolume").GetComponent<AudioController>();
     }
 
     // Update is called once per frame
@@ -82,6 +82,8 @@ public class Fader : MonoBehaviour
         transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
         value = GetNonLinearFaderValue(faderPvr);
         ChangeValueText();
+        audioController.SetFaderVolume(transform.parent.name,value);
+
     }
 
     private void ChangeValueText()

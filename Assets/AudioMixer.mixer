@@ -22,7 +22,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Drum_Snare
+  m_Name: Channel3
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 21337c0276f61b94baab87bb8c06d660
   m_Children: []
@@ -93,7 +93,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Drum_Bass
+  m_Name: Channel1
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: f9d3d65a15b7d09499871dcf658f68ac
   m_Children: []
@@ -199,15 +199,17 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: 9b7102dfbdcc2314890eb43872c9ebc0
-    name: BassDrumGain
+    name: BassdrumVolume
   - guid: 3b506591ff92dd545910c675b049f9dc
     name: BassCutOff
   - guid: 99700e19dd703ab4390d5a41bff69521
-    name: BassDrumEqLow
+    name: Channel1KnobBassGain
   - guid: f8e543149f2574545a21d22f5f78d33d
-    name: BassDrumEqMid
+    name: Channel1KnobLoMidGain
   - guid: b86126a3bd8b8f64384b361948a57600
-    name: BassDrumEqHigh
+    name: Channel1KnobTrebleGain
+  - guid: b368e26a3374941459003f8734270d9c
+    name: HihatVolume
   - guid: bbcf0a87dba1f4b43a76ea980005cc15
     name: HihatCutOff
   - guid: a4ae506888640d04e84b23a0bbedb214
@@ -216,6 +218,8 @@ AudioMixerController:
     name: HihatEqLow
   - guid: a9d53a87cf51ab8429340dd91dbf8dd4
     name: HihatEqHigh
+  - guid: 9c0864a5f68e2304fb45f58118cdd275
+    name: SnareVolume
   - guid: ddde41c2f38799e41b97a3705d9b7ee1
     name: SnareCutOff
   - guid: 82b1366f9a5df0347ba0d4948ee7046c
@@ -281,14 +285,14 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 050761736b290d645899ba0100c1ffff
   m_FloatValues:
-    55453b506ce4af64dac7f44144b6fa88: 0.23288131
+    55453b506ce4af64dac7f44144b6fa88: 10.437403
     3b506591ff92dd545910c675b049f9dc: 386
     16b0ceb1afc750e4ba6e5244b353ef98: 60
     571c1fb20b4aa3d4a98b7d13f37a9deb: 0.69
     ddde41c2f38799e41b97a3705d9b7ee1: 200
     b86126a3bd8b8f64384b361948a57600: 1
     f8e543149f2574545a21d22f5f78d33d: 1
-    c93e5324cdd888f4a9486fef183af7d7: 0.68
+    c93e5324cdd888f4a9486fef183af7d7: 0.2
     9c0864a5f68e2304fb45f58118cdd275: 0.64345783
     95182ef56830135458cc3de09e33230d: 1
     8c165307e34565d41bf612b97008ece6: 4000
@@ -296,7 +300,7 @@ AudioMixerSnapshotController:
     bbcf0a87dba1f4b43a76ea980005cc15: 401
     a9d53a87cf51ab8429340dd91dbf8dd4: 1
     f9ab61c8ba7ac854b9935dec02c301f4: 300
-    99700e19dd703ab4390d5a41bff69521: 1
+    99700e19dd703ab4390d5a41bff69521: 1.42
     82cf6e3991ff7164d95e6854fd4a5444: 0.64
     1255a90a1d480304499be1a4bdde4afd: 1.548
     b368e26a3374941459003f8734270d9c: -0.27209902
@@ -336,7 +340,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Drum_Hihat
+  m_Name: Channel2
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: ea46335508c7f41498327d3db545499d
   m_Children: []
