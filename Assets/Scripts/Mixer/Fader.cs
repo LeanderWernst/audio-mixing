@@ -31,7 +31,7 @@ public class Fader : MonoBehaviour
     {
         if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0))
         {
-            SlideFader(Input.mouseScrollDelta.y * 2);
+            SlideFader(Input.mouseScrollDelta.y / 2);
         }
     }
 
