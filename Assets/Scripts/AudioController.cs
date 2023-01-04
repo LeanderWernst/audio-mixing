@@ -8,6 +8,7 @@ public class AudioController : MonoBehaviour
     public AudioMixer mixer;
     public AudioSource AudiSrcBass, AudiSrcHihat, AudiSrcSnare;
     public static AudioClip drum_bass, drum_hihat, drum_snare;
+    public MixerOverhead mixerObj;
 
     // Start is called before the first frame update
     void Start()
@@ -20,12 +21,55 @@ public class AudioController : MonoBehaviour
         AudiSrcSnare.volume = 0;
     }
 
+    public void SetFaderVolume(string channel, float value)
+    {
+        switch (channel)
+        {
+            case "Channel1":
+                mixer.SetFloat("BassdrumVolume", mixerObj.channel1.fader.value);
+                break;
+            case "Channel2":
+                mixer.SetFloat("SnareVolume", value);
+                break;
+            case "Channel3":
+                mixer.SetFloat("HihatVolume", value);
+                break;
+            default:
+                // code block
+                break;
+        }
+
+    }
+
+    public void SetKnobValue(string knob, string channel, float value)
+    {
+        switch(knob)
+        {
+            case "KnobPanControl":
+                switch (channel)
+                {
+                    case "Channel1":
+                        Debug.Log("check");
+                        AudiSrcBass.panStereo = value;
+                        break;
+                }
+                break;
+            default:
+                mixer.SetFloat(channel + knob, value);
+                break;
+    }
+}
     public void SetMasterVolume(float sliderValue)
     {
         mixer.SetFloat("MasterVol", sliderValue);
     }
     public void SetBassdrumGain(float gain){
         AudiSrcBass.volume = gain;
+        Debug.Log(mixerObj.channel1.fader.value);
+    }
+    public void setBassdrumVolum(float volume)
+    {
+        Debug.Log(mixerObj.channel1.fader.value);
     }
     // functions to controll bassdrum eq
     public void SetBassLowEqGain(float sliderValue)

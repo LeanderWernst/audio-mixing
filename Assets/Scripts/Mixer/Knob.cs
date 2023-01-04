@@ -13,6 +13,8 @@ public class Knob : MonoBehaviour
 	private float angle;
     private KnobType knobType;
     private PositionValueRelation[] knobPvr;
+    private AudioController audioController;
+    public string channel;
     public float value;
     TextMeshProUGUI canvasValueText;
 
@@ -27,6 +29,15 @@ public class Knob : MonoBehaviour
         knobType = GetKnobType();
         knobPvr = KnobPvr.Relation(knobType);
         value = GetNonLinearFaderValue(knobPvr);
+        audioController = GameObject.Find("MasterVolume").GetComponent<AudioController>();
+        if(transform.parent.CompareTag("Channel"))
+        {
+            channel = transform.parent.name;
+        }
+        else
+        {
+            channel = transform.parent.parent.name;
+        }
     }
 
     private void Update()
@@ -50,6 +61,7 @@ public class Knob : MonoBehaviour
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
         value = GetNonLinearFaderValue(knobPvr);
         ChangeValueText();
+        audioController.SetKnobValue(transform.name,channel, value);
     }
 
     private void ChangeValueText() 
