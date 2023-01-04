@@ -7,26 +7,31 @@ public class AudioController : MonoBehaviour
 {
     public AudioMixer mixer;
     public AudioSource AudiSrcBass, AudiSrcHihat, AudiSrcSnare;
-    public static AudioClip drum_bass, drum_hihat, drum_snare;
-    public MixerOverhead mixerObj;
+    public static AudioClip drum_bass, drum_snare ,drum_hihat;
 
     // Start is called before the first frame update
     void Start()
     {
         drum_bass = Resources.Load<AudioClip>("drum_bass");
-        drum_hihat = Resources.Load<AudioClip>("drum_hihat");
         drum_snare = Resources.Load<AudioClip>("drum_snare");
+        drum_hihat = Resources.Load<AudioClip>("drum_hihat");
         AudiSrcBass.volume = 0;
-        AudiSrcHihat.volume = 0;
         AudiSrcSnare.volume = 0;
+        AudiSrcHihat.volume = 0;
     }
-
+    private float ConvertValuesToNewScale(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
+    {
+        if (oldMin != oldMax)
+            return (oldValue - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
+        else
+            return 0;
+    }
     public void SetFaderVolume(string channel, float value)
     {
         switch (channel)
         {
             case "Channel1":
-                mixer.SetFloat("BassdrumVolume", mixerObj.channel1.fader.value);
+                mixer.SetFloat("BassdrumVolume", value);
                 break;
             case "Channel2":
                 mixer.SetFloat("SnareVolume", value);
@@ -38,22 +43,61 @@ public class AudioController : MonoBehaviour
                 // code block
                 break;
         }
-
     }
-
     public void SetKnobValue(string knob, string channel, float value)
     {
         switch(knob)
         {
+            case "KnobMicGain":
+                value = ConvertValuesToNewScale(value, 10, 60, 0.05f, 1);
+                switch (channel)
+                {
+                    case "Channel1":
+                        AudiSrcBass.volume = value;
+                        break;
+                    case "Channel2":
+                        AudiSrcSnare.volume = value;
+                        break;
+                    case "Channel3":
+                        AudiSrcHihat.volume = value;
+                        break;
+                }
+                break;
+            case "KnobTrebleGain":
+                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                mixer.SetFloat(channel + knob, value);
+                break;
+            case "KnobTrebleFreq":
+                value = ConvertValuesToNewScale(value,2,20,2000,20000);
+                mixer.SetFloat(channel + knob, value);
+                break;
+            case "KnobHiMidGain":
+                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                mixer.SetFloat(channel + knob, value);
+                break;
+            case "KnobLoMidGain":
+                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                mixer.SetFloat(channel + knob, value);
+                break;
+            case "KnobBassGain":
+                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                mixer.SetFloat(channel + knob, value);
+                break;
             case "KnobPanControl":
                 switch (channel)
                 {
                     case "Channel1":
-                        Debug.Log("check");
                         AudiSrcBass.panStereo = value;
+                        break;
+                    case "Channel2":
+                        AudiSrcSnare.panStereo = value;
+                        break;
+                    case "Channel3":
+                        AudiSrcHihat.panStereo = value;
                         break;
                 }
                 break;
+
             default:
                 mixer.SetFloat(channel + knob, value);
                 break;
@@ -65,25 +109,12 @@ public class AudioController : MonoBehaviour
     }
     public void SetBassdrumGain(float gain){
         AudiSrcBass.volume = gain;
-        Debug.Log(mixerObj.channel1.fader.value);
     }
-    public void setBassdrumVolum(float volume)
+    public void SetBassdrumVolum(float volume)
     {
-        Debug.Log(mixerObj.channel1.fader.value);
     }
     // functions to controll bassdrum eq
-    public void SetBassLowEqGain(float sliderValue)
-    {
-        mixer.SetFloat("BassDrumEqLow", sliderValue);
-    }
-    public void SetBassMidEqGain(float sliderValue)
-    {
-        mixer.SetFloat("BassDrumEqMid", sliderValue);
-    }
-    public void SetBassHighEqGain(float sliderValue)
-    {
-        mixer.SetFloat("BassDrumEqHigh", sliderValue);
-    }
+
     bool bassCutOffStatus = false;
     public void SetBassCutOff()
     {
@@ -101,18 +132,7 @@ public class AudioController : MonoBehaviour
     {
         AudiSrcSnare.volume = gain;
     }
-    public void SetSnareLowEqGain(float sliderValue)
-    {
-        mixer.SetFloat("SnareEqLow", sliderValue);
-    }
-    public void SetSnareMidEqGain(float sliderValue)
-    {
-        mixer.SetFloat("SnareEqMid", sliderValue);
-    }
-    public void SetSnareHighEqGain(float sliderValue)
-    {
-        mixer.SetFloat("SnareEqHigh", sliderValue);
-    }
+    
     bool snareCutOffStatus = false;
     public void SetSnareCutOff()
     {
@@ -124,22 +144,9 @@ public class AudioController : MonoBehaviour
             mixer.SetFloat("SnareCutOff", 0);
         }
     }
-    // functions to controll hihat eq
     public void SetHiHatGain(float gain)
     {
         AudiSrcHihat.volume = gain;
-    }
-    public void SetHihatLowEqGain(float sliderValue)
-    {
-        mixer.SetFloat("HihatEqLow", sliderValue);
-    }
-    public void SetHihatMidEqGain(float sliderValue)
-    {
-        mixer.SetFloat("HihatEqMid", sliderValue);
-    }
-    public void SetHihatHighEqGain(float sliderValue)
-    {
-        mixer.SetFloat("HihatEqHigh", sliderValue);
     }
     bool hihatCutOffStatus = false;
     public void SetHihatCutOff()
