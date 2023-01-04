@@ -168,15 +168,18 @@ public class SelectionManager : MonoBehaviour
         {
             case Fade.Out:
                 StopAllCoroutines();
-                StartCoroutine(FadeTextToZeroAlpha(1f, canvasValueText));
+                StartCoroutine(FadeTextToZeroAlpha(0.5f, canvasValueText));
                 break;
             case Fade.In:
-                StopAllCoroutines();
-                StartCoroutine(FadeTextToFullAlpha(1f, canvasValueText));
+                if (currentSelection != clickedObject) 
+                { 
+                    StopAllCoroutines();
+                    StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
+                }
                 break;
             default:
                 StopAllCoroutines();
-                StartCoroutine(FadeTextToFullAlpha(1f, canvasValueText));
+                StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
                 break;
         }
 
