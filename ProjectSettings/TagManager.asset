@@ -12,6 +12,7 @@ TagManager:
   - Channel
   - StereoInputChannel
   - Master
+  - UIButton
   layers:
   - Default
   - TransparentFX

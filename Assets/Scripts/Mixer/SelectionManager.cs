@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -9,15 +11,26 @@ public class SelectionManager : MonoBehaviour
 
     private Transform currentSelection;
     private Transform clickedObject;
+    private TextMeshProUGUI canvasValueText;
+    private Image valueTextBackground;
+    private float vtbMaxAlpha = 235f/255f;
+
+    private enum Fade {Out = 0, In = 1};
+
+    private void Awake()
+    {
+        canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
+        valueTextBackground = GameObject.Find("ValueTextBackground").GetComponent<Image>();
+    }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+ 
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         HighlightOnHover();
         
@@ -78,6 +91,7 @@ public class SelectionManager : MonoBehaviour
             var selection = hit.transform;
             if (TransformWithTagIsMovable(selectableTags, selection))
             {
+                FadeValueText(Fade.In);
                 var clickedBefore = clickedObject;
                 if (clickedBefore != null)
                 {
@@ -103,6 +117,7 @@ public class SelectionManager : MonoBehaviour
             }
             else
             {
+                FadeValueText(Fade.Out);
                 if (clickedObject != null)
                 { 
                     clickedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
@@ -122,5 +137,53 @@ public class SelectionManager : MonoBehaviour
     {
         return System.Array.IndexOf(tagArray, transform.tag) != -1;
     }
+
+    private void FadeValueText(SelectionManager.Fade direction) 
+    {
+
+        IEnumerator FadeTextToFullAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI)
+        {
+            yield return FadeTextToZeroAlpha(0.05f, canvasValueText);
+            while (tmpUGUI.color.a < 1.0f)
+            {
+                tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a + (Time.deltaTime / timeInSeconds));
+                valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, Mathf.Clamp(valueTextBackground.color.a + (Time.deltaTime / timeInSeconds), 0, vtbMaxAlpha));
+                yield return null;
+            }
+            valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, vtbMaxAlpha);
+        }
+
+        IEnumerator FadeTextToZeroAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI)
+        {
+            while (tmpUGUI.color.a > 0.0f)
+            {
+                tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a - (Time.deltaTime / timeInSeconds));
+                valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, Mathf.Clamp(valueTextBackground.color.a - (Time.deltaTime / timeInSeconds), 0, vtbMaxAlpha));
+                yield return null;
+            }
+            valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, 0);
+        }
+
+        switch ((Fade)direction) 
+        {
+            case Fade.Out:
+                StopAllCoroutines();
+                StartCoroutine(FadeTextToZeroAlpha(0.5f, canvasValueText));
+                break;
+            case Fade.In:
+                if (currentSelection != clickedObject) 
+                { 
+                    StopAllCoroutines();
+                    StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
+                }
+                break;
+            default:
+                StopAllCoroutines();
+                StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
+                break;
+        }
+
+    }
+    
 
 }

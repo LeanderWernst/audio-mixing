@@ -42,9 +42,9 @@ public class Knob : MonoBehaviour
 
     private void Update()
     {
-        if (isClicked) 
+        if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0)) 
         {
-            TurnKnob(Input.mouseScrollDelta.y * 2);
+            TurnKnob(Input.mouseScrollDelta.y / 2);
         }
     }
 
