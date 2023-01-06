@@ -41,7 +41,17 @@ public class UIButtonBehaviour : MonoBehaviour
 
     public void NoHover()
     {
-        cb.selectedColor = normalColor;
+        var pbb = gameObject.GetComponent<PlayButtonBehaviour>();
+        if (pbb != null && pbb.isActive)
+        {
+            cb.selectedColor = pbb.activeColor;
+            cb.normalColor = pbb.activeColor;
+        }
+        else
+        { 
+            cb.selectedColor = normalColor;
+            cb.normalColor = normalColor;
+        }
         button.colors = cb;
         if (tmpUGUI != null)
         {

@@ -8,16 +8,27 @@ public class AudioController : MonoBehaviour
     public AudioMixer mixer;
     public AudioSource AudiSrcBass, AudiSrcHihat, AudiSrcSnare;
     public static AudioClip drum_bass, drum_snare ,drum_hihat;
+    [SerializeField] private PlayButtonBehaviour pbbBassdrum;
+    [SerializeField] private PlayButtonBehaviour pbbSnare;
+    [SerializeField] private PlayButtonBehaviour pbbHihat;
+    [SerializeField] private PlayButtonBehaviour pbbAll;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         drum_bass = Resources.Load<AudioClip>("drum_bass");
         drum_snare = Resources.Load<AudioClip>("drum_snare");
         drum_hihat = Resources.Load<AudioClip>("drum_hihat");
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
         AudiSrcBass.volume = 0;
         AudiSrcSnare.volume = 0;
         AudiSrcHihat.volume = 0;
+        AudiSrcSnare.clip = drum_snare;
+        AudiSrcBass.clip = drum_bass;
+        AudiSrcHihat.clip = drum_hihat;
     }
     private float ConvertValuesToNewScale(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
     {
@@ -160,45 +171,88 @@ public class AudioController : MonoBehaviour
         }
     }
 
+    // FIX: booleans are set in separate scripts, not in the same
     public void PlaySound(string clip)
     {
         switch (clip)
         {
             case "drum_bass":
-                AudiSrcBass.clip = drum_bass;
-                AudiSrcHihat.Stop();
-                AudiSrcSnare.Stop();
-                AudiSrcBass.Play();
-                    break;
+                pbbBassdrum.isActive = !pbbBassdrum.isActive;
+                if (pbbBassdrum.isActive)
+                {
+                    pbbHihat.isActive = false;
+                    pbbSnare.isActive = false;
+                    pbbAll.isActive = false;
+                    AudiSrcHihat.Stop();
+                    AudiSrcSnare.Stop();
+                    AudiSrcBass.Play();
+                }
+                else 
+                    AudiSrcBass.Stop();
+                
+                break;
             case "drum_hihat":
-                AudiSrcHihat.clip = drum_hihat;
-                AudiSrcBass.Stop();
-                AudiSrcSnare.Stop();
-                AudiSrcHihat.Play();
+                pbbHihat.isActive = !pbbHihat.isActive;
+                if (pbbHihat.isActive)
+                {
+                    pbbBassdrum.isActive = false;
+                    pbbSnare.isActive = false;
+                    pbbAll.isActive = false;
+                    AudiSrcBass.Stop();
+                    AudiSrcSnare.Stop();
+                    AudiSrcHihat.Play();
+                }
+                else
+                    AudiSrcHihat.Stop();
                 break;
             case "drum_snare":
-                AudiSrcSnare.clip = drum_snare;
-                AudiSrcHihat.Stop();
-                AudiSrcBass.Stop();
-                AudiSrcSnare.Play();
+                pbbSnare.isActive = !pbbSnare.isActive;
+                if (pbbSnare.isActive)
+                {
+                    pbbBassdrum.isActive = false;
+                    pbbHihat.isActive = false;
+                    pbbAll.isActive = false;
+                    AudiSrcHihat.Stop();
+                    AudiSrcBass.Stop();
+                    AudiSrcSnare.Play();
+                }
+                else
+                    AudiSrcSnare.Stop();
                 break;
             case "all":
-                AudiSrcSnare.clip = drum_snare;
-                AudiSrcBass.clip = drum_bass;
-                AudiSrcHihat.clip = drum_hihat;
-                AudiSrcSnare.Play();
-                AudiSrcBass.Play();
-                AudiSrcHihat.Play();
-                break;
-            case "stop":
-                AudiSrcSnare.clip = drum_snare;
-                AudiSrcBass.clip = drum_bass;
-                AudiSrcHihat.clip = drum_hihat;
-                AudiSrcSnare.Stop();
-                AudiSrcBass.Stop();
-                AudiSrcHihat.Stop();
+                pbbAll.isActive = !pbbAll.isActive;
+                if (pbbAll.isActive)
+                {
+                    pbbBassdrum.isActive = false;
+                    pbbHihat.isActive = false;
+                    pbbSnare.isActive = false;
+                    AudiSrcSnare.Play();
+                    AudiSrcBass.Play();
+                    AudiSrcHihat.Play();
+                }
+                else
+                {
+                    AudiSrcSnare.Stop();
+                    AudiSrcBass.Stop();
+                    AudiSrcHihat.Stop();
+                }
                 break;
         }
+        pbbBassdrum.ChangeButtonColor();
+        pbbAll.ChangeButtonColor();
+        pbbSnare.ChangeButtonColor();
+        pbbHihat.ChangeButtonColor();
+    }
+    private void ListenToKeyboard()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+            PlaySound("drum_bass");
+        else if (Input.GetKeyDown(KeyCode.S))
+            PlaySound("drum_snare");
+        else if (Input.GetKeyDown(KeyCode.H))
+            PlaySound("drum_hihat");
+        else if (Input.GetKeyDown(KeyCode.Space))
+            PlaySound("all");
     }
     public void SetChannelLevel(string channel, float level)
     {
@@ -208,7 +262,7 @@ public class AudioController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        ListenToKeyboard();
     }
 }
 
