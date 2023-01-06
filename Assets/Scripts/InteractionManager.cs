@@ -62,7 +62,8 @@ namespace haw.unitytutorium.w22
             currentInteraction = interactions[interactionIndex];
             instructionLabel.SetText(currentInteraction.Instruction);
             audioSource.clip = currentInteraction.InstrAudio;
-            audioSource.Play();
+            if (audioSource.clip != null)
+                audioSource.Play();
         }
 
         private void Update()
