@@ -22,6 +22,8 @@ namespace haw.unitytutorium.w22
         [SerializeField] private TextMeshProUGUI totalErrorCountLabel;
         [SerializeField] private TextMeshProUGUI totalHelpCountLabel;
 
+        [SerializeField] private TextMeshProUGUI skipLabel;
+
 
         [Header("Raycast")]
         [SerializeField] private LayerMask layerMask;
@@ -63,8 +65,9 @@ namespace haw.unitytutorium.w22
             headlineLabel.SetText(currentInteraction.Headline);
             instructionLabel.SetText(currentInteraction.Instruction);
             audioSource.clip = currentInteraction.InstrAudio;
-            if (audioSource.clip != null)
-                audioSource.Play();
+            if (currentInteraction.IsSkippable)
+                skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 255f);
+            StartCoroutine(WaitThenPlaySound(2f));
         }
 
         private void Update()
@@ -100,6 +103,9 @@ namespace haw.unitytutorium.w22
                 StopHelpAndErrorDisplay();
                 StartCoroutine(DisplayForDuration(helpLabel, currentInteraction.HelpMsg, 5));
             }
+
+            if (Input.GetKeyDown(KeyCode.Return) && currentInteraction.IsSkippable)
+                MoveToNextInteraction();
         }
 
         private void DebugDrawRay()
@@ -132,11 +138,7 @@ namespace haw.unitytutorium.w22
             if (selectedGameObject.Equals(currentInteraction.TargetObject))
             {
                 if (currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue() == currentInteraction.TargetValue)
-                { 
-                    StopHelpAndErrorDisplay();
-                    currentInteraction.OnExecution?.Invoke();
-                    interactionIndex++;
-                }
+                    MoveToNextInteraction();
 
                 if (InteractionsCompleted)
                 {
@@ -145,12 +147,6 @@ namespace haw.unitytutorium.w22
                     return;
                 }
 
-                currentInteraction = interactions[interactionIndex];
-                SetTextWithFade(1f, headlineLabel, currentInteraction.Headline);
-                SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction);
-                errorLabel.SetText(currentInteraction.Instruction);
-                helpLabel.SetText(currentInteraction.HelpMsg);
-                helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
             }
             else
             {
@@ -179,19 +175,47 @@ namespace haw.unitytutorium.w22
         private void StopHelpAndErrorDisplay()
         {
             //StopAllCoroutines();
-            helpLabel.SetText("");
-            errorLabel.SetText("");
+            //helpLabel.SetText("");
+            //errorLabel.SetText("");
+        }
+
+        private void MoveToNextInteraction()
+        {
+            StopHelpAndErrorDisplay();
+            if (audioSource.isPlaying)
+                audioSource.Stop();
+            currentInteraction.OnExecution?.Invoke();
+
+            interactionIndex++;
+
+            currentInteraction = interactions[interactionIndex];
+            StopAllCoroutines();
+            if (!headlineLabel.text.Equals(currentInteraction.Headline))
+            { 
+                SetTextWithFade(1f, headlineLabel, currentInteraction.Headline);
+            }
+            SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction);
+            errorLabel.SetText(currentInteraction.ErrorMsg);
+            helpLabel.SetText(currentInteraction.HelpMsg);
+            helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
+
+            if (currentInteraction.IsSkippable)
+                skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 255f);
+            else
+                skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 0f);
         }
 
         private void SetTextWithFade(float seconds, TextMeshProUGUI textMesh, string newText)
         {
-            StopAllCoroutines();
             StartCoroutine(FadeTextToFullAlpha(seconds, textMesh, newText));
 
             IEnumerator FadeTextToFullAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI, string newText)
             {
                 yield return FadeTextToZeroAlpha(timeInSeconds, tmpUGUI);
                 tmpUGUI.SetText(newText);
+                audioSource.clip = currentInteraction.InstrAudio;
+                if (audioSource.clip != null)
+                    audioSource.Play();
                 while (tmpUGUI.color.a < 1.0f)
                 {
                     tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a + (Time.deltaTime / timeInSeconds));
@@ -207,6 +231,13 @@ namespace haw.unitytutorium.w22
                     yield return null;
                 }
             }
+        }
+
+        IEnumerator WaitThenPlaySound(float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            if (audioSource.clip != null)
+                audioSource.Play();
         }
     }
 }

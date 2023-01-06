@@ -36,7 +36,6 @@ public class Knob : MonoBehaviour
         while(!parent.CompareTag("Channel"))
         {
             parent = parent.parent;
-            Debug.Log(parent.tag);
         }
         channel = parent.name;
         TurnKnob(0); // Initial "move" to get initial value from position
