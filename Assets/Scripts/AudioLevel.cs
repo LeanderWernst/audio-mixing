@@ -68,7 +68,6 @@ public class AudioLevel : MonoBehaviour
         rmsValue = Mathf.Sqrt(sum / qSamples); // rms = square root of average
         dbValue = 20 * Mathf.Log10(rmsValue / refValue); // calculate dB
         if (dbValue < -160) dbValue = -160; // clamp it to -160dB min
-        Debug.Log(dbValue + " dB");
         return dbValue;
     }
 
