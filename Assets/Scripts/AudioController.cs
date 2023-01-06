@@ -171,7 +171,6 @@ public class AudioController : MonoBehaviour
         }
     }
 
-    // FIX: booleans are set in separate scripts, not in the same
     public void PlaySound(string clip)
     {
         switch (clip)

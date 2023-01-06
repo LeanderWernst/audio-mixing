@@ -11,6 +11,7 @@ public class Fader : MonoBehaviour
     
     private PositionValueRelation[] faderPvr = FaderPvr.relation;
     public float value;
+    private ValueStorage valueStorage;
     private float verticalMovement;
     public bool isClicked = false;
     public AudioController audioController;
@@ -19,11 +20,13 @@ public class Fader : MonoBehaviour
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
+        valueStorage = gameObject.GetComponent<ValueStorage>();
     }
 
     void Start()
     {
         audioController = GameObject.Find("MasterVolume").GetComponent<AudioController>();
+        SlideFader(0); // Initial "move" to get initial value from position
     }
 
     // Update is called once per frame
@@ -82,7 +85,8 @@ public class Fader : MonoBehaviour
         transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
         value = GetNonLinearFaderValue(faderPvr);
         ChangeValueText();
-        audioController.SetFaderVolume(transform.parent.name,value);
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetFaderVolume(transform.parent.name, value);
 
     }
 

@@ -39,14 +39,17 @@ public class MixerMovementHandler : MonoBehaviour
     {
         foreach (GameObject fader in faders) 
         {
+            fader.AddComponent<ValueStorage>();
             fader.AddComponent<Fader>();
         }
         foreach (GameObject button in buttons)
         {
+            button.AddComponent<ValueStorage>();
             button.AddComponent<Button>();
         }
         foreach (GameObject knob in knobs)
         {
+            knob.AddComponent<ValueStorage>();
             knob.AddComponent<Knob>();
         }
     }

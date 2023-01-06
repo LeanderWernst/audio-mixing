@@ -6,6 +6,7 @@ using UnityEngine;
 public class Button : MonoBehaviour
 {
     public bool isOn = false;
+    private ValueStorage valueStorage;
     public bool isClicked = false;
     private bool isMoving = false;
     private bool hasLED = false;
@@ -20,6 +21,7 @@ public class Button : MonoBehaviour
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
+        valueStorage = gameObject.GetComponent<ValueStorage>();
     }
 
     // Start is called before the first frame update
@@ -55,6 +57,6 @@ public class Button : MonoBehaviour
         else if (hasLED && !isOn)
             transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
         canvasValueText.text = isOn ? "on" : "off";
+        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
     }
-
 }

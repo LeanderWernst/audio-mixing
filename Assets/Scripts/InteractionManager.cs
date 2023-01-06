@@ -60,6 +60,7 @@ namespace haw.unitytutorium.w22
 
             // Set the first interaction from the list as our current interaction and display its instruction in the ui.
             currentInteraction = interactions[interactionIndex];
+            headlineLabel.SetText(currentInteraction.Headline);
             instructionLabel.SetText(currentInteraction.Instruction);
             audioSource.clip = currentInteraction.InstrAudio;
             if (audioSource.clip != null)
@@ -94,7 +95,7 @@ namespace haw.unitytutorium.w22
                 // otherwise just do ...
                 // helpCount++;
 
-                helpCountLabel.SetText("Hilfen: " + helpCount);
+                //helpCountLabel.SetText("Hilfen: " + helpCount);
 
                 StopHelpAndErrorDisplay();
                 StartCoroutine(DisplayForDuration(helpLabel, currentInteraction.HelpMsg, 5));
@@ -118,6 +119,10 @@ namespace haw.unitytutorium.w22
 
         private void CheckInteractionOrder(GameObject selectedGameObject)
         {
+            /*Debug.Log(selectedGameObject.GetComponent<Fader>()?.value);
+            Debug.Log(selectedGameObject.GetComponent<Button>()?.isOn);
+            Debug.Log(selectedGameObject.GetComponent<Knob>()?.value);*/
+
             if (InteractionsCompleted)
                 return;
 
@@ -126,9 +131,12 @@ namespace haw.unitytutorium.w22
 
             if (selectedGameObject.Equals(currentInteraction.TargetObject))
             {
-                StopHelpAndErrorDisplay();
-                currentInteraction.OnExecution?.Invoke();
-                interactionIndex++;
+                if (currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue() == currentInteraction.TargetValue)
+                { 
+                    StopHelpAndErrorDisplay();
+                    currentInteraction.OnExecution?.Invoke();
+                    interactionIndex++;
+                }
 
                 if (InteractionsCompleted)
                 {
@@ -138,7 +146,11 @@ namespace haw.unitytutorium.w22
                 }
 
                 currentInteraction = interactions[interactionIndex];
-                instructionLabel.SetText(currentInteraction.Instruction);
+                SetTextWithFade(1f, headlineLabel, currentInteraction.Headline);
+                SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction);
+                errorLabel.SetText(currentInteraction.Instruction);
+                helpLabel.SetText(currentInteraction.HelpMsg);
+                helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
             }
             else
             {
@@ -166,9 +178,35 @@ namespace haw.unitytutorium.w22
 
         private void StopHelpAndErrorDisplay()
         {
-            StopAllCoroutines();
+            //StopAllCoroutines();
             helpLabel.SetText("");
             errorLabel.SetText("");
+        }
+
+        private void SetTextWithFade(float seconds, TextMeshProUGUI textMesh, string newText)
+        {
+            StopAllCoroutines();
+            StartCoroutine(FadeTextToFullAlpha(seconds, textMesh, newText));
+
+            IEnumerator FadeTextToFullAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI, string newText)
+            {
+                yield return FadeTextToZeroAlpha(timeInSeconds, tmpUGUI);
+                tmpUGUI.SetText(newText);
+                while (tmpUGUI.color.a < 1.0f)
+                {
+                    tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a + (Time.deltaTime / timeInSeconds));
+                    yield return null;
+                }
+            }
+
+            IEnumerator FadeTextToZeroAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI)
+            {
+                while (tmpUGUI.color.a > 0.0f)
+                {
+                    tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a - (Time.deltaTime / timeInSeconds));
+                    yield return null;
+                }
+            }
         }
     }
 }
