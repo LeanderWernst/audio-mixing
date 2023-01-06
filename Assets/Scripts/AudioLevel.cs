@@ -20,7 +20,7 @@ public class AudioLevel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetVolume(); // TEST
+        //GetVolume(); // TEST
     }
 
     public float GetLevelLeft()
@@ -57,7 +57,7 @@ public class AudioLevel : MonoBehaviour
     float dbValue;    // sound level - dB
     private float[] samples; // audio samples
 
-    void GetVolume()
+    public float GetVolume()
     {
         audioSource.GetOutputData(samples, 0); // fill array with samples
         float sum = 0;
@@ -68,7 +68,7 @@ public class AudioLevel : MonoBehaviour
         rmsValue = Mathf.Sqrt(sum / qSamples); // rms = square root of average
         dbValue = 20 * Mathf.Log10(rmsValue / refValue); // calculate dB
         if (dbValue < -160) dbValue = -160; // clamp it to -160dB min
-        //Debug.Log(dbValue + " dB");
+        return dbValue;
     }
 
 }
