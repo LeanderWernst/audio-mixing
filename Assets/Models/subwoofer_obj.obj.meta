@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Subwoofer_bodyMat
-    second: {fileID: 2100000, guid: ab546bd3383e2d64585baa25a0766f84, type: 2}
+    second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -27,13 +27,88 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Subwoofer_roundthing3Mat
+      name: Subwoofer_bolt4Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_bolt5Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_bolt6Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_bolt7Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_bolt8Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_leg1Mat
     second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Subwoofer_roundthingMat
+      name: Subwoofer_leg2Mat
     second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_leg3Mat
+    second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_leg4Mat
+    second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_leg5Mat
+    second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_leg6Mat
+    second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_leg7Mat
+    second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_legMat
+    second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_roundthing1Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_roundthing2Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_roundthing3Mat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_roundthingMat
+    second: {fileID: 2100000, guid: 5e0dcb36226a26f42a81b52ec82ef11e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -44,6 +119,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Subwoofer_speakerholder1Mat
     second: {fileID: 2100000, guid: 00df4902832f4fa47b45e992800fbe7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Subwoofer_yellowthingMat
+    second: {fileID: 2100000, guid: aadd01f723aa82040ac87793cc7fc181, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

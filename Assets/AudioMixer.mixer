@@ -22,7 +22,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Drum_Snare
+  m_Name: Channel3
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 21337c0276f61b94baab87bb8c06d660
   m_Children: []
@@ -93,7 +93,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Drum_Bass
+  m_Name: Channel1
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: f9d3d65a15b7d09499871dcf658f68ac
   m_Children: []
@@ -103,9 +103,10 @@ AudioMixerGroupController:
   m_Effects:
   - {fileID: -5340278206032205911}
   - {fileID: -9102510807042131532}
-  - {fileID: 571428345417581027}
-  - {fileID: -4545713482516084294}
   - {fileID: -201086108108560474}
+  - {fileID: 6969415783935019466}
+  - {fileID: -4545713482516084294}
+  - {fileID: 571428345417581027}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -162,6 +163,26 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!244 &-397066695152527639
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 157b47d346e5e0f41bf1f57b12a7199f
+  m_EffectName: ParamEQ
+  m_MixLevel: 5edf609f070da24478ac2a1602f3ce81
+  m_Parameters:
+  - m_ParameterName: Center freq
+    m_GUID: b5fe38f51446b1c4786bacc9cf70fa0d
+  - m_ParameterName: Octave range
+    m_GUID: 9e52aa1656cd46044a5b1fb942de4b52
+  - m_ParameterName: Frequency gain
+    m_GUID: 75d43a7f107d0524698dd8fec9e271fb
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &-201086108108560474
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -199,23 +220,51 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: 9b7102dfbdcc2314890eb43872c9ebc0
-    name: BassDrumGain
+    name: BassdrumVolume
   - guid: 3b506591ff92dd545910c675b049f9dc
     name: BassCutOff
-  - guid: 99700e19dd703ab4390d5a41bff69521
-    name: BassDrumEqLow
-  - guid: f8e543149f2574545a21d22f5f78d33d
-    name: BassDrumEqMid
+  - guid: 91bef5eae0ed2ec4db1db71511f0dfde
+    name: Channel1KnobBassFreq
+  - guid: 721da05a3512a574981fac1ac30e1ac0
+    name: Channel1KnobHiMidWidth
+  - guid: 81ed5cc31d329674190513a3cd81285a
+    name: Channel1KnobHiMidGain
   - guid: b86126a3bd8b8f64384b361948a57600
-    name: BassDrumEqHigh
+    name: Channel1KnobTrebleGain
+  - guid: d3c0254cfdf36ef4680349ae624417c9
+    name: Channel1KnobHiMidFreq
+  - guid: 99700e19dd703ab4390d5a41bff69521
+    name: Channel1KnobBassGain
+  - guid: f8e543149f2574545a21d22f5f78d33d
+    name: Channel1KnobLoMidGain
+  - guid: 999ea0bd74bb1a34aad45dc2dc187001
+    name: Channel1KnobTrebleFreq
+  - guid: 571c1fb20b4aa3d4a98b7d13f37a9deb
+    name: Channel1KnobLoMidWidth
+  - guid: 8bed58dc3295d8f46be0f944d5492ff0
+    name: Channel1KnobLoMidFreq
+  - guid: b368e26a3374941459003f8734270d9c
+    name: HihatVolume
   - guid: bbcf0a87dba1f4b43a76ea980005cc15
     name: HihatCutOff
-  - guid: a4ae506888640d04e84b23a0bbedb214
-    name: HihatEqMid
+  - guid: 75d43a7f107d0524698dd8fec9e271fb
+    name: Channel2KnobLoMidGain
   - guid: 27d300523c9507b46905729f75032383
-    name: HihatEqLow
+    name: Channel2KnobBassGain
+  - guid: a4ae506888640d04e84b23a0bbedb214
+    name: Channel2KnobHiMidGain
   - guid: a9d53a87cf51ab8429340dd91dbf8dd4
-    name: HihatEqHigh
+    name: Channel2KnobTrebleGain
+  - guid: 6c742a8c4a1ed6b47acf41101b94619e
+    name: Channel2KnobTrebleFreq
+  - guid: f9ab61c8ba7ac854b9935dec02c301f4
+    name: Channel2KnobHiMidFreq
+  - guid: b5fe38f51446b1c4786bacc9cf70fa0d
+    name: Channel2KnobLoMidFreq
+  - guid: 16b0ceb1afc750e4ba6e5244b353ef98
+    name: Channel2KnobBassFreq
+  - guid: 9c0864a5f68e2304fb45f58118cdd275
+    name: SnareVolume
   - guid: ddde41c2f38799e41b97a3705d9b7ee1
     name: SnareCutOff
   - guid: 82b1366f9a5df0347ba0d4948ee7046c
@@ -281,25 +330,26 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 050761736b290d645899ba0100c1ffff
   m_FloatValues:
-    55453b506ce4af64dac7f44144b6fa88: 0.23288131
+    55453b506ce4af64dac7f44144b6fa88: 20
     3b506591ff92dd545910c675b049f9dc: 386
     16b0ceb1afc750e4ba6e5244b353ef98: 60
     571c1fb20b4aa3d4a98b7d13f37a9deb: 0.69
     ddde41c2f38799e41b97a3705d9b7ee1: 200
-    b86126a3bd8b8f64384b361948a57600: 1
+    b86126a3bd8b8f64384b361948a57600: 0.35
     f8e543149f2574545a21d22f5f78d33d: 1
-    c93e5324cdd888f4a9486fef183af7d7: 0.68
-    9c0864a5f68e2304fb45f58118cdd275: 0.64345783
+    c93e5324cdd888f4a9486fef183af7d7: 0.2
+    9c0864a5f68e2304fb45f58118cdd275: -80
+    b5fe38f51446b1c4786bacc9cf70fa0d: 607
     95182ef56830135458cc3de09e33230d: 1
     8c165307e34565d41bf612b97008ece6: 4000
     d5c8886760387364786b32c9f8cc9208: 300
     bbcf0a87dba1f4b43a76ea980005cc15: 401
     a9d53a87cf51ab8429340dd91dbf8dd4: 1
-    f9ab61c8ba7ac854b9935dec02c301f4: 300
-    99700e19dd703ab4390d5a41bff69521: 1
+    f9ab61c8ba7ac854b9935dec02c301f4: 7119
+    99700e19dd703ab4390d5a41bff69521: 1.42
     82cf6e3991ff7164d95e6854fd4a5444: 0.64
     1255a90a1d480304499be1a4bdde4afd: 1.548
-    b368e26a3374941459003f8734270d9c: -0.27209902
+    b368e26a3374941459003f8734270d9c: -80
     91bef5eae0ed2ec4db1db71511f0dfde: 60
     4c1a633bebfcb5b479e670813a3b17bb: 1.2
     6c742a8c4a1ed6b47acf41101b94619e: 4000
@@ -308,7 +358,7 @@ AudioMixerSnapshotController:
     999ea0bd74bb1a34aad45dc2dc187001: 3500
     02530ebebda08cf4496fc155f1b496ee: 494
     82b1366f9a5df0347ba0d4948ee7046c: 0.99
-    9b7102dfbdcc2314890eb43872c9ebc0: 0.58972603
+    9b7102dfbdcc2314890eb43872c9ebc0: -80
   m_TransitionOverrides: {}
 --- !u!244 &571428345417581027
 AudioMixerEffectController:
@@ -336,7 +386,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Drum_Hihat
+  m_Name: Channel2
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: ea46335508c7f41498327d3db545499d
   m_Children: []
@@ -346,9 +396,10 @@ AudioMixerGroupController:
   m_Effects:
   - {fileID: 6701749720672790417}
   - {fileID: -1700184367239750873}
-  - {fileID: 1762070136703476170}
-  - {fileID: 3745175004269170928}
   - {fileID: 2398977623797584569}
+  - {fileID: 3745175004269170928}
+  - {fileID: -397066695152527639}
+  - {fileID: 1762070136703476170}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -444,6 +495,26 @@ AudioMixerEffectController:
   m_EffectName: Attenuation
   m_MixLevel: 170e12d7655b0a4459f2ff19e1fc4112
   m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
+--- !u!244 &6969415783935019466
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 8473a6ca9b6d35d45bb0c8279c0c6bbb
+  m_EffectName: ParamEQ
+  m_MixLevel: 4e50bc74eeada6645ad1013259f883fd
+  m_Parameters:
+  - m_ParameterName: Center freq
+    m_GUID: d3c0254cfdf36ef4680349ae624417c9
+  - m_ParameterName: Octave range
+    m_GUID: 721da05a3512a574981fac1ac30e1ac0
+  - m_ParameterName: Frequency gain
+    m_GUID: 81ed5cc31d329674190513a3cd81285a
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0

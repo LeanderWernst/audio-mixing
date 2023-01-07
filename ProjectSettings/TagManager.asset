@@ -10,8 +10,7 @@ TagManager:
   - Light
   - ValueText
   - Channel
-  - StereoInputChannel
-  - Master
+  - UIButton
   layers:
   - Default
   - TransparentFX
@@ -19,7 +18,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Lights
   - 
   - 
   - 

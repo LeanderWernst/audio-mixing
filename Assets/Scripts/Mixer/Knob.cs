@@ -13,12 +13,16 @@ public class Knob : MonoBehaviour
 	private float angle;
     private KnobType knobType;
     private PositionValueRelation[] knobPvr;
+    private AudioController audioController;
+    public string channel;
     public float value;
+    private ValueStorage valueStorage;
     TextMeshProUGUI canvasValueText;
 
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
+        valueStorage = gameObject.GetComponent<ValueStorage>();
     }
     private void Start()
     {
@@ -27,13 +31,21 @@ public class Knob : MonoBehaviour
         knobType = GetKnobType();
         knobPvr = KnobPvr.Relation(knobType);
         value = GetNonLinearFaderValue(knobPvr);
+        audioController = GameObject.Find("MasterVolume").GetComponent<AudioController>();
+        var parent = transform;
+        while(!parent.CompareTag("Channel"))
+        {
+            parent = parent.parent;
+        }
+        channel = parent.name;
+        TurnKnob(0); // Initial "move" to get initial value from position
     }
 
     private void Update()
     {
-        if (isClicked) 
+        if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0)) 
         {
-            TurnKnob(Input.mouseScrollDelta.y * 2);
+            TurnKnob(Input.mouseScrollDelta.y / 2);
         }
     }
 
@@ -50,6 +62,8 @@ public class Knob : MonoBehaviour
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
         value = GetNonLinearFaderValue(knobPvr);
         ChangeValueText();
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetKnobValue(transform.name, channel, value);
     }
 
     private void ChangeValueText() 
