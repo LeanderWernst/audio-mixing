@@ -48,7 +48,7 @@ public class Button : MonoBehaviour
             isMoving = false;
     }
 
-    private void OnMouseUp()
+    private void OnMouseDown()
     {
         isOn = !isOn;
         isMoving = true;
