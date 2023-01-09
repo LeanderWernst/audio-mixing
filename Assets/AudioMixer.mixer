@@ -274,7 +274,7 @@ AudioMixerController:
   - guid: b2d3fc8d31aa3a944896cacd9facde11
     name: SnareEqHigh
   - guid: 55453b506ce4af64dac7f44144b6fa88
-    name: MasterVol
+    name: FaderMasterL
   m_AudioMixerGroupViews:
   - guids:
     - dff87ae81d15ddf4cb342b987ff90c11
@@ -330,7 +330,7 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 050761736b290d645899ba0100c1ffff
   m_FloatValues:
-    55453b506ce4af64dac7f44144b6fa88: 20
+    55453b506ce4af64dac7f44144b6fa88: -80
     3b506591ff92dd545910c675b049f9dc: 386
     16b0ceb1afc750e4ba6e5244b353ef98: 60
     571c1fb20b4aa3d4a98b7d13f37a9deb: 0.69
@@ -347,8 +347,9 @@ AudioMixerSnapshotController:
     a9d53a87cf51ab8429340dd91dbf8dd4: 1
     f9ab61c8ba7ac854b9935dec02c301f4: 7119
     99700e19dd703ab4390d5a41bff69521: 1.42
-    82cf6e3991ff7164d95e6854fd4a5444: 0.64
+    82cf6e3991ff7164d95e6854fd4a5444: 0.2
     1255a90a1d480304499be1a4bdde4afd: 1.548
+    721da05a3512a574981fac1ac30e1ac0: 2.96
     b368e26a3374941459003f8734270d9c: -80
     91bef5eae0ed2ec4db1db71511f0dfde: 60
     4c1a633bebfcb5b479e670813a3b17bb: 1.2

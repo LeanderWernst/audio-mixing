@@ -37,7 +37,7 @@ public class AudioController : MonoBehaviour
         else
             return 0;
     }
-    public void SetFaderVolume(string channel, float value)
+    public void SetFaderVolume(string fader , string channel, float value)
     {
         switch (channel)
         {
@@ -50,8 +50,13 @@ public class AudioController : MonoBehaviour
             case "Channel3":
                 mixer.SetFloat("HihatVolume", value);
                 break;
-            default:
-                // code block
+            case "Master":
+                switch (fader)
+                {
+                    case "FaderMasterL":
+                        mixer.SetFloat("FaderMasterL", value);
+                        break;
+                }
                 break;
         }
     }
@@ -86,12 +91,32 @@ public class AudioController : MonoBehaviour
                 value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
                 mixer.SetFloat(channel + knob, value);
                 break;
+            case "KnobHiMidFreq":
+                value = ConvertValuesToNewScale(value, 0.4f, 8, 400, 8000);
+                mixer.SetFloat(channel + knob, value);
+                break;
+            case "KnobHiMidWidth":
+                value = ConvertValuesToNewScale(value, 0.1f, 2, 0.2f, 2);
+                mixer.SetFloat(channel + knob, value);
+                break;
             case "KnobLoMidGain":
                 value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
                 mixer.SetFloat(channel + knob, value);
                 break;
+            case "KnobLoMidFreq":
+                value = ConvertValuesToNewScale(value, 0.1f,2, 100, 2000);
+                mixer.SetFloat(channel + knob, value);
+                break;
+            case "KnobLoMidWidth":
+                value = ConvertValuesToNewScale(value, 0.1f, 2, 0.2f, 2);
+                mixer.SetFloat(channel + knob, value);
+                break;
             case "KnobBassGain":
                 value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                mixer.SetFloat(channel + knob, value);
+                break;
+            case "KnobBassFreq":
+                value = ConvertValuesToNewScale(value, 0.02f,0.2f, 20, 200);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobPanControl":

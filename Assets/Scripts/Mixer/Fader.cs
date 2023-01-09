@@ -16,6 +16,8 @@ public class Fader : MonoBehaviour
     public bool isClicked = false;
     public AudioController audioController;
     TextMeshProUGUI canvasValueText;
+    public string channel;
+
 
     private void Awake()
     {
@@ -26,6 +28,12 @@ public class Fader : MonoBehaviour
     void Start()
     {
         audioController = GameObject.Find("MasterVolume").GetComponent<AudioController>();
+        var parent = transform;
+        while (!parent.CompareTag("Channel"))
+        {
+            parent = parent.parent;
+        }
+        channel = parent.name;
         SlideFader(0); // Initial "move" to get initial value from position
     }
 
@@ -86,7 +94,7 @@ public class Fader : MonoBehaviour
         value = GetNonLinearFaderValue(faderPvr);
         ChangeValueText();
         valueStorage.SetValue(value, gameObject);
-        audioController.SetFaderVolume(transform.parent.name, value);
+        audioController.SetFaderVolume(transform.name, channel, value);
 
     }
 

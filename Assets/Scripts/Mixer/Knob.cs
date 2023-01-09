@@ -157,7 +157,7 @@ public class Knob : MonoBehaviour
             case "KnobBassFreq":
                 knobType = KnobType.BassFreq;
                 break;
-            case "KnobHidMidWidth":
+            case "KnobHiMidWidth":
             case "KnobLoMidWidth":
                 knobType = KnobType.EqWidth;
                 break;
