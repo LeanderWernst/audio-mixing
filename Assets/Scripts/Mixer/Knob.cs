@@ -31,7 +31,7 @@ public class Knob : MonoBehaviour
         knobType = GetKnobType();
         knobPvr = KnobPvr.Relation(knobType);
         value = GetNonLinearFaderValue(knobPvr);
-        audioController = GameObject.Find("MasterVolume").GetComponent<AudioController>();
+        audioController = GameObject.Find("PanelKeys").GetComponent<AudioController>();
         var parent = transform;
         while(!parent.CompareTag("Channel"))
         {
