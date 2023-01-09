@@ -58,6 +58,9 @@ public class AudioController : MonoBehaviour
                         break;
                 }
                 break;
+            case "StereoInput1":
+                mixer.SetFloat("StereoInput1Volume", value);
+                break;
         }
     }
     public void SetKnobValue(string knob, string channel, float value)
