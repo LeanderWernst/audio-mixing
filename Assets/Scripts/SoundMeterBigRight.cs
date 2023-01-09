@@ -39,40 +39,40 @@ public class SoundMeterBigRight : MonoBehaviour
     }
     void SwitchLedRight()
     {
-        if (sound.GetLevelRight() > 2) LED1.status = false;
+        if (sound.GetLevelRight() > 18) LED1.status = false;
         else LED1.status = true;
 
-        if (sound.GetLevelRight() > 1.8) LED2.status = false;
+        if (sound.GetLevelRight() > 12) LED2.status = false;
         else LED2.status = true;
 
-        if (sound.GetLevelRight() > 1.6) LED3.status = false;
+        if (sound.GetLevelRight() > 6) LED3.status = false;
         else LED3.status = true;
 
-        if (sound.GetLevelRight() > 1.2) LED4.status = false;
+        if (sound.GetLevelRight() > 0) LED4.status = false;
         else LED4.status = true;
 
-        if (sound.GetLevelRight() > 1) LED5.status = false;
+        if (sound.GetLevelRight() > -3) LED5.status = false;
         else LED5.status = true;
 
-        if (sound.GetLevelRight() > 0.8) LED6.status = false;
+        if (sound.GetLevelRight() > -6) LED6.status = false;
         else LED6.status = true;
 
-        if (sound.GetLevelRight() > 0.5) LED7.status = false;
+        if (sound.GetLevelRight() > -9) LED7.status = false;
         else LED7.status = true;
 
-        if (sound.GetLevelRight() > 0.2) LED8.status = false;
+        if (sound.GetLevelRight() > -12) LED8.status = false;
         else LED8.status = true;
 
-        if (sound.GetLevelRight() > 0.15) LED9.status = false;
+        if (sound.GetLevelRight() > -15) LED9.status = false;
         else LED9.status = true;
 
-        if (sound.GetLevelRight() > 0.1) LED10.status = false;
+        if (sound.GetLevelRight() > -18) LED10.status = false;
         else LED10.status = true;
 
-        if (sound.GetLevelRight() > 0.05) LED11.status = false;
+        if (sound.GetLevelRight() > -21) LED11.status = false;
         else LED11.status = true;
 
-        if (sound.GetLevelRight() > 0.036) LED12.status = false;
+        if (sound.GetLevelRight() > -24) LED12.status = false;
         else LED12.status = true;
     }
 
