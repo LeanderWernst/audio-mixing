@@ -23,6 +23,8 @@ namespace haw.unitytutorium.w22
         [SerializeField] private TextMeshProUGUI totalHelpCountLabel;
 
         [SerializeField] private TextMeshProUGUI skipLabel;
+        [SerializeField] private AudioClip soundWrong;
+        [SerializeField] private AudioClip soundCorrect;
 
 
         [Header("Raycast")]
@@ -81,12 +83,13 @@ namespace haw.unitytutorium.w22
 
                 if (Physics.Raycast(ray, out hit, 20.0f, layerMask))
                 {
+                    Debug.Log("Hit InteractionLayer");
                     CheckInteractionOrder(hit.transform.gameObject);
                 }
             }
 
             // Users can request help with the H key as long as we still have "open" interactions (the training is not completed).
-            if (Input.GetKeyDown(KeyCode.H) && !InteractionsCompleted)
+            /*if (Input.GetKeyDown(KeyCode.H) && !InteractionsCompleted)
             {
                 // If your help counter is limited (because you display the help permanently after it was requested)
                 // then you can do this ...
@@ -100,12 +103,17 @@ namespace haw.unitytutorium.w22
 
                 //helpCountLabel.SetText("Hilfen: " + helpCount);
 
-                StopHelpAndErrorDisplay();
                 StartCoroutine(DisplayForDuration(helpLabel, currentInteraction.HelpMsg, 5));
-            }
+            }*/
 
+            // Skip steps, when skippable or confirm action
             if (Input.GetKeyDown(KeyCode.Return) && currentInteraction.IsSkippable)
                 MoveToNextInteraction();
+            else if (Input.GetKeyDown(KeyCode.Return) // Check TargetRange if TargetRange was given
+                    && currentInteraction.TargetValueMax != currentInteraction.TargetValueMin)
+            {
+                CheckTargetRange();
+            }
         }
 
         private void DebugDrawRay()
@@ -128,6 +136,7 @@ namespace haw.unitytutorium.w22
             /*Debug.Log(selectedGameObject.GetComponent<Fader>()?.value);
             Debug.Log(selectedGameObject.GetComponent<Button>()?.isOn);
             Debug.Log(selectedGameObject.GetComponent<Knob>()?.value);*/
+            Debug.Log(selectedGameObject.name);
 
             if (InteractionsCompleted)
                 return;
@@ -137,8 +146,14 @@ namespace haw.unitytutorium.w22
 
             if (selectedGameObject.Equals(currentInteraction.TargetObject))
             {
-                if (currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue() == currentInteraction.TargetValue)
+                Debug.Log("Hit correct Object");
+                Debug.Log("Object value: " + currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue());
+                if (ObjectHasTargetValue())
+                {
+                    PlayFeedbackSound(true);
                     MoveToNextInteraction();
+                }
+                
 
                 if (InteractionsCompleted)
                 {
@@ -148,12 +163,15 @@ namespace haw.unitytutorium.w22
                 }
 
             }
-            else
+            else if (!currentInteraction.IsSkippable) // OR SHOULD IT BE ALLOWED TO PRESS RANDOM BUTTONS?
             {
-                StopHelpAndErrorDisplay();
-                StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrorMsg, 5));
-                errorCount++;
-                errorCountLabel.SetText("Fehler: " + errorCount);
+                if (!selectedGameObject.Equals(currentInteraction.TargetObject)) // Delete if it always should throw error
+                { 
+                    PlayFeedbackSound(false);
+                    StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrElement, 5));
+                    errorCount++;
+                    errorCountLabel.SetText(errorCount.ToString());
+                }
             }
         }
 
@@ -172,16 +190,47 @@ namespace haw.unitytutorium.w22
             label.text = "";
         }
 
-        private void StopHelpAndErrorDisplay()
+        private void CheckTargetRange()
         {
-            //StopAllCoroutines();
-            //helpLabel.SetText("");
-            //errorLabel.SetText("");
+            if (currentInteraction.TargetValueMax != currentInteraction.TargetValueMin)
+                { 
+                var setValue = currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue();
+                var minValue = currentInteraction.TargetValueMin;
+                var maxValue = currentInteraction.TargetValueMax;
+                if (setValue >= minValue && setValue <= maxValue)
+                { 
+                    PlayFeedbackSound(true);
+                    MoveToNextInteraction();
+                }
+                else 
+                {
+                    PlayFeedbackSound(false);
+                    if (setValue < minValue)
+                    {
+                        StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrBelowMin, 5));
+                        errorCount++;
+                        errorCountLabel.SetText(errorCount.ToString());
+                    }
+                    else 
+                    {
+                        StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrAboveMax, 5));
+                        errorCount++;
+                        errorCountLabel.SetText(errorCount.ToString());
+                    }
+                }
+            }
+        }
+
+        private bool ObjectHasTargetValue()
+        {
+            if (currentInteraction.TargetObject != null)
+                return currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue() == currentInteraction.TargetValue;
+            else
+                return false;
         }
 
         private void MoveToNextInteraction()
         {
-            StopHelpAndErrorDisplay();
             if (audioSource.isPlaying)
                 audioSource.Stop();
             currentInteraction.OnExecution?.Invoke();
@@ -195,7 +244,7 @@ namespace haw.unitytutorium.w22
                 SetTextWithFade(1f, headlineLabel, currentInteraction.Headline);
             }
             SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction);
-            errorLabel.SetText(currentInteraction.ErrorMsg);
+            // errorLabel.SetText(currentInteraction.ErrElement);
             helpLabel.SetText(currentInteraction.HelpMsg);
             helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
 
@@ -203,6 +252,31 @@ namespace haw.unitytutorium.w22
                 skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 255f);
             else
                 skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 0f);
+
+            // In case setting is already correct move instantly to next step // NECESSARY?
+            if (ObjectHasTargetValue())
+            {
+                MoveToNextInteraction();
+                return;
+            }
+            CheckTargetRange();
+        }
+
+        private void PlayFeedbackSound(bool success)
+        {
+            audioSource.Stop();
+            AudioSource tempAudioSource = gameObject.AddComponent<AudioSource>();
+            if (success)
+            {
+                tempAudioSource.clip = soundCorrect;
+                tempAudioSource.Play();
+            }
+            else 
+            {
+                tempAudioSource.clip = soundWrong;
+                tempAudioSource.Play();
+            }
+            Destroy(tempAudioSource, tempAudioSource.clip.length);
         }
 
         private void SetTextWithFade(float seconds, TextMeshProUGUI textMesh, string newText)
