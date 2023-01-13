@@ -18,22 +18,23 @@ public class NewLEDMeter : MonoBehaviour
     public SwitchLED LED12;
 
     public AudioLevel audioLevel;
+    float timeElapsed;
+    float interval;
     // Start is called before the first frame update
     void Start()
     {
-        /*
-        foreach (Transform g in transform.GetComponentsInChildren<Transform>())
-        {
-            Debug.Log(g.name);
-        }
-        */
-
+        interval = 0.001f;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        SwitchLed();
+        timeElapsed += Time.deltaTime;
+        while (timeElapsed >= interval)
+        {
+            timeElapsed -= interval;
+           // SwitchLed();
+        }
     }
 
     void SwitchLed()

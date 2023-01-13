@@ -138,7 +138,7 @@ public class AudioController : MonoBehaviour
                 break;
 
             default:
-                mixer.SetFloat(channel + knob, value);
+                //mixer.SetFloat(channel + knob, value);
                 break;
     }
 }

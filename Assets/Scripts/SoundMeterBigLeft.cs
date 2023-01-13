@@ -39,7 +39,6 @@ public class SoundMeterBigLeft : MonoBehaviour
     }
     void SwitchLedLeft()
     {
-        Debug.Log(audioLevel.GetLevelLeft());
         if (audioLevel.GetLevelLeft() > 18) LED1.status = false;
         else LED1.status = true;
 

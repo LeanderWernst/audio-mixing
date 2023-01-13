@@ -32,9 +32,10 @@ AudioMixerGroupController:
   m_Effects:
   - {fileID: -6872352828061092107}
   - {fileID: -4079330746551538359}
-  - {fileID: -4609091780408689133}
-  - {fileID: 9005182799374007768}
   - {fileID: 4337681183078931341}
+  - {fileID: -2236522266089771684}
+  - {fileID: 9005182799374007768}
+  - {fileID: -4609091780408689133}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -147,6 +148,26 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!244 &-2236522266089771684
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: ef9742641f376c84f861fdb7c1f9543a
+  m_EffectName: ParamEQ
+  m_MixLevel: 4e28b548e02be874c859baa5c867b146
+  m_Parameters:
+  - m_ParameterName: Center freq
+    m_GUID: 68fc718f678f1f44598436b6d5deda83
+  - m_ParameterName: Octave range
+    m_GUID: f75281d889a63d04ebc14557226ffb18
+  - m_ParameterName: Frequency gain
+    m_GUID: f525d9e83449abb4e9122f9f30efcb6c
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &-1700184367239750873
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -223,38 +244,30 @@ AudioMixerController:
     name: BassdrumVolume
   - guid: 3b506591ff92dd545910c675b049f9dc
     name: BassCutOff
-  - guid: 8bed58dc3295d8f46be0f944d5492ff0
-    name: Channel1KnobLoMidFreq
-  - guid: 571c1fb20b4aa3d4a98b7d13f37a9deb
-    name: Channel1KnobLoMidWidth
-  - guid: 999ea0bd74bb1a34aad45dc2dc187001
-    name: Channel1KnobTrebleFreq
-  - guid: 99700e19dd703ab4390d5a41bff69521
-    name: Channel1KnobBassGain
-  - guid: f8e543149f2574545a21d22f5f78d33d
-    name: Channel1KnobLoMidGain
+  - guid: d3c0254cfdf36ef4680349ae624417c9
+    name: Channel1KnobHiMidFreq
+  - guid: 91bef5eae0ed2ec4db1db71511f0dfde
+    name: Channel1KnobBassFreq
+  - guid: 721da05a3512a574981fac1ac30e1ac0
+    name: Channel1KnobHiMidWidth
   - guid: b86126a3bd8b8f64384b361948a57600
     name: Channel1KnobTrebleGain
   - guid: 81ed5cc31d329674190513a3cd81285a
     name: Channel1KnobHiMidGain
-  - guid: 721da05a3512a574981fac1ac30e1ac0
-    name: Channel1KnobHiMidWidth
-  - guid: 91bef5eae0ed2ec4db1db71511f0dfde
-    name: Channel1KnobBassFreq
-  - guid: d3c0254cfdf36ef4680349ae624417c9
-    name: Channel1KnobHiMidFreq
+  - guid: 99700e19dd703ab4390d5a41bff69521
+    name: Channel1KnobBassGain
+  - guid: 999ea0bd74bb1a34aad45dc2dc187001
+    name: Channel1KnobTrebleFreq
+  - guid: 571c1fb20b4aa3d4a98b7d13f37a9deb
+    name: Channel1KnobLoMidWidth
+  - guid: 8bed58dc3295d8f46be0f944d5492ff0
+    name: Channel1KnobLoMidFreq
+  - guid: f8e543149f2574545a21d22f5f78d33d
+    name: Channel1KnobLoMidGain
   - guid: b368e26a3374941459003f8734270d9c
     name: HihatVolume
   - guid: bbcf0a87dba1f4b43a76ea980005cc15
     name: HihatCutOff
-  - guid: f9ab61c8ba7ac854b9935dec02c301f4
-    name: Channel2KnobHiMidFreq
-  - guid: 16b0ceb1afc750e4ba6e5244b353ef98
-    name: Channel2KnobBassFreq
-  - guid: b5fe38f51446b1c4786bacc9cf70fa0d
-    name: Channel2KnobLoMidFreq
-  - guid: 6c742a8c4a1ed6b47acf41101b94619e
-    name: Channel2KnobTrebleFreq
   - guid: 75d43a7f107d0524698dd8fec9e271fb
     name: Channel2KnobLoMidGain
   - guid: a4ae506888640d04e84b23a0bbedb214
@@ -263,16 +276,42 @@ AudioMixerController:
     name: Channel2KnobBassGain
   - guid: a9d53a87cf51ab8429340dd91dbf8dd4
     name: Channel2KnobTrebleGain
+  - guid: 61da4044e8e3f134e80443fe46aa0c32
+    name: Channel2KnobHiMidWidth
+  - guid: b5fe38f51446b1c4786bacc9cf70fa0d
+    name: Channel2KnobLoMidFreq
+  - guid: 6c742a8c4a1ed6b47acf41101b94619e
+    name: Channel2KnobTrebleFreq
+  - guid: 9e52aa1656cd46044a5b1fb942de4b52
+    name: Channel2KnobLoMidWidth
+  - guid: 16b0ceb1afc750e4ba6e5244b353ef98
+    name: Channel2KnobBassFreq
+  - guid: f9ab61c8ba7ac854b9935dec02c301f4
+    name: Channel2KnobHiMidFreq
   - guid: 9c0864a5f68e2304fb45f58118cdd275
     name: SnareVolume
   - guid: ddde41c2f38799e41b97a3705d9b7ee1
     name: SnareCutOff
+  - guid: 9a9c0886afcf08346ae1ccd6db36f43a
+    name: Channel3KnobLoMidWidth
+  - guid: 8c165307e34565d41bf612b97008ece6
+    name: Channel3KnobTrebleFreq
   - guid: 82b1366f9a5df0347ba0d4948ee7046c
-    name: SnareEqLow
-  - guid: 95182ef56830135458cc3de09e33230d
-    name: SnareEqMid
+    name: Channel3KnobBassGain
+  - guid: 68fc718f678f1f44598436b6d5deda83
+    name: Channel3KnobHiMidFreq
+  - guid: f525d9e83449abb4e9122f9f30efcb6c
+    name: Channel3KnobHiMidGain
+  - guid: d5c8886760387364786b32c9f8cc9208
+    name: Channel3KnobLoMidFreq
+  - guid: fc80a04d5962a614aa24ee3391693f73
+    name: Channel3KnobBassFreq
+  - guid: f75281d889a63d04ebc14557226ffb18
+    name: Channel3KnobHiMidWidth
   - guid: b2d3fc8d31aa3a944896cacd9facde11
-    name: SnareEqHigh
+    name: Channel3KnobTrebleGain
+  - guid: 95182ef56830135458cc3de09e33230d
+    name: Channel3KnobLoMidGain
   - guid: 55453b506ce4af64dac7f44144b6fa88
     name: FaderMasterL
   - guid: 02eedf5e36939ad49b33362f457b3ae4

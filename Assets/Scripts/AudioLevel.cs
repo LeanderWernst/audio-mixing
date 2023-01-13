@@ -6,21 +6,17 @@ public class AudioLevel : MonoBehaviour
 {
     public float audioLevelLeft;
     public float audioLevelRight;
-    public float max;
-    public float min;
-    public int channelCount;
-
 
     // Start is called before the first frame update
     void Start()
     {
-        samples = new float[qSamples]; // TEST
+        samples = new float[qSamples]; 
     }
 
     // Update is called once per frame
     void Update()
     {
-        //GetVolume(); // TEST
+
     }
 
     public float GetLevelLeft()
@@ -33,9 +29,6 @@ public class AudioLevel : MonoBehaviour
     }
 
 
-
-
-    // TEST AREA
     [SerializeField] AudioSource audioSource;
     int qSamples = 1024;  // array size
     float refValue = 0.1f; // RMS value for 0 dB
@@ -62,7 +55,7 @@ public class AudioLevel : MonoBehaviour
     float rmsValueRight;   // sound level - RMS
     float dbValueRight;    // sound level - dB
 
-    private void OnAudioFilterRead(float[] data, int channels)
+    private float[] OnAudioFilterRead(float[] data, int channels)
     {
 
         samples = data;
@@ -103,18 +96,6 @@ public class AudioLevel : MonoBehaviour
         if (dbValueRight < -160) dbValueRight = -160; // clamp it to -160dB min
         audioLevelRight = dbValueRight;
 
-
-        //int i = 0; // 0 for left channel 1 for right channel
-        //audioLevelLeft = data[i];
-        //audioLevelRight = data[1];
-        //channelCount = channels;
-
+        return data;
     }
 }
-
-
-
-
-// werte zwischen 0.54 und - 0.54
-// Nur ein Fund ohne Hintergrund: "array of floats ranging from [-1.0f;1.0f]"
-// => https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnAudioFilterRead.html
