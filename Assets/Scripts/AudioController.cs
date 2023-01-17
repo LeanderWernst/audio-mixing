@@ -17,7 +17,9 @@ public class AudioController : MonoBehaviour
     [SerializeField] private PlayButtonBehaviour pbbAll;
 
     private float oldFader1Value;
-
+    private float oldFader2Value;
+    private float oldFader3Value;
+    private float oldFaderStereoInput1;
     private void Awake()
     {
         drum_bass = Resources.Load<AudioClip>("drum_bass");
@@ -159,6 +161,18 @@ public class AudioController : MonoBehaviour
                         mixer.GetFloat("Channel1Volume",out oldFader1Value);
                         mixer.SetFloat("Channel1Volume", -80);
                         break;
+                    case "Channel2":
+                        mixer.GetFloat("Channel2Volume", out oldFader2Value);
+                        mixer.SetFloat("Channel2Volume", -80);
+                        break;
+                    case "Channel3":
+                        mixer.GetFloat("Channel3Volume", out oldFader3Value);
+                        mixer.SetFloat("Channel3Volume", -80);
+                        break;
+                    case "StereoInput1":
+                        mixer.GetFloat("StereoInput1Volume", out oldFaderStereoInput1);
+                        mixer.SetFloat("StereoInput1Volume", -80);
+                        break;
                 }
                 break;
             case "ButtonSolo":
@@ -194,6 +208,15 @@ public class AudioController : MonoBehaviour
                     case "Channel1":
                         mixer.SetFloat("Channel1Volume", oldFader1Value);
                         break;
+                    case "Channel2":
+                        mixer.SetFloat("Channel2Volume", oldFader2Value);
+                        break;
+                    case "Channel3":
+                        mixer.SetFloat("Channel3Volume", oldFader3Value);
+                        break;
+                    case "StereoInput1":
+                        mixer.SetFloat("StereoInput1Volume", oldFaderStereoInput1);
+                        break;
                 }
                 break;
 
@@ -205,16 +228,6 @@ public class AudioController : MonoBehaviour
                 break;
         }
 
-    }
-    public void SetMasterVolume(float sliderValue)
-    {
-        mixer.SetFloat("MasterVol", sliderValue);
-    }
-    public void SetBassdrumGain(float gain){
-        AudioSrcBass.volume = gain;
-    }
-    public void SetBassdrumVolum(float volume)
-    {
     }
     // functions to controll bassdrum eq
 
