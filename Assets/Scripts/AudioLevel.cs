@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioLevel : MonoBehaviour
 {
     public float audioLevelLeft;
     public float audioLevelRight;
+    private int counter;
+    public AudioListener audioListern;
+    public AudioMixer mixer;
+    //public AudioOutputCapture capture;
 
     // Start is called before the first frame update
     void Start()
@@ -35,9 +40,11 @@ public class AudioLevel : MonoBehaviour
     float rmsValue;   // sound level - RMS
     float dbValue;    // sound level - dB
     private float[] samples; // audio samples
+    private float[] samplesLR; // audio samples LR
 
     public float GetVolume()
     {
+
         audioSource.GetOutputData(samples, 0); // fill array with samples
         float sum = 0;
         for (var i = 0; i < qSamples; i++)
@@ -55,47 +62,46 @@ public class AudioLevel : MonoBehaviour
     float rmsValueRight;   // sound level - RMS
     float dbValueRight;    // sound level - dB
 
-    private float[] OnAudioFilterRead(float[] data, int channels)
+    private void OnAudioFilterRead(float[] data, int channels)
     {
 
-        samples = data;
+            samplesLR = data;
 
-        List<float> samplesLeft = new List<float>();
-        List<float> samplesRight = new List<float>();
+            List<float> samplesLeft = new List<float>();
+            List<float> samplesRight = new List<float>();
 
-        for (var x = 0; x < samples.Length; x++ )
-         {
-           if(x % 2 == 0)
+            for (var x = 0; x < samplesLR.Length; x++)
             {
-                samplesLeft.Add(samples[x]);
+                if (x % 2 == 0)
+                {
+                    samplesLeft.Add(samplesLR[x]);
+                }
+                else
+                {
+                    samplesRight.Add(samplesLR[x]);
+                }
             }
-            else
+
+            float sumLeft = 0;
+            for (var j = 0; j < qSamples; j++)
             {
-                samplesRight.Add(samples[x]);
+                sumLeft += samplesLeft[j] * samplesLeft[j]; // sum squared samples
             }
-         }
+            rmsValueLeft = Mathf.Sqrt(sumLeft / qSamples); // rms = square root of average
+            dbValueLeft = 20 * Mathf.Log10(rmsValueLeft / refValue); // calculate dB
+            if (dbValueLeft < -160) dbValueLeft = -160; // clamp it to -160dB min
+            audioLevelLeft = dbValueLeft;
+
+            float sumRight = 0;
+            for (var j = 0; j < qSamples; j++)
+            {
+                sumRight += samplesRight[j] * samplesRight[j]; // sum squared samples
+            }
+            rmsValueRight = Mathf.Sqrt(sumRight / qSamples); // rms = square root of average
+            dbValueRight = 20 * Mathf.Log10(rmsValueRight / refValue); // calculate dB
+            if (dbValueRight < -160) dbValueRight = -160; // clamp it to -160dB min
+            audioLevelRight = dbValueRight;
         
 
-        float sumLeft = 0;
-        for (var j = 0; j < qSamples; j++)
-        {
-            sumLeft += samplesLeft[j] * samplesLeft[j]; // sum squared samples
-        }
-        rmsValueLeft = Mathf.Sqrt(sumLeft / qSamples); // rms = square root of average
-        dbValueLeft = 20 * Mathf.Log10(rmsValueLeft / refValue); // calculate dB
-        if (dbValueLeft < -160) dbValueLeft = -160; // clamp it to -160dB min
-        audioLevelLeft = dbValueLeft;
-        
-        float sumRight = 0;
-        for (var j = 0; j < qSamples; j++)
-        {
-            sumRight += samplesRight[j] * samplesRight[j]; // sum squared samples
-        }
-        rmsValueRight = Mathf.Sqrt(sumRight / qSamples); // rms = square root of average
-        dbValueRight = 20 * Mathf.Log10(rmsValueRight / refValue); // calculate dB
-        if (dbValueRight < -160) dbValueRight = -160; // clamp it to -160dB min
-        audioLevelRight = dbValueRight;
-
-        return data;
     }
 }

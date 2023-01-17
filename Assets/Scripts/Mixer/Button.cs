@@ -18,6 +18,9 @@ public class Button : MonoBehaviour
     [SerializeField] private Vector3 velocity = Vector3.zero;
     TextMeshProUGUI canvasValueText;
 
+    private AudioController audioController;
+    public string channel;
+
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
@@ -32,6 +35,13 @@ public class Button : MonoBehaviour
         hasLED = transform.parent != null && transform.parent.tag == LEDTag;
         if (hasLED)
             transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+        audioController = GameObject.Find("PanelKeys").GetComponent<AudioController>();
+        var parent = transform;
+        while (!parent.CompareTag("Channel"))
+        {
+            parent = parent.parent;
+        }
+        channel = parent.name;
     }
 
     // Update is called once per frame
@@ -52,11 +62,17 @@ public class Button : MonoBehaviour
     {
         isOn = !isOn;
         isMoving = true;
-        if (hasLED && isOn) // Turn on LED
+        if (hasLED && isOn) {
+
             transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+            audioController.SetButtonOn(transform.name, channel); 
+        }
         else if (hasLED && !isOn)
+        {
             transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-        canvasValueText.text = isOn ? "on" : "off";
-        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+            canvasValueText.text = isOn? "on" : "off";
+            valueStorage.SetValue(isOn? 1f : 0f, gameObject);
+            audioController.SetButtonOff(transform.name, channel);
+        }
     }
 }

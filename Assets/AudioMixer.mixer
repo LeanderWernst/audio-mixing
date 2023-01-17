@@ -241,7 +241,7 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: 9b7102dfbdcc2314890eb43872c9ebc0
-    name: BassdrumVolume
+    name: Channel1Volume
   - guid: 3b506591ff92dd545910c675b049f9dc
     name: BassCutOff
   - guid: d3c0254cfdf36ef4680349ae624417c9
@@ -265,7 +265,7 @@ AudioMixerController:
   - guid: f8e543149f2574545a21d22f5f78d33d
     name: Channel1KnobLoMidGain
   - guid: b368e26a3374941459003f8734270d9c
-    name: HihatVolume
+    name: Channel2Volume
   - guid: bbcf0a87dba1f4b43a76ea980005cc15
     name: HihatCutOff
   - guid: 75d43a7f107d0524698dd8fec9e271fb
@@ -289,7 +289,7 @@ AudioMixerController:
   - guid: f9ab61c8ba7ac854b9935dec02c301f4
     name: Channel2KnobHiMidFreq
   - guid: 9c0864a5f68e2304fb45f58118cdd275
-    name: SnareVolume
+    name: Channel3Volume
   - guid: ddde41c2f38799e41b97a3705d9b7ee1
     name: SnareCutOff
   - guid: 9a9c0886afcf08346ae1ccd6db36f43a

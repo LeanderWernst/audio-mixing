@@ -13,6 +13,8 @@ public class AudioController : MonoBehaviour
     [SerializeField] private PlayButtonBehaviour pbbHihat;
     [SerializeField] private PlayButtonBehaviour pbbAll;
 
+    private float oldFader1Value;
+
     private void Awake()
     {
         drum_bass = Resources.Load<AudioClip>("drum_bass");
@@ -42,13 +44,13 @@ public class AudioController : MonoBehaviour
         switch (channel)
         {
             case "Channel1":
-                mixer.SetFloat("BassdrumVolume", value);
+                mixer.SetFloat("Channel1Volume", value);
                 break;
             case "Channel2":
-                mixer.SetFloat("SnareVolume", value);
+                mixer.SetFloat("Channel2Volume", value);
                 break;
             case "Channel3":
-                mixer.SetFloat("HihatVolume", value);
+                mixer.SetFloat("Channel3Volume", value);
                 break;
             case "Master":
                 switch (fader)
@@ -142,6 +144,38 @@ public class AudioController : MonoBehaviour
                 break;
     }
 }
+
+    public void SetButtonOn(string button, string channel)
+    {
+        switch (button)
+        {
+            case "ButtonMute":
+                switch (channel)
+                {
+                    case "Channel1":
+                        mixer.GetFloat("Channel1Volume",out oldFader1Value);
+                        mixer.SetFloat("Channel1Volume", -80);
+                        break;
+                }
+                break;
+        }
+  
+    }
+    public void SetButtonOff(string button, string channel)
+    {
+        switch (button)
+        {
+            case "ButtonMute":
+                switch (channel)
+                {
+                    case "Channel1":
+                        mixer.SetFloat("Channel1Volume", oldFader1Value);
+                        break;
+                }
+                break;
+        }
+
+    }
     public void SetMasterVolume(float sliderValue)
     {
         mixer.SetFloat("MasterVol", sliderValue);
