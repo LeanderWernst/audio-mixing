@@ -21,6 +21,8 @@ public class SoundMeterBigRight : MonoBehaviour
     float timeElapsed;
     float interval;
 
+    public bool soloMode = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +41,11 @@ public class SoundMeterBigRight : MonoBehaviour
     }
     void SwitchLedRight()
     {
-        float level = audioLevel.GetLevelRight();
+        float level;
+
+        if (soloMode) level = audioLevel.GetVolume();
+        else level = audioLevel.GetLevelLeft();
+
         if (level > 18) LED1.status = false;
         else LED1.status = true;
 

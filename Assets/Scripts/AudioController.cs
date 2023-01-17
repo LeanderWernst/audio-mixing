@@ -6,8 +6,11 @@ using UnityEngine.Audio;
 public class AudioController : MonoBehaviour
 {
     public AudioMixer mixer;
-    public AudioSource AudiSrcBass, AudiSrcHihat, AudiSrcSnare;
+    public AudioSource AudioSrcBass, AudioSrcSnare, AudioSrcHihat;
     public static AudioClip drum_bass, drum_snare ,drum_hihat;
+    public AudioLevel audioLevel;
+    public SoundMeterBigLeft leftMeter;
+    public SoundMeterBigRight rightMeter;
     [SerializeField] private PlayButtonBehaviour pbbBassdrum;
     [SerializeField] private PlayButtonBehaviour pbbSnare;
     [SerializeField] private PlayButtonBehaviour pbbHihat;
@@ -25,12 +28,12 @@ public class AudioController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        AudiSrcBass.volume = 0;
-        AudiSrcSnare.volume = 0;
-        AudiSrcHihat.volume = 0;
-        AudiSrcSnare.clip = drum_snare;
-        AudiSrcBass.clip = drum_bass;
-        AudiSrcHihat.clip = drum_hihat;
+        AudioSrcBass.volume = 0;
+        AudioSrcSnare.volume = 0;
+        AudioSrcHihat.volume = 0;
+        AudioSrcSnare.clip = drum_snare;
+        AudioSrcBass.clip = drum_bass;
+        AudioSrcHihat.clip = drum_hihat;
     }
     private float ConvertValuesToNewScale(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
     {
@@ -74,13 +77,13 @@ public class AudioController : MonoBehaviour
                 switch (channel)
                 {
                     case "Channel1":
-                        AudiSrcBass.volume = value;
+                        AudioSrcBass.volume = value;
                         break;
                     case "Channel2":
-                        AudiSrcSnare.volume = value;
+                        AudioSrcSnare.volume = value;
                         break;
                     case "Channel3":
-                        AudiSrcHihat.volume = value;
+                        AudioSrcHihat.volume = value;
                         break;
                 }
                 break;
@@ -128,13 +131,13 @@ public class AudioController : MonoBehaviour
                 switch (channel)
                 {
                     case "Channel1":
-                        AudiSrcBass.panStereo = value;
+                        AudioSrcBass.panStereo = value;
                         break;
                     case "Channel2":
-                        AudiSrcSnare.panStereo = value;
+                        AudioSrcSnare.panStereo = value;
                         break;
                     case "Channel3":
-                        AudiSrcHihat.panStereo = value;
+                        AudioSrcHihat.panStereo = value;
                         break;
                 }
                 break;
@@ -158,6 +161,26 @@ public class AudioController : MonoBehaviour
                         break;
                 }
                 break;
+            case "ButtonSolo":
+                switch (channel)
+                {
+                    case "Channel1":
+                        audioLevel.SetAudioSource(AudioSrcBass);
+                        leftMeter.soloMode = true;
+                        rightMeter.soloMode = true;
+                        break;
+                    case "Channel2":
+                        audioLevel.SetAudioSource(AudioSrcSnare);
+                        leftMeter.soloMode = true;
+                        rightMeter.soloMode = true;
+                        break;
+                    case "Channel3":
+                        audioLevel.SetAudioSource(AudioSrcHihat);
+                        leftMeter.soloMode = true;
+                        rightMeter.soloMode = true;
+                        break;
+                }
+                break;
         }
   
     }
@@ -173,6 +196,13 @@ public class AudioController : MonoBehaviour
                         break;
                 }
                 break;
+
+            case "ButtonSolo":
+                {
+                    leftMeter.soloMode = false;
+                    rightMeter.soloMode = false;
+                }
+                break;
         }
 
     }
@@ -181,7 +211,7 @@ public class AudioController : MonoBehaviour
         mixer.SetFloat("MasterVol", sliderValue);
     }
     public void SetBassdrumGain(float gain){
-        AudiSrcBass.volume = gain;
+        AudioSrcBass.volume = gain;
     }
     public void SetBassdrumVolum(float volume)
     {
@@ -203,7 +233,7 @@ public class AudioController : MonoBehaviour
     // functions to controll snaredrum eq
     public void SetSnaredrumGain(float gain)
     {
-        AudiSrcSnare.volume = gain;
+        AudioSrcSnare.volume = gain;
     }
     
     bool snareCutOffStatus = false;
@@ -219,7 +249,7 @@ public class AudioController : MonoBehaviour
     }
     public void SetHiHatGain(float gain)
     {
-        AudiSrcHihat.volume = gain;
+        AudioSrcHihat.volume = gain;
     }
     bool hihatCutOffStatus = false;
     public void SetHihatCutOff()
@@ -244,12 +274,12 @@ public class AudioController : MonoBehaviour
                     pbbHihat.isActive = false;
                     pbbSnare.isActive = false;
                     pbbAll.isActive = false;
-                    AudiSrcHihat.Stop();
-                    AudiSrcSnare.Stop();
-                    AudiSrcBass.Play();
+                    AudioSrcHihat.Stop();
+                    AudioSrcSnare.Stop();
+                    AudioSrcBass.Play();
                 }
                 else 
-                    AudiSrcBass.Stop();
+                    AudioSrcBass.Stop();
                 
                 break;
             case "drum_hihat":
@@ -259,12 +289,12 @@ public class AudioController : MonoBehaviour
                     pbbBassdrum.isActive = false;
                     pbbSnare.isActive = false;
                     pbbAll.isActive = false;
-                    AudiSrcBass.Stop();
-                    AudiSrcSnare.Stop();
-                    AudiSrcHihat.Play();
+                    AudioSrcBass.Stop();
+                    AudioSrcSnare.Stop();
+                    AudioSrcHihat.Play();
                 }
                 else
-                    AudiSrcHihat.Stop();
+                    AudioSrcHihat.Stop();
                 break;
             case "drum_snare":
                 pbbSnare.isActive = !pbbSnare.isActive;
@@ -273,12 +303,12 @@ public class AudioController : MonoBehaviour
                     pbbBassdrum.isActive = false;
                     pbbHihat.isActive = false;
                     pbbAll.isActive = false;
-                    AudiSrcHihat.Stop();
-                    AudiSrcBass.Stop();
-                    AudiSrcSnare.Play();
+                    AudioSrcHihat.Stop();
+                    AudioSrcBass.Stop();
+                    AudioSrcSnare.Play();
                 }
                 else
-                    AudiSrcSnare.Stop();
+                    AudioSrcSnare.Stop();
                 break;
             case "all":
                 pbbAll.isActive = !pbbAll.isActive;
@@ -287,15 +317,15 @@ public class AudioController : MonoBehaviour
                     pbbBassdrum.isActive = false;
                     pbbHihat.isActive = false;
                     pbbSnare.isActive = false;
-                    AudiSrcSnare.Play();
-                    AudiSrcBass.Play();
-                    AudiSrcHihat.Play();
+                    AudioSrcSnare.Play();
+                    AudioSrcBass.Play();
+                    AudioSrcHihat.Play();
                 }
                 else
                 {
-                    AudiSrcSnare.Stop();
-                    AudiSrcBass.Stop();
-                    AudiSrcHihat.Stop();
+                    AudioSrcSnare.Stop();
+                    AudioSrcBass.Stop();
+                    AudioSrcHihat.Stop();
                 }
                 break;
         }

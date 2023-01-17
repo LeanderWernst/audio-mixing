@@ -5,12 +5,8 @@ using UnityEngine.Audio;
 
 public class AudioLevel : MonoBehaviour
 {
-    public float audioLevelLeft;
-    public float audioLevelRight;
-    private int counter;
-    public AudioListener audioListern;
-    public AudioMixer mixer;
-    //public AudioOutputCapture capture;
+    [SerializeField] float audioLevelLeft;
+    [SerializeField] float audioLevelRight;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +38,11 @@ public class AudioLevel : MonoBehaviour
     private float[] samples; // audio samples
     private float[] samplesLR; // audio samples LR
 
+    
+    public void SetAudioSource(AudioSource source)
+    {
+        audioSource = source;
+    }
     public float GetVolume()
     {
 
