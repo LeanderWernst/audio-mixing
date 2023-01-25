@@ -11,6 +11,7 @@ TagManager:
   - ValueText
   - Channel
   - UIButton
+  - InteractionManager
   layers:
   - Default
   - TransparentFX
