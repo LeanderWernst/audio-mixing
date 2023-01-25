@@ -21,10 +21,14 @@ public class Button : MonoBehaviour
     private AudioController audioController;
     public string channel;
 
+    private List<string> blockedChannels = new List<string>{"Channel1", "Channel2", "Channel3"};
+    private InteractionManager im;
+
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         valueStorage = gameObject.GetComponent<ValueStorage>();
+        im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
     }
 
     // Start is called before the first frame update
@@ -60,19 +64,23 @@ public class Button : MonoBehaviour
 
     private void OnMouseDown()
     {
-        isOn = !isOn;
-        isMoving = true;
-        if (hasLED && isOn) {
-
-            transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
-            audioController.SetButtonOn(transform.name, channel); 
-        }
-        else if (hasLED && !isOn)
+        // Move only when it is the target object of an interaction
+        // or when it is a gameObject that is not in channels 1-3
+        if (im.GetCurrentInteractionObject() == gameObject || !blockedChannels.Contains(channel))
         {
-            transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+            isOn = !isOn;
+            isMoving = true;
             canvasValueText.text = isOn? "on" : "off";
             valueStorage.SetValue(isOn? 1f : 0f, gameObject);
-            audioController.SetButtonOff(transform.name, channel);
+            if (hasLED && isOn) {
+                transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+                audioController.SetButtonOn(transform.name, channel); 
+            }
+            else if (hasLED && !isOn)
+            {
+                transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+                audioController.SetButtonOff(transform.name, channel);
+            }
         }
     }
 }

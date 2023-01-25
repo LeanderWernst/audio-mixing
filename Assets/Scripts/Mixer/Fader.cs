@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using System.Collections.Generic;
 
 public class Fader : MonoBehaviour
 {
@@ -18,11 +19,14 @@ public class Fader : MonoBehaviour
     TextMeshProUGUI canvasValueText;
     public string channel;
 
+    private List<string> blockedChannels = new List<string> { "Channel1", "Channel2", "Channel3" };
+    private InteractionManager im;
 
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         valueStorage = gameObject.GetComponent<ValueStorage>();
+        im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
     }
 
     void Start()
@@ -87,15 +91,18 @@ public class Fader : MonoBehaviour
 
     private void SlideFader(float inputForce)
     {
-        verticalMovement = inputForce * sensitivityY * Time.deltaTime;
-        float posX = transform.localPosition.x - verticalMovement;
-        float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
-        transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
-        value = GetNonLinearFaderValue(faderPvr);
-        ChangeValueText();
-        valueStorage.SetValue(value, gameObject);
-        audioController.SetFaderVolume(transform.name, channel, value);
-
+        // Slide Fader only when it's the current target object or not needed for future interactions
+        if (im.GetCurrentInteractionObject() == gameObject || !blockedChannels.Contains(channel))
+        {
+            verticalMovement = inputForce * sensitivityY * Time.deltaTime;
+            float posX = transform.localPosition.x - verticalMovement;
+            float clampedPosX = Mathf.Clamp(posX, upperPosBoundary, lowerPosBoundary);
+            transform.localPosition = new Vector3(clampedPosX, transform.localPosition.y, transform.localPosition.z);
+            value = GetNonLinearFaderValue(faderPvr);
+            ChangeValueText();
+            valueStorage.SetValue(value, gameObject);
+            audioController.SetFaderVolume(transform.name, channel, value);
+        }
     }
 
     private void ChangeValueText()

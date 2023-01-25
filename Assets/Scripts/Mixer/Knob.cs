@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -19,10 +20,14 @@ public class Knob : MonoBehaviour
     private ValueStorage valueStorage;
     TextMeshProUGUI canvasValueText;
 
+    private List<string> blockedChannels = new List<string> { "Channel1", "Channel2", "Channel3" };
+    private InteractionManager im;
+
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         valueStorage = gameObject.GetComponent<ValueStorage>();
+        im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
     }
     private void Start()
     {
@@ -56,14 +61,18 @@ public class Knob : MonoBehaviour
 
     private void TurnKnob(float inputForce)
     {
-        angle += inputForce * rotationSpeed * Time.deltaTime;
-        angle = Mathf.Clamp(angle, minRotation, maxRotation);
-        angle = angle > maxRotation ? angle - 360 : angle;
-        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
-        value = GetNonLinearFaderValue(knobPvr);
-        ChangeValueText();
-        valueStorage.SetValue(value, gameObject);
-        audioController.SetKnobValue(transform.name, channel, value);
+        // Turn Knob only when it's the current target object or not needed for future interactions
+        if (im.GetCurrentInteractionObject() == gameObject || !blockedChannels.Contains(channel))
+        {
+            angle += inputForce * rotationSpeed * Time.deltaTime;
+            angle = Mathf.Clamp(angle, minRotation, maxRotation);
+            angle = angle > maxRotation ? angle - 360 : angle;
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
+            value = GetNonLinearFaderValue(knobPvr);
+            ChangeValueText();
+            valueStorage.SetValue(value, gameObject);
+            audioController.SetKnobValue(transform.name, channel, value);
+        }
     }
 
     private void ChangeValueText() 
