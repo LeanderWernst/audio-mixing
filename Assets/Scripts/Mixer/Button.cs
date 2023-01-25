@@ -66,7 +66,7 @@ public class Button : MonoBehaviour
     {
         // Move only when it is the target object of an interaction
         // or when it is a gameObject that is not in channels 1-3
-        if (im.GetCurrentInteractionObject() == gameObject || !blockedChannels.Contains(channel))
+        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel))
         {
             isOn = !isOn;
             isMoving = true;

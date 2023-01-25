@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
@@ -11,13 +12,20 @@ public class Knob : MonoBehaviour
 	[SerializeField] private float maxRotation = 185.0f;
 	[SerializeField] private float rotationSpeed = 250.0f;
 
+    private float minValue;
+    private float maxValue;
+
 	private float angle;
-    private KnobType knobType;
-    private PositionValueRelation[] knobPvr;
-    private AudioController audioController;
-    public string channel;
     public float value;
     private ValueStorage valueStorage;
+    private float movementTolerance = 4.5f; // Tolerance for discrepancy between target angle/value and selected angle/value (degrees)
+
+    private KnobType knobType;
+    private PositionValueRelation[] knobPvr;
+
+    private AudioController audioController;
+    public string channel;
+    
     TextMeshProUGUI canvasValueText;
 
     private List<string> blockedChannels = new List<string> { "Channel1", "Channel2", "Channel3" };
@@ -35,15 +43,24 @@ public class Knob : MonoBehaviour
         angle = angle > maxRotation ? angle - 360 : angle;
         knobType = GetKnobType();
         knobPvr = KnobPvr.Relation(knobType);
-        value = GetNonLinearFaderValue(knobPvr);
+        value = GetNonLinearKnobValue(knobPvr);
         audioController = GameObject.Find("PanelKeys").GetComponent<AudioController>();
+        
+        // Climb parents up to get channel name
         var parent = transform;
         while(!parent.CompareTag("Channel"))
         {
             parent = parent.parent;
         }
         channel = parent.name;
-        TurnKnob(0); // Initial "move" to get initial value from position
+
+        // Initial "move" to get initial value from position
+        TurnKnob(0);
+
+        // Read min max values
+        minValue = knobPvr[0].values[0];
+        maxValue = knobPvr[knobPvr.Length-1].values[1];
+        Debug.Log(name + ": " + minValue + " | " + maxValue);
     }
 
     private void Update()
@@ -61,17 +78,40 @@ public class Knob : MonoBehaviour
 
     private void TurnKnob(float inputForce)
     {
+        Debug.Log("Force: " + inputForce);
         // Turn Knob only when it's the current target object or not needed for future interactions
-        if (im.GetCurrentInteractionObject() == gameObject || !blockedChannels.Contains(channel))
+        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel))
         {
             angle += inputForce * rotationSpeed * Time.deltaTime;
             angle = Mathf.Clamp(angle, minRotation, maxRotation);
             angle = angle > maxRotation ? angle - 360 : angle;
             transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
-            value = GetNonLinearFaderValue(knobPvr);
+            value = GetNonLinearKnobValue(knobPvr);
             ChangeValueText();
             valueStorage.SetValue(value, gameObject);
             audioController.SetKnobValue(transform.name, channel, value);
+        }
+
+        Debug.Log("Mouse: " + Input.GetAxis("Mouse Y"));
+        Debug.Log("Scroll: " + Input.mouseScrollDelta.y);
+
+        // If Knob is current target object, check if the objects angle (value) 
+        // is close to the target angle (value). If so, move the GO to the angle 
+        // and call the CheckInteractionOrder() of Interaction Manager.
+        // This way it's not neccessary to hit the target value exactly.
+        if (im.GetCurrentInteraction().TargetObject == gameObject // GO is target GO
+            && Mathf.Abs(GetNonLinearKnobAngle(im.GetCurrentInteraction().TargetValue) - transform.localEulerAngles.z) <= movementTolerance // Target Angle is in close range
+            && im.GetCurrentInteraction().TargetValueMax == im.GetCurrentInteraction().TargetValueMin // Target is depending on an exact value not a range
+            && Mathf.Abs(Input.GetAxis("Mouse Y")) <= 0.10f && Mathf.Abs(Input.mouseScrollDelta.y) <= 1f) // don't react on too forcefull input  
+        {
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, GetNonLinearKnobAngle(im.GetCurrentInteraction().TargetValue));
+            value = GetNonLinearKnobValue(knobPvr);
+            ChangeValueText();
+            valueStorage.SetValue(value, gameObject);
+            audioController.SetKnobValue(transform.name, channel, value);
+            // Stop all running coroutines to prevent multiple coroutine calling
+            StopAllCoroutines();
+            StartCoroutine(WaitForMouseAndScrollThenCheckTargetValue()); // this will wait for input to finish, then check value
         }
     }
 
@@ -108,7 +148,7 @@ public class Knob : MonoBehaviour
         }
     }
 
-    float GetNonLinearFaderValue(PositionValueRelation[] pvr)
+    float GetNonLinearKnobValue(PositionValueRelation[] pvr)
     {
         var angle = transform.localEulerAngles.z;
         angle = angle > maxRotation ? angle - 360 : angle;
@@ -136,6 +176,33 @@ public class Knob : MonoBehaviour
         else
             return 0;
     }
+
+    /* Returns gameObject angle corresponding to a value */
+    float GetNonLinearKnobAngle(float correspondingValue)
+    {
+        foreach (var relation in knobPvr)
+        {
+            if (correspondingValue >= relation.values[0] && correspondingValue <= relation.values[1])
+            {
+                var knobAngle = GetKnobAngle(correspondingValue, relation.values[0], relation.values[1], relation.positions[0], relation.positions[1]);
+                if (knobAngle < 0)
+                    return 360 + knobAngle;
+                else
+                    return knobAngle;
+            }
+        }
+        return 0f;
+    }
+
+    float GetKnobAngle(float value, float scaleMin, float scaleMax, float minRotation, float maxRotation)
+    {
+        if (scaleMin != scaleMax)
+            return (value - scaleMin) * (maxRotation - minRotation) / (scaleMax - scaleMin) + minRotation;
+        else
+            return 0;
+    }
+
+  
 
     KnobType GetKnobType()
     {
@@ -207,5 +274,20 @@ public class Knob : MonoBehaviour
                 break;
         }
         return knobType;
+    }
+
+    IEnumerator WaitForMouseAndScrollThenCheckTargetValue()
+    {
+        while (Input.GetMouseButton(0))
+        {
+            yield return null;
+        }
+        while (Input.mouseScrollDelta.y > 0)
+        {
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.25f);
+        
+        im.CheckInteractionOrder(gameObject);
     }
 }

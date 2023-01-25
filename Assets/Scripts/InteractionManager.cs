@@ -42,7 +42,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float completionCallbackDelay;
 
     public bool InteractionsCompleted => interactionIndex >= interactions.Count;
-    private int interactionIndex;
+    private int interactionIndex = 0; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
     private Interaction currentInteraction;
 
     private int errorCount;
@@ -135,7 +135,7 @@ public class InteractionManager : MonoBehaviour
         }
     }
 
-    private void CheckInteractionOrder(GameObject selectedGameObject)
+    public void CheckInteractionOrder(GameObject selectedGameObject)
     {
         if (InteractionsCompleted)
             return;
@@ -311,8 +311,8 @@ public class InteractionManager : MonoBehaviour
             audioSource.Play();
     }
 
-    public GameObject GetCurrentInteractionObject()
+    public Interaction GetCurrentInteraction()
     {
-        return currentInteraction.TargetObject;
+        return currentInteraction;
     }
 }
