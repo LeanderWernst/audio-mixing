@@ -60,18 +60,18 @@ public class Button : MonoBehaviour
 
     private void OnMouseDown()
     {
+        Debug.Log("Button clicked");
         isOn = !isOn;
         isMoving = true;
+        canvasValueText.text = isOn? "on" : "off";
+        valueStorage.SetValue(isOn? 1f : 0f, gameObject);
         if (hasLED && isOn) {
-
             transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
             audioController.SetButtonOn(transform.name, channel); 
         }
         else if (hasLED && !isOn)
         {
             transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-            canvasValueText.text = isOn? "on" : "off";
-            valueStorage.SetValue(isOn? 1f : 0f, gameObject);
             audioController.SetButtonOff(transform.name, channel);
         }
     }
