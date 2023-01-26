@@ -29,6 +29,7 @@ public class InteractionManager : MonoBehaviour
     [Header("No Error GameObjects")]
     [SerializeField] private GameObject speechFader;
     [SerializeField] private GameObject channelList;
+    [SerializeField] private int mixingStep;
 
 
     [Header("Raycast")]
@@ -146,7 +147,6 @@ public class InteractionManager : MonoBehaviour
         if (selectedGameObject.Equals(currentInteraction.TargetObject))
         {
             Debug.Log("Hit correct Object");
-            Debug.Log("Object value: " + currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue());
             // When min & max value is set, we need to check the value by pressing Return instead of 
             // just checking the target value
             if (ObjectHasTargetValue() && currentInteraction.TargetValueMax == currentInteraction.TargetValueMin)
@@ -163,7 +163,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
         }
-        else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(channelList))
+        else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(channelList) && interactionIndex != mixingStep)
         {
             PlayFeedbackSound(false);
             StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrElement, 5));
@@ -221,7 +221,9 @@ public class InteractionManager : MonoBehaviour
     private bool ObjectHasTargetValue()
     {
         if (currentInteraction.TargetObject != null)
-            return currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue() == currentInteraction.TargetValue;
+            // Mathf.Approximately allows a certain tolerance of epsilon (approx. 1.192092896e-07f) to avoid floating point
+            // precision errors.
+            return Mathf.Approximately(currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue(), currentInteraction.TargetValue);
         else
             return false;
     }
