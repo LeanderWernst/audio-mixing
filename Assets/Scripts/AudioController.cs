@@ -20,6 +20,8 @@ public class AudioController : MonoBehaviour
     private float oldFader2Value;
     private float oldFader3Value;
     private float oldFaderStereoInput1;
+    private float knobGainMax = 2f;
+    private float knobGainMin = 0.5f;
     private void Awake()
     {
         //drum_bass = Resources.Load<AudioClip>("drum_bass");
@@ -90,7 +92,7 @@ public class AudioController : MonoBehaviour
                 }
                 break;
             case "KnobTrebleGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobTrebleFreq":
@@ -98,7 +100,7 @@ public class AudioController : MonoBehaviour
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobHiMidGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobHiMidFreq":
@@ -110,7 +112,7 @@ public class AudioController : MonoBehaviour
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobLoMidGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobLoMidFreq":
@@ -122,7 +124,7 @@ public class AudioController : MonoBehaviour
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobBassGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.5f, 2);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobBassFreq":
