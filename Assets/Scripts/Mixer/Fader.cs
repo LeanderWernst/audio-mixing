@@ -38,7 +38,7 @@ public class Fader : MonoBehaviour
             parent = parent.parent;
         }
         channel = parent.name;
-        SlideFader(0); // Initial "move" to get initial value from position
+        SlideFader(0, initialMove: true); // Initial "move" to get initial value from position
     }
 
     // Update is called once per frame
@@ -89,10 +89,10 @@ public class Fader : MonoBehaviour
 
     }
 
-    private void SlideFader(float inputForce)
+    private void SlideFader(float inputForce, bool initialMove = false)
     {
         // Slide Fader only when it's the current target object or not needed for future interactions
-        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel))
+        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel) || initialMove)
         {
             verticalMovement = inputForce * sensitivityY * Time.deltaTime;
             float posX = transform.localPosition.x - verticalMovement;
@@ -102,6 +102,10 @@ public class Fader : MonoBehaviour
             ChangeValueText();
             valueStorage.SetValue(value, gameObject);
             audioController.SetFaderVolume(transform.name, channel, value);
+        }
+        else
+        {
+            ChangeValueText();
         }
     }
 

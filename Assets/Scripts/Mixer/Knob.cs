@@ -55,7 +55,7 @@ public class Knob : MonoBehaviour
         channel = parent.name;
 
         // Initial "move" to get initial value from position
-        TurnKnob(0);
+        TurnKnob(0, initialMove: true);
 
         // Read min max values
         minValue = knobPvr[0].values[0];
@@ -76,11 +76,11 @@ public class Knob : MonoBehaviour
         TurnKnob(Input.GetAxis("Mouse Y"));
     }
 
-    private void TurnKnob(float inputForce)
+    private void TurnKnob(float inputForce, bool initialMove = false)
     {
         Debug.Log("Force: " + inputForce);
         // Turn Knob only when it's the current target object or not needed for future interactions
-        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel))
+        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel) || initialMove)
         {
             angle += inputForce * rotationSpeed * Time.deltaTime;
             angle = Mathf.Clamp(angle, minRotation, maxRotation);
@@ -90,6 +90,10 @@ public class Knob : MonoBehaviour
             ChangeValueText();
             valueStorage.SetValue(value, gameObject);
             audioController.SetKnobValue(transform.name, channel, value);
+        }
+        else
+        {
+            ChangeValueText();
         }
 
         Debug.Log("Mouse: " + Input.GetAxis("Mouse Y"));

@@ -70,17 +70,22 @@ public class Button : MonoBehaviour
         {
             isOn = !isOn;
             isMoving = true;
-            canvasValueText.text = isOn? "on" : "off";
-            valueStorage.SetValue(isOn? 1f : 0f, gameObject);
-            if (hasLED && isOn) {
+            canvasValueText.text = isOn ? "on" : "off";
+            valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+            if (hasLED && isOn)
+            {
                 transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
-                audioController.SetButtonOn(transform.name, channel); 
+                audioController.SetButtonOn(transform.name, channel);
             }
             else if (hasLED && !isOn)
             {
                 transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
                 audioController.SetButtonOff(transform.name, channel);
             }
+        }
+        else 
+        {
+            canvasValueText.text = isOn ? "on" : "off";
         }
     }
 }

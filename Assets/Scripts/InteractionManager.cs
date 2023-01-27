@@ -12,6 +12,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI headlineLabel;
     [SerializeField] private TextMeshProUGUI instructionLabel;
     [SerializeField] private TextMeshProUGUI errorLabel;
+    private Image errorLabelPanel;
     [SerializeField] private TextMeshProUGUI helpLabel;
     [SerializeField] private TextMeshProUGUI helpLabelBonus;
 
@@ -49,6 +50,8 @@ public class InteractionManager : MonoBehaviour
     private int errorCount;
     private int helpCount;
 
+    private Coroutine lastCoroutine; // keeping track of the latest Coroutine
+
     private void Awake() => cam = Camera.main;
 
     private void Start()
@@ -56,12 +59,13 @@ public class InteractionManager : MonoBehaviour
         Debug.Log("Start InteractionManager");
         // UI init
         skipLabelPanel = skipLabel.GetComponentInParent<Image>();
+        errorLabelPanel = errorLabel.GetComponentInParent<Image>();
         //helpLabel.SetText("");
         //errorLabel.SetText("");
         errorCountLabel.SetText(errorCount.ToString());
         helpCountLabel.SetText(helpCount.ToString());
 
-        // We display a little warning if no interactions are defined in the interaction manager ... just to annoy ourselves :D
+        // warning if no interactions are defined in the interaction manager
         if (interactions.Count == 0)
         {
             Debug.LogWarning("No Interactions in Interaction Manager.");
@@ -147,6 +151,10 @@ public class InteractionManager : MonoBehaviour
         {
             Debug.Log("Hit correct Object");
 
+            // Hide Error Messages
+            errorLabelPanel.enabled = false;
+            errorLabel.text = "";
+
             // Show 'ENTER' message when hitting an object that needs confirmation
             if (TargetValueHasRange())
             {
@@ -172,7 +180,7 @@ public class InteractionManager : MonoBehaviour
         else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(channelList) && interactionIndex != mixingStep)
         {
             PlayFeedbackSound(false);
-            StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrElement, 5));
+            DisplayForDuration(errorLabel, currentInteraction.ErrElement, 5, errorLabelPanel);
             errorCount++;
             errorCountLabel.SetText(errorCount.ToString());
         }
@@ -186,12 +194,37 @@ public class InteractionManager : MonoBehaviour
         OnCompleted?.Invoke();
     }
 
-    private IEnumerator DisplayForDuration(TextMeshProUGUI label, string msg, float duration)
+    private Coroutine coroutine;
+    private void DisplayForDuration(TextMeshProUGUI label, string msg, float duration, Image panel = null)
     {
-        label.text = msg;
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+
+        if (msg != "")
+        {
+            if (panel != null)
+            {
+                panel.enabled = true;
+            }
+            label.text = msg;
+
+            coroutine = StartCoroutine(DisableAfterDuration(duration, label, panel));
+        }
+    }
+
+    private IEnumerator DisableAfterDuration(float duration, TextMeshProUGUI label, Image panel = null)
+    {
         yield return new WaitForSeconds(duration);
+
+        if (panel != null)
+        {
+            panel.enabled = false;
+        }
         label.text = "";
     }
+
 
     private void CheckTargetRange()
     {
@@ -210,13 +243,13 @@ public class InteractionManager : MonoBehaviour
                 PlayFeedbackSound(false);
                 if (setValue < minValue)
                 {
-                    StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrBelowMin, 5));
+                    DisplayForDuration(errorLabel, currentInteraction.ErrBelowMin, 5);
                     errorCount++;
                     errorCountLabel.SetText(errorCount.ToString());
                 }
                 else 
                 {
-                    StartCoroutine(DisplayForDuration(errorLabel, currentInteraction.ErrAboveMax, 5));
+                    DisplayForDuration(errorLabel, currentInteraction.ErrAboveMax, 5);
                     errorCount++;
                     errorCountLabel.SetText(errorCount.ToString());
                 }
@@ -241,8 +274,10 @@ public class InteractionManager : MonoBehaviour
 
     private void MoveToNextInteraction()
     {
+        // Stop Audio
         if (audioSource.isPlaying)
             audioSource.Stop();
+        // Invoke Interaction function 'OnExecution' if defines
         currentInteraction.OnExecution?.Invoke();
 
         interactionIndex++;
@@ -351,6 +386,30 @@ public class InteractionManager : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         if (audioSource.clip != null)
             audioSource.Play();
+    }
+
+    void StopAllCoroutinesByName(string name)
+    {
+        var coroutines = new List<Coroutine>();
+        foreach (var coroutine in coroutines)
+        {
+            if (coroutine.ToString().Contains(name))
+            {
+                StopCoroutine(coroutine);
+            }
+        }
+    }
+
+    void StopAllCoroutinesByNameExceptNewest(string name)
+    {
+        var coroutines = new List<Coroutine>();
+        foreach (var coroutine in coroutines)
+        {
+            if (coroutine.ToString().Contains(name) && coroutine != lastCoroutine)
+            {
+                StopCoroutine(coroutine);
+            }
+        }
     }
 
     public Interaction GetCurrentInteraction()
