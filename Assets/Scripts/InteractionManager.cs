@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-
-
+using UnityEngine.UI;
 
 public class InteractionManager : MonoBehaviour
 {
@@ -23,6 +22,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI totalHelpCountLabel;
 
     [SerializeField] private TextMeshProUGUI skipLabel;
+    private Image skipLabelPanel;
     [SerializeField] private AudioClip soundWrong;
     [SerializeField] private AudioClip soundCorrect;
 
@@ -55,6 +55,7 @@ public class InteractionManager : MonoBehaviour
     {
         Debug.Log("Start InteractionManager");
         // UI init
+        skipLabelPanel = skipLabel.GetComponentInParent<Image>();
         //helpLabel.SetText("");
         //errorLabel.SetText("");
         errorCountLabel.SetText(errorCount.ToString());
@@ -72,8 +73,6 @@ public class InteractionManager : MonoBehaviour
         headlineLabel.SetText(currentInteraction.Headline);
         instructionLabel.SetText(currentInteraction.Instruction);
         audioSource.clip = currentInteraction.InstrAudio;
-        if (currentInteraction.IsSkippable)
-            skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 255f);
         StartCoroutine(WaitThenPlaySound(2f));
     }
 
@@ -147,6 +146,13 @@ public class InteractionManager : MonoBehaviour
         if (selectedGameObject.Equals(currentInteraction.TargetObject))
         {
             Debug.Log("Hit correct Object");
+
+            // Show 'ENTER' message when hitting an object that needs confirmation
+            if (TargetValueHasRange())
+            {
+                SetTextWithFade(1f, skipLabel, "Drücke ENTER zum Bestätigen");
+                FadeGraphic(1f, skipLabelPanel);
+            }
             // When min & max value is set, we need to check the value by pressing Return instead of 
             // just checking the target value
             if (ObjectHasTargetValue() && currentInteraction.TargetValueMax == currentInteraction.TargetValueMin)
@@ -228,6 +234,11 @@ public class InteractionManager : MonoBehaviour
             return false;
     }
 
+    private bool TargetValueHasRange()
+    {
+        return currentInteraction.TargetValueMax != currentInteraction.TargetValueMin;
+    }
+
     private void MoveToNextInteraction()
     {
         if (audioSource.isPlaying)
@@ -242,23 +253,21 @@ public class InteractionManager : MonoBehaviour
         { 
             SetTextWithFade(1f, headlineLabel, currentInteraction.Headline);
         }
-        SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction);
+        SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction, setNewAudio: true);
         // errorLabel.SetText(currentInteraction.ErrElement);
         helpLabel.SetText(currentInteraction.HelpMsg);
         helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
 
         if (currentInteraction.IsSkippable)
-            skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 255f);
-        else
-            skipLabel.color = new Color(skipLabel.color.r, skipLabel.color.g, skipLabel.color.b, 0f);
-
-        // In case setting is already correct move instantly to next step // NECESSARY?
-        /*if (ObjectHasTargetValue())
         {
-            MoveToNextInteraction();
-            return;
+            SetTextWithFade(1f, skipLabel, "Drücke ENTER, um fortzufahren", delay: 3f);
+            FadeGraphic(1f, skipLabelPanel, delay: 3f);
         }
-        CheckTargetRange();*/
+        else
+        {
+            StartCoroutine(FadeGraphicToZeroAlpha(1f, skipLabel));
+            StartCoroutine(FadeGraphicToZeroAlpha(1f, skipLabelPanel));
+        }
     }
 
     private void PlayFeedbackSound(bool success)
@@ -278,17 +287,21 @@ public class InteractionManager : MonoBehaviour
         Destroy(tempAudioSource, tempAudioSource.clip.length);
     }
 
-    private void SetTextWithFade(float seconds, TextMeshProUGUI textMesh, string newText)
+    private void SetTextWithFade(float seconds, TextMeshProUGUI textMesh, string newText, bool setNewAudio = false, float delay = 0f)
     {
-        StartCoroutine(FadeTextToFullAlpha(seconds, textMesh, newText));
+        StartCoroutine(FadeTextToFullAlpha(seconds, textMesh, newText, delay));
 
-        IEnumerator FadeTextToFullAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI, string newText)
+        IEnumerator FadeTextToFullAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI, string newText, float delay)
         {
             yield return FadeTextToZeroAlpha(timeInSeconds, tmpUGUI);
+            yield return new WaitForSeconds(delay);
             tmpUGUI.SetText(newText);
-            audioSource.clip = currentInteraction.InstrAudio;
-            if (audioSource.clip != null)
-                audioSource.Play();
+            if (setNewAudio)
+            {
+                audioSource.clip = currentInteraction.InstrAudio;
+                if (audioSource.clip != null)
+                    audioSource.Play();
+            }
             while (tmpUGUI.color.a < 1.0f)
             {
                 tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a + (Time.deltaTime / timeInSeconds));
@@ -303,6 +316,33 @@ public class InteractionManager : MonoBehaviour
                 tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a - (Time.deltaTime / timeInSeconds));
                 yield return null;
             }
+        }
+    }
+
+    private void FadeGraphic(float seconds, Graphic g, float delay = 0f)
+    {
+        StartCoroutine(FadeGraphicToFullAlpha(seconds, g, delay));
+
+    }
+    IEnumerator FadeGraphicToFullAlpha(float timeInSeconds, Graphic g, float delay = 0f)
+    {
+        yield return FadeGraphicToZeroAlpha(timeInSeconds, g);
+        yield return new WaitForSeconds(delay);
+            
+        while (g.color.a < 1.0f)
+        {
+            g.color = new Color(g.color.r, g.color.g, g.color.b, g.color.a + (Time.deltaTime / timeInSeconds));
+            yield return null;
+        }
+    }
+
+    IEnumerator FadeGraphicToZeroAlpha(float timeInSeconds, Graphic g, float delay = 0f)
+    {
+        yield return new WaitForSeconds(delay);
+        while (g.color.a > 0.0f)
+        {
+            g.color = new Color(g.color.r, g.color.g, g.color.b, g.color.a - (Time.deltaTime / timeInSeconds));
+            yield return null;
         }
     }
 
