@@ -6,8 +6,8 @@ using UnityEngine.Audio;
 public class AudioController : MonoBehaviour
 {
     public AudioMixer mixer;
-    public AudioSource AudioSrcBass, AudioSrcSnare, AudioSrcHihat;
-    public static AudioClip drum_bass, drum_snare ,drum_hihat;
+    [SerializeField] private AudioSource AudioSrcBass, AudioSrcSnare, AudioSrcHihat;
+    [SerializeField] private AudioClip bassdrum, snare, hihat, bassdrumLoop, snareLoop, hihatLoop;
     public AudioLevel audioLevel;
     public SoundMeterBigLeft leftMeter;
     public SoundMeterBigRight rightMeter;
@@ -20,11 +20,13 @@ public class AudioController : MonoBehaviour
     private float oldFader2Value;
     private float oldFader3Value;
     private float oldFaderStereoInput1;
+    private float knobGainMax = 2f;
+    private float knobGainMin = 0.5f;
     private void Awake()
     {
-        drum_bass = Resources.Load<AudioClip>("drum_bass");
-        drum_snare = Resources.Load<AudioClip>("drum_snare");
-        drum_hihat = Resources.Load<AudioClip>("drum_hihat");
+        //drum_bass = Resources.Load<AudioClip>("drum_bass");
+        //drum_snare = Resources.Load<AudioClip>("drum_snare");
+        //drum_hihat = Resources.Load<AudioClip>("drum_hihat");
     }
 
     // Start is called before the first frame update
@@ -33,9 +35,9 @@ public class AudioController : MonoBehaviour
         AudioSrcBass.volume = 0;
         AudioSrcSnare.volume = 0;
         AudioSrcHihat.volume = 0;
-        AudioSrcSnare.clip = drum_snare;
-        AudioSrcBass.clip = drum_bass;
-        AudioSrcHihat.clip = drum_hihat;
+        AudioSrcSnare.clip = snare;
+        AudioSrcBass.clip = bassdrum;
+        AudioSrcHihat.clip = hihat;
     }
     private float ConvertValuesToNewScale(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
     {
@@ -90,7 +92,7 @@ public class AudioController : MonoBehaviour
                 }
                 break;
             case "KnobTrebleGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobTrebleFreq":
@@ -98,7 +100,7 @@ public class AudioController : MonoBehaviour
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobHiMidGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobHiMidFreq":
@@ -110,7 +112,7 @@ public class AudioController : MonoBehaviour
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobLoMidGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobLoMidFreq":
@@ -122,7 +124,7 @@ public class AudioController : MonoBehaviour
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobBassGain":
-                value = ConvertValuesToNewScale(value, -15, 15, 0.35f, 3);
+                value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                 mixer.SetFloat(channel + knob, value);
                 break;
             case "KnobBassFreq":
@@ -281,6 +283,7 @@ public class AudioController : MonoBehaviour
         switch (clip)
         {
             case "drum_bass":
+                AudioSrcBass.clip = bassdrum;
                 pbbBassdrum.isActive = !pbbBassdrum.isActive;
                 if (pbbBassdrum.isActive)
                 {
@@ -296,6 +299,7 @@ public class AudioController : MonoBehaviour
                 
                 break;
             case "drum_hihat":
+                AudioSrcHihat.clip = hihat;
                 pbbHihat.isActive = !pbbHihat.isActive;
                 if (pbbHihat.isActive)
                 {
@@ -310,6 +314,7 @@ public class AudioController : MonoBehaviour
                     AudioSrcHihat.Stop();
                 break;
             case "drum_snare":
+                AudioSrcSnare.clip = snare;
                 pbbSnare.isActive = !pbbSnare.isActive;
                 if (pbbSnare.isActive)
                 {
@@ -325,6 +330,9 @@ public class AudioController : MonoBehaviour
                 break;
             case "all":
                 pbbAll.isActive = !pbbAll.isActive;
+                AudioSrcSnare.clip = snareLoop;
+                AudioSrcBass.clip = bassdrumLoop;
+                AudioSrcHihat.clip = hihatLoop;
                 if (pbbAll.isActive)
                 {
                     pbbBassdrum.isActive = false;
