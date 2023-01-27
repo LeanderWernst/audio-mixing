@@ -243,13 +243,13 @@ public class InteractionManager : MonoBehaviour
                 PlayFeedbackSound(false);
                 if (setValue < minValue)
                 {
-                    DisplayForDuration(errorLabel, currentInteraction.ErrBelowMin, 5);
+                    DisplayForDuration(errorLabel, currentInteraction.ErrBelowMin, 5, errorLabelPanel);
                     errorCount++;
                     errorCountLabel.SetText(errorCount.ToString());
                 }
                 else 
                 {
-                    DisplayForDuration(errorLabel, currentInteraction.ErrAboveMax, 5);
+                    DisplayForDuration(errorLabel, currentInteraction.ErrAboveMax, 5, errorLabelPanel);
                     errorCount++;
                     errorCountLabel.SetText(errorCount.ToString());
                 }
