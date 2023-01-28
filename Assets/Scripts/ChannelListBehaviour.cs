@@ -9,7 +9,10 @@ public class ChannelListBehaviour : MonoBehaviour
     [SerializeField] GameObject channelListUI;
     [SerializeField] AudioClip showList;
     [SerializeField] AudioClip hideList;
+    [SerializeField] InteractionManager interactionManager;
     private bool listIsVisible = false;
+    private bool wasClickedAtStep = false;
+    private ValueStorage valueStorage;
 
     private void Awake()
     {
@@ -19,7 +22,7 @@ public class ChannelListBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        valueStorage = gameObject.GetComponent<ValueStorage>();
     }
 
     // Update is called once per frame
@@ -33,7 +36,7 @@ public class ChannelListBehaviour : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (EventSystem.current.IsPointerOverGameObject()) { return;  }
+        if (EventSystem.current.IsPointerOverGameObject()) { return; }
         toggleChannelList();
     }
 
@@ -46,6 +49,7 @@ public class ChannelListBehaviour : MonoBehaviour
         }
         else
         {
+            confirmInteractionStep();
             channelListUI.SetActive(false);
         }
         playChannelListSound();
@@ -65,5 +69,20 @@ public class ChannelListBehaviour : MonoBehaviour
             tempAudioSource.Play();
         }
         Destroy(tempAudioSource, tempAudioSource.clip.length);
+    }
+
+    /**
+     * If the current interaction step is to look at this channelList,
+     * it informs the interaction manager as soon as the list is closed again.
+     * To only inform once, it uses a flag 'wasClickedAtStep'.
+     */
+    private void confirmInteractionStep()
+    {
+        if (interactionManager.GetCurrentInteraction().TargetObject == gameObject && !wasClickedAtStep)
+        {
+            wasClickedAtStep = true;
+            valueStorage.SetValue(1f, gameObject); // will be checked from interactionManager
+            interactionManager.CheckInteractionOrder(gameObject);
+        }
     }
 }

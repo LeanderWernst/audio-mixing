@@ -7,7 +7,7 @@ public class ValueStorage : MonoBehaviour
 {
 
     private float storedValue;
-    private string[] allowedCallers = new string[] {"Knob", "Fader", "Button"};
+    private string[] allowedCallers = new string[] {"Knob", "Fader", "Button", "ChannelList"};
     public float GetValue()
     {
         return storedValue;

@@ -169,6 +169,7 @@ public class InteractionManager : MonoBehaviour
                 SetTextWithFade(1f, skipLabel, "Drücke ENTER zum Bestätigen");
                 FadeGraphic(1f, skipLabelPanel);
             }
+
             // When min & max value is set, we need to check the value by pressing Return instead of 
             // just checking the target value
             if (ObjectHasTargetValue() && currentInteraction.TargetValueMax == currentInteraction.TargetValueMin)
