@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class SelectionManager : MonoBehaviour
 {
 
-    [SerializeField] private string[] selectableTags = new string[] { "Button", "Fader", "Knob" };
+    [SerializeField] private string[] selectableTags = new string[] { "Button", "Fader", "Knob", "ChannelList" };
 
     private Transform currentSelection;
     private Transform clickedObject;
@@ -99,7 +99,7 @@ public class SelectionManager : MonoBehaviour
 
     void HighlightOnClick()
     {
-        if (!IsPointerOverUIElement())
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -108,7 +108,8 @@ public class SelectionManager : MonoBehaviour
             {
                 Debug.DrawLine(ray.origin, hit.point, Color.red); // DEBUG
                 var selection = hit.transform;
-                if (TransformWithTagIsMovable(selectableTags, selection))
+                // only highlight on click, when in selectableTags array, but ignore ChannelList
+                if (TransformWithTagIsMovable(selectableTags, selection) && !selection.CompareTag("ChannelList"))
                 {
                     FadeValueText(Fade.In);
                     var clickedBefore = clickedObject;
