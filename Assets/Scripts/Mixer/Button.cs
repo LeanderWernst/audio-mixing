@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Button : MonoBehaviour
 {
@@ -66,7 +67,7 @@ public class Button : MonoBehaviour
     {
         // Move only when it is the target object of an interaction
         // or when it is a gameObject that is not in channels 1-3
-        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel))
+        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel) && !EventSystem.current.IsPointerOverGameObject())
         {
             isOn = !isOn;
             isMoving = true;

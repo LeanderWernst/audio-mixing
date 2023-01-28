@@ -34,10 +34,13 @@ public class SelectionManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+
         HighlightOnHover();
-        
-        if (Input.GetMouseButtonDown(0))
+
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        { 
             HighlightOnClick();
+        }
     }
 
     private void OnMouseUp()
@@ -47,7 +50,7 @@ public class SelectionManager : MonoBehaviour
 
     void HighlightOnHover() 
     {
-        if (!IsPointerOverUIElement())
+        if (!EventSystem.current.IsPointerOverGameObject()) // if mouse is not over UI
         {
             if (!Input.GetMouseButton(0))
             {
@@ -81,6 +84,15 @@ public class SelectionManager : MonoBehaviour
                         currentSelection = selectionRenderer == null ? null : selection;
                     }
                 }
+            }
+        }
+        else // turn off emission on currentSelection when pointer is over UI
+        {
+            if (currentSelection != null)
+            {
+                var selectionRenderer = currentSelection.GetComponent<Renderer>();
+                selectionRenderer.material.DisableKeyword("_EMISSION");
+                currentSelection = null;
             }
         }
     }

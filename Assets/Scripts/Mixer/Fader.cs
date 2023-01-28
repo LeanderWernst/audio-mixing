@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class Fader : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class Fader : MonoBehaviour
     public AudioController audioController;
     TextMeshProUGUI canvasValueText;
     public string channel;
+
+    private bool isMouseOverUI = false;
 
     private List<string> blockedChannels = new List<string> { "Channel1", "Channel2", "Channel3" };
     private InteractionManager im;
@@ -50,14 +53,18 @@ public class Fader : MonoBehaviour
         }
     }
 
-    private void OnMouseDrag()
+    void OnMouseDown()
     {
-        SlideFader(Input.GetAxis("Mouse Y"));
+        if (EventSystem.current.IsPointerOverGameObject()) { isMouseOverUI = true; }
+        else { isMouseOverUI = false; }
     }
 
-    private void OnMouseDown()
+    private void OnMouseDrag()
     {
+        // abort if mouse is over UI
+        if (isMouseOverUI) { return; }
 
+        SlideFader(Input.GetAxis("Mouse Y"));
     }
 
     float GetNonLinearFaderValue(PositionValueRelation[] pvr)

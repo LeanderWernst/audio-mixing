@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
- 
+using UnityEngine.EventSystems;
+
 public class Knob : MonoBehaviour
 {
 	public bool isClicked = false;
@@ -30,6 +31,8 @@ public class Knob : MonoBehaviour
 
     private List<string> blockedChannels = new List<string> { "Channel1", "Channel2", "Channel3" };
     private InteractionManager im;
+
+    private bool isMouseOverUI = false;
 
     private void Awake()
     {
@@ -71,8 +74,17 @@ public class Knob : MonoBehaviour
         }
     }
 
+    void OnMouseDown()
+    {
+        if (EventSystem.current.IsPointerOverGameObject()) { isMouseOverUI = true; }
+        else { isMouseOverUI = false; }
+    }
+
     void OnMouseDrag()
 	{
+        // abort if mouse is over UI
+        if (isMouseOverUI) { return; }
+
         TurnKnob(Input.GetAxis("Mouse Y"));
     }
 
@@ -96,8 +108,6 @@ public class Knob : MonoBehaviour
             ChangeValueText();
         }
 
-        Debug.Log("Mouse: " + Input.GetAxis("Mouse Y"));
-        Debug.Log("Scroll: " + Input.mouseScrollDelta.y);
 
         // If Knob is current target object, check if the objects angle (value) 
         // is close to the target angle (value). If so, move the GO to the angle 

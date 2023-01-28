@@ -1,8 +1,10 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class InteractionManager : MonoBehaviour
@@ -12,9 +14,10 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI headlineLabel;
     [SerializeField] private TextMeshProUGUI instructionLabel;
     [SerializeField] private TextMeshProUGUI errorLabel;
-    private Image errorLabelPanel;
     [SerializeField] private TextMeshProUGUI helpLabel;
     [SerializeField] private TextMeshProUGUI helpLabelBonus;
+    [SerializeField] private GameObject helpBonusButton;
+    private GameObject helpPanel;
 
     [SerializeField] private TextMeshProUGUI errorCountLabel = null;
     [SerializeField] private TextMeshProUGUI helpCountLabel = null;
@@ -49,6 +52,7 @@ public class InteractionManager : MonoBehaviour
 
     private int errorCount;
     private int helpCount;
+    private bool helpUsedInThisStep = false;
 
     private Coroutine lastCoroutine; // keeping track of the latest Coroutine
 
@@ -59,9 +63,7 @@ public class InteractionManager : MonoBehaviour
         Debug.Log("Start InteractionManager");
         // UI init
         skipLabelPanel = skipLabel.GetComponentInParent<Image>();
-        errorLabelPanel = errorLabel.GetComponentInParent<Image>();
-        //helpLabel.SetText("");
-        //errorLabel.SetText("");
+        helpPanel = helpLabel.transform.parent.gameObject;
         errorCountLabel.SetText(errorCount.ToString());
         helpCountLabel.SetText(helpCount.ToString());
 
@@ -76,7 +78,13 @@ public class InteractionManager : MonoBehaviour
         currentInteraction = interactions[interactionIndex];
         headlineLabel.SetText(currentInteraction.Headline);
         instructionLabel.SetText(currentInteraction.Instruction);
+        helpLabel.SetText(currentInteraction.HelpMsg);
+        helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
         audioSource.clip = currentInteraction.InstrAudio;
+        helpBonusButton.SetActive(currentInteraction.HelpMsgBonus != "");
+        // error label does not need to be set, since it is set when an error occurs.
+
+        // Wait 2 seconds until the first instruction sound is being played
         StartCoroutine(WaitThenPlaySound(2f));
     }
 
@@ -84,7 +92,9 @@ public class InteractionManager : MonoBehaviour
     {
         DebugDrawRay();
 
-        if (Input.GetMouseButtonDown(0))
+        Debug.Log(EventSystem.current.IsPointerOverGameObject());
+
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -152,7 +162,7 @@ public class InteractionManager : MonoBehaviour
             Debug.Log("Hit correct Object");
 
             // Hide Error Messages
-            errorLabelPanel.enabled = false;
+            errorLabel.transform.parent.gameObject.SetActive(false);
             errorLabel.text = "";
 
             // Show 'ENTER' message when hitting an object that needs confirmation
@@ -180,7 +190,7 @@ public class InteractionManager : MonoBehaviour
         else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(channelList) && interactionIndex != mixingStep)
         {
             PlayFeedbackSound(false);
-            DisplayForDuration(errorLabel, currentInteraction.ErrElement, 5, errorLabelPanel);
+            DisplayErrForDuration(errorLabel, currentInteraction.ErrElement, 5);
             errorCount++;
             errorCountLabel.SetText(errorCount.ToString());
         }
@@ -195,8 +205,9 @@ public class InteractionManager : MonoBehaviour
     }
 
     private Coroutine coroutine;
-    private void DisplayForDuration(TextMeshProUGUI label, string msg, float duration, Image panel = null)
+    private void DisplayErrForDuration(TextMeshProUGUI label, string msg, float duration)
     {
+        helpPanel.SetActive(false); // disable help when creating an error
         if (coroutine != null)
         {
             StopCoroutine(coroutine);
@@ -204,24 +215,18 @@ public class InteractionManager : MonoBehaviour
 
         if (msg != "")
         {
-            if (panel != null)
-            {
-                panel.enabled = true;
-            }
+            label.transform.parent.gameObject.SetActive(true);
             label.text = msg;
 
-            coroutine = StartCoroutine(DisableAfterDuration(duration, label, panel));
+            coroutine = StartCoroutine(DisableAfterDuration(duration, label));
         }
     }
 
-    private IEnumerator DisableAfterDuration(float duration, TextMeshProUGUI label, Image panel = null)
+    private IEnumerator DisableAfterDuration(float duration, TextMeshProUGUI label)
     {
         yield return new WaitForSeconds(duration);
 
-        if (panel != null)
-        {
-            panel.enabled = false;
-        }
+        label.transform.parent.gameObject.SetActive(false);
         label.text = "";
     }
 
@@ -243,13 +248,13 @@ public class InteractionManager : MonoBehaviour
                 PlayFeedbackSound(false);
                 if (setValue < minValue)
                 {
-                    DisplayForDuration(errorLabel, currentInteraction.ErrBelowMin, 5, errorLabelPanel);
+                    DisplayErrForDuration(errorLabel, currentInteraction.ErrBelowMin, 5);
                     errorCount++;
                     errorCountLabel.SetText(errorCount.ToString());
                 }
                 else 
                 {
-                    DisplayForDuration(errorLabel, currentInteraction.ErrAboveMax, 5, errorLabelPanel);
+                    DisplayErrForDuration(errorLabel, currentInteraction.ErrAboveMax, 5);
                     errorCount++;
                     errorCountLabel.SetText(errorCount.ToString());
                 }
@@ -267,6 +272,8 @@ public class InteractionManager : MonoBehaviour
             return false;
     }
 
+    // Checks if the target value of the current interaction is within a range
+    // (if min and max are not equal, there is a range)
     private bool TargetValueHasRange()
     {
         return currentInteraction.TargetValueMax != currentInteraction.TargetValueMin;
@@ -282,17 +289,32 @@ public class InteractionManager : MonoBehaviour
 
         interactionIndex++;
 
+        // reset helpUsedInThisStep to count help again, hide helpPanel
+        helpUsedInThisStep = false;
+        helpPanel.SetActive(false);
+
+        // set next interaction
         currentInteraction = interactions[interactionIndex];
         StopAllCoroutines();
+
+        // only fade in the headline if it is new
         if (!headlineLabel.text.Equals(currentInteraction.Headline))
         { 
             SetTextWithFade(1f, headlineLabel, currentInteraction.Headline);
         }
+        // fade in new instruction
         SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction, setNewAudio: true);
-        // errorLabel.SetText(currentInteraction.ErrElement);
+
+        // set new help texts
         helpLabel.SetText(currentInteraction.HelpMsg);
         helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
+        helpBonusButton.SetActive(currentInteraction.HelpMsgBonus != "");
+        if (!helpBonusButton.activeInHierarchy)
+        {
+            helpLabelBonus.gameObject.SetActive(false); // deactivate bonus, when button is not available
+        }
 
+        // if step is skippable fade in info panel, else fade out
         if (currentInteraction.IsSkippable)
         {
             SetTextWithFade(1f, skipLabel, "Drücke ENTER, um fortzufahren", delay: 3f);
@@ -415,5 +437,30 @@ public class InteractionManager : MonoBehaviour
     public Interaction GetCurrentInteraction()
     {
         return currentInteraction;
+    }
+
+    /**
+     * Used for Button in HelpPanel: Disables Button GO and enables
+     * the 'HelpMsgBonus' Go to show additional text.
+     */
+    public void showBonusInformation()
+    {
+        helpBonusButton.SetActive(false);
+        helpLabelBonus.gameObject.SetActive(true);
+    }
+
+    public void setHelpUsedInThisStep()
+    {
+        helpUsedInThisStep = true;
+    }
+
+    public bool getHelpUsedInThisStep()
+    {
+        return helpUsedInThisStep;
+    }
+
+    public bool currentInteractionIsSkippable()
+    {
+        return currentInteraction.IsSkippable;
     }
 }
