@@ -10,6 +10,7 @@ public class UIButtonBehaviour : MonoBehaviour
     [SerializeField] private Color hoverColor;
     [SerializeField] private TextMeshProUGUI tmpUGUI;
     private UnityEngine.UI.Button button;
+    private Selectable selectable;
     private Color normalColor;
     private ColorBlock cb;
 
@@ -20,6 +21,10 @@ public class UIButtonBehaviour : MonoBehaviour
         button = gameObject.GetComponent<UnityEngine.UI.Button>();
         cb = button.colors;
         normalColor = cb.selectedColor;
+
+        // prevent button from being triggered by ENTER key
+        selectable = GetComponent<Selectable>();
+        selectable.navigation = new Navigation();
     }
 
     // Update is called once per frame
