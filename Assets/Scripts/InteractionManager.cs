@@ -63,7 +63,7 @@ public class InteractionManager : MonoBehaviour
         Debug.Log("Start InteractionManager");
         // UI init
         skipLabelPanel = skipLabel.GetComponentInParent<Image>();
-        helpPanel = helpLabel.transform.parent.gameObject;
+        helpPanel = helpLabel.transform.parent.parent.gameObject;
         errorCountLabel.SetText(errorCount.ToString());
         helpCountLabel.SetText(helpCount.ToString());
 
@@ -91,8 +91,6 @@ public class InteractionManager : MonoBehaviour
     private void Update()
     {
         DebugDrawRay();
-
-        Debug.Log(EventSystem.current.IsPointerOverGameObject());
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {

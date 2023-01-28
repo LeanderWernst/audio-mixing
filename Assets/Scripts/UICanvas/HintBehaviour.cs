@@ -53,7 +53,7 @@ public class HintBehaviour : MonoBehaviour
         }
     }
 
-    public void showHelpPanel()
+    public void ToggleHelpPanel()
     {
         if (!helpPanel.activeInHierarchy)
         {
