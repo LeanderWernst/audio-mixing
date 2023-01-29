@@ -364,11 +364,11 @@ public class AudioController : MonoBehaviour
     }
     private void ListenToKeyboard()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
             PlaySound("drum_bass");
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
             PlaySound("drum_snare");
-        else if (Input.GetKeyDown(KeyCode.H))
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
             PlaySound("drum_hihat");
         else if (Input.GetKeyDown(KeyCode.Space))
             PlaySound("all");
