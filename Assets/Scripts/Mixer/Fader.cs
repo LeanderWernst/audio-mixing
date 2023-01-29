@@ -99,7 +99,10 @@ public class Fader : MonoBehaviour
     private void SlideFader(float inputForce, bool initialMove = false)
     {
         // Slide Fader only when it's the current target object or not needed for future interactions
-        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel) || initialMove)
+        if (im.GetCurrentInteraction().TargetObject == gameObject 
+            || !blockedChannels.Contains(channel) 
+            || initialMove
+            || im.FinalMixingIsActive())
         {
             verticalMovement = inputForce * sensitivityY * Time.deltaTime;
             float posX = transform.localPosition.x - verticalMovement;

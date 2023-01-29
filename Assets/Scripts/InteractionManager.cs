@@ -189,7 +189,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
         }
-        else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(channelList) && interactionIndex != mixingStep)
+        else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(channelList) && !FinalMixingIsActive())
         {
             PlayFeedbackSound(false);
             DisplayErrForDuration(errorLabel, currentInteraction.ErrElement, 5);
@@ -469,5 +469,11 @@ public class InteractionManager : MonoBehaviour
     public bool currentInteractionIsSkippable()
     {
         return currentInteraction.IsSkippable;
+    }
+
+    // Indicates if current interaction is the final mixing step
+    public bool FinalMixingIsActive()
+    {
+        return interactionIndex == mixingStep;
     }
 }

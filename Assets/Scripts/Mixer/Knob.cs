@@ -92,7 +92,10 @@ public class Knob : MonoBehaviour
     {
         Debug.Log("Force: " + inputForce);
         // Turn Knob only when it's the current target object or not needed for future interactions
-        if (im.GetCurrentInteraction().TargetObject == gameObject || !blockedChannels.Contains(channel) || initialMove)
+        if (im.GetCurrentInteraction().TargetObject == gameObject 
+            || !blockedChannels.Contains(channel) 
+            || initialMove
+            || im.FinalMixingIsActive())
         {
             angle += inputForce * rotationSpeed * Time.deltaTime;
             angle = Mathf.Clamp(angle, minRotation, maxRotation);
