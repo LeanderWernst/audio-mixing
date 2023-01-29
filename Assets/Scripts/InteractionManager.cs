@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class InteractionManager : MonoBehaviour
 {
     [Header("User Interface")]
+    [SerializeField] private AudioController audioController;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private TextMeshProUGUI headlineLabel;
     [SerializeField] private TextMeshProUGUI instructionLabel;
@@ -43,6 +44,9 @@ public class InteractionManager : MonoBehaviour
     private Camera cam;
 
     [Header("Interactions")]
+    [SerializeField] private List<int> bassSoundSteps = new List<int> { 5, 7, 25, 27, 29 };
+    [SerializeField] private List<int> snareSoundSteps = new List<int> { 11, 13, 36, 38 };
+    [SerializeField] private List<int> hihatSoundSteps = new List<int> { 17, 19, 45, 47 };
     [SerializeField] private List<int> pipSteps = new List<int> { 5, 11, 17 };
     [SerializeField] private List<Interaction> interactions;
 
@@ -56,6 +60,7 @@ public class InteractionManager : MonoBehaviour
     private int errorCount;
     private int helpCount;
     private bool helpUsedInThisStep = false;
+    private bool bassWasPlayed, snareWasPlayed, hihatWasPlayed, drumsWerePlayed = false;
 
     private Coroutine lastCoroutine; // keeping track of the latest Coroutine
 
@@ -236,7 +241,15 @@ public class InteractionManager : MonoBehaviour
     private void CheckTargetRange()
     {
         if (currentInteraction.TargetValueMax != currentInteraction.TargetValueMin)
-            { 
+        {
+            if (!MandatorySoundWasPlayed())
+            {
+                PlayFeedbackSound(false);
+                DisplayErrForDuration(errorLabel, "Du solltest hören, was du mischst.", 5);
+                errorCount++;
+                errorCountLabel.SetText(errorCount.ToString());
+                return;
+            }
             var setValue = currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue();
             var minValue = currentInteraction.TargetValueMin;
             var maxValue = currentInteraction.TargetValueMax;
@@ -291,6 +304,9 @@ public class InteractionManager : MonoBehaviour
 
         // move interaction index up
         interactionIndex++;
+
+        // reset all flags indicating if sound was played in step
+        ResetSoundWasPlaying();
 
         // if step requires master-meter show it, else hide it
         if (pipSteps.Contains(interactionIndex)) { pip.ToggleSmoothSlide(); }
@@ -475,5 +491,54 @@ public class InteractionManager : MonoBehaviour
     public bool FinalMixingIsActive()
     {
         return interactionIndex == mixingStep;
+    }
+
+    private bool MandatorySoundWasPlayed()
+    {
+        int i = interactionIndex;
+        if (bassSoundSteps.Contains(i) && !bassWasPlayed && !drumsWerePlayed)
+        {
+            return false;
+        }
+        if (snareSoundSteps.Contains(i) && !snareWasPlayed && !drumsWerePlayed)
+        {
+            return false;
+        }
+        if (hihatSoundSteps.Contains(i) && !hihatWasPlayed && !drumsWerePlayed)
+        {
+            return false;
+        }
+        if (i == mixingStep && !drumsWerePlayed)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public void SetSoundWasPlayed(string drum)
+    {
+        switch (drum)
+        {
+            case "drum_bass":
+                bassWasPlayed = true;
+                break;
+            case "drum_snare":
+                snareWasPlayed = true;
+                break;
+            case "drum_hihat":
+                hihatWasPlayed = true;
+                break;
+            case "all":
+                drumsWerePlayed = true;
+                break;
+        }
+    }
+
+    private void ResetSoundWasPlaying()
+    {
+        bassWasPlayed = audioController.IsDrumActive("drum_bass");
+        snareWasPlayed = audioController.IsDrumActive("drum_snare");
+        hihatWasPlayed = audioController.IsDrumActive("drum_hihat");
+        drumsWerePlayed = audioController.IsDrumActive("all");
     }
 }

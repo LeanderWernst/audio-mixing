@@ -22,11 +22,14 @@ public class AudioController : MonoBehaviour
     private float oldFaderStereoInput1;
     private float knobGainMax = 2f;
     private float knobGainMin = 0.5f;
+
+    private InteractionManager im;
     private void Awake()
     {
         //drum_bass = Resources.Load<AudioClip>("drum_bass");
         //drum_snare = Resources.Load<AudioClip>("drum_snare");
         //drum_hihat = Resources.Load<AudioClip>("drum_hihat");
+        im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
     }
 
     // Start is called before the first frame update
@@ -293,6 +296,7 @@ public class AudioController : MonoBehaviour
                     AudioSrcHihat.Stop();
                     AudioSrcSnare.Stop();
                     AudioSrcBass.Play();
+                    im.SetSoundWasPlayed("drum_bass");
                 }
                 else 
                     AudioSrcBass.Stop();
@@ -309,6 +313,7 @@ public class AudioController : MonoBehaviour
                     AudioSrcBass.Stop();
                     AudioSrcSnare.Stop();
                     AudioSrcHihat.Play();
+                    im.SetSoundWasPlayed("drum_hihat");
                 }
                 else
                     AudioSrcHihat.Stop();
@@ -324,6 +329,7 @@ public class AudioController : MonoBehaviour
                     AudioSrcHihat.Stop();
                     AudioSrcBass.Stop();
                     AudioSrcSnare.Play();
+                    im.SetSoundWasPlayed("drum_snare");
                 }
                 else
                     AudioSrcSnare.Stop();
@@ -341,6 +347,7 @@ public class AudioController : MonoBehaviour
                     AudioSrcSnare.Play();
                     AudioSrcBass.Play();
                     AudioSrcHihat.Play();
+                    im.SetSoundWasPlayed("all");
                 }
                 else
                 {
@@ -369,6 +376,23 @@ public class AudioController : MonoBehaviour
     public void SetChannelLevel(string channel, float level)
     {
         mixer.SetFloat(channel, level);
+    }
+
+    public bool IsDrumActive(string drum)
+    {
+        switch (drum)
+        {
+            case "drum_bass":
+                return pbbBassdrum.isActive;
+            case "drum_snare":
+                return pbbSnare.isActive;
+            case "drum_hihat":
+                return pbbHihat.isActive;
+            case "all":
+                return pbbAll.isActive;
+            default:
+                return false;
+        }
     }
 
     // Update is called once per frame
