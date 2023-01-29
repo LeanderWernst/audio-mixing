@@ -30,6 +30,8 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private AudioClip soundWrong;
     [SerializeField] private AudioClip soundCorrect;
 
+    [SerializeField] private PictureInPicture pip;
+
     [Header("No Error GameObjects")]
     [SerializeField] private GameObject speechFader;
     [SerializeField] private GameObject channelList;
@@ -41,6 +43,7 @@ public class InteractionManager : MonoBehaviour
     private Camera cam;
 
     [Header("Interactions")]
+    [SerializeField] private List<int> pipSteps = new List<int> { 5, 11, 17 };
     [SerializeField] private List<Interaction> interactions;
 
     [SerializeField] private UnityEvent OnCompleted;
@@ -286,7 +289,12 @@ public class InteractionManager : MonoBehaviour
         // Invoke Interaction function 'OnExecution' if defines
         currentInteraction.OnExecution?.Invoke();
 
+        // move interaction index up
         interactionIndex++;
+
+        // if step requires master-meter show it, else hide it
+        if (pipSteps.Contains(interactionIndex)) { pip.ToggleSmoothSlide(); }
+        else { if (pip.IsVisible()) { pip.ToggleSmoothSlide(); } }
 
         // reset helpUsedInThisStep to count help again, hide helpPanel
         helpUsedInThisStep = false;
