@@ -83,7 +83,12 @@ public class PictureInPicture : MonoBehaviour
 
     private bool UnityIsInEditMode()
     {
-        return !EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode;
+        // Compile depending on environment
+        #if UNITY_EDITOR
+            return !EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode;
+        #else
+            return false;
+        #endif
     }
 
     /**
