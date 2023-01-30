@@ -154,20 +154,4 @@ public class Fader : MonoBehaviour
         }
     }
 
-    private void UpdateSound()
-    {
-        
-
-    }
-
-    void OnMouseEnter()
-    {
-
-    }
-
-    void OnMouseExit()
-    {
-
-    }
-
 }
