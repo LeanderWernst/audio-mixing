@@ -61,7 +61,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float completionCallbackDelay;
 
     public bool InteractionsCompleted => interactionIndex >= interactions.Count;
-    private int interactionIndex = 0; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
+    private int interactionIndex = 52; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
     private Interaction currentInteraction;
 
     private int errorCount;
@@ -197,7 +197,7 @@ public class InteractionManager : MonoBehaviour
             errorLabel.text = "";
 
             // Show 'ENTER' message when hitting an object that needs confirmation
-            if (TargetValueHasRange())
+            if (TargetValueHasRange() && interactionIndex != mixingStep)
             {
                 SetTextWithFade(1f, skipLabel, "Drücke ENTER zum Bestätigen");
                 FadeGraphic(1f, skipLabelPanel);
@@ -370,8 +370,16 @@ public class InteractionManager : MonoBehaviour
         // if step is skippable fade in info panel, else fade out
         if (currentInteraction.IsSkippable)
         {
-            SetTextWithFade(1f, skipLabel, "Drücke ENTER, um fortzufahren", delay: 3f);
-            FadeGraphic(1f, skipLabelPanel, delay: 3f);
+            if (interactionIndex == mixingStep)
+            {
+                SetTextWithFade(1f, skipLabel, "Drücke ENTER zum Bestätigen", delay: 3f);
+                FadeGraphic(1f, skipLabelPanel, delay: 3f);
+            }
+            else
+            {
+                SetTextWithFade(1f, skipLabel, "Drücke ENTER, um fortzufahren", delay: 3f);
+                FadeGraphic(1f, skipLabelPanel, delay: 3f);
+            }
         }
         else
         {
