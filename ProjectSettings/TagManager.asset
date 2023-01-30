@@ -15,6 +15,7 @@ TagManager:
   - ChannelList
   - ApplicationSettings
   - ExitPanel
+  - SettingsPanel
   layers:
   - Default
   - TransparentFX

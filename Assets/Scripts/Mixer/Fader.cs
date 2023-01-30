@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class Fader : MonoBehaviour
 {
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
 
     [SerializeField] private float upperPosBoundary = 0.0236f;
     [SerializeField] private float lowerPosBoundary = 0.06782f;
@@ -30,6 +32,15 @@ public class Fader : MonoBehaviour
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         valueStorage = gameObject.GetComponent<ValueStorage>();
         im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
+
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
     }
 
     void Start()
@@ -112,6 +123,8 @@ public class Fader : MonoBehaviour
             ChangeValueText();
             valueStorage.SetValue(value, gameObject);
             audioController.SetFaderVolume(transform.name, channel, value);
+
+            ChangeVolumeInSettings();
         }
         else
         {
@@ -125,6 +138,20 @@ public class Fader : MonoBehaviour
             canvasValueText.text = "-" + "\u221E" + " dB";
         else
             canvasValueText.text = value.ToString("F2") + " dB";
+    }
+
+    private void ChangeVolumeInSettings()
+    {
+        if (channel == "Master")
+        {
+            applicationData.masterVolume = (value + 80) / 90;
+            applicationData.settingsPanel.masterSlider.value = applicationData.masterVolume;
+        }
+        else if (channel == "StereoInput1")
+        {
+            applicationData.systemVolume = (value + 80) / 90;
+            applicationData.settingsPanel.systemSlider.value = applicationData.systemVolume;
+        }
     }
 
     private void UpdateSound()

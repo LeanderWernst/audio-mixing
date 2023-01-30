@@ -38,6 +38,7 @@ public class InteractionManager : MonoBehaviour
 
     [Header("No Error GameObjects")]
     [SerializeField] private GameObject speechFader;
+    [SerializeField] private GameObject masterFader;
     [SerializeField] private GameObject channelList;
     [SerializeField] private int mixingStep;
 
@@ -82,7 +83,7 @@ public class InteractionManager : MonoBehaviour
             applicationSettings.tag = "ApplicationSettings";
             applicationSettings.AddComponent<ApplicationData>();
         }
-        applicationData = applicationSettings.GetComponent<ApplicationData>();
+        applicationData = applicationSettings.GetComponent<ApplicationData>();        
     }
 
 
@@ -217,7 +218,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
         }
-        else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(channelList) && !FinalMixingIsActive())
+        else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(masterFader) && !selectedGameObject.Equals(channelList) && !FinalMixingIsActive())
         {
             PlayFeedbackSound(false);
             DisplayErrForDuration(errorLabel, currentInteraction.ErrElement, 5);

@@ -63,7 +63,6 @@ public class Knob : MonoBehaviour
         // Read min max values
         minValue = knobPvr[0].values[0];
         maxValue = knobPvr[knobPvr.Length-1].values[1];
-        Debug.Log(name + ": " + minValue + " | " + maxValue);
     }
 
     private void Update()
@@ -90,7 +89,6 @@ public class Knob : MonoBehaviour
 
     private void TurnKnob(float inputForce, bool initialMove = false)
     {
-        Debug.Log("Force: " + inputForce);
         // Turn Knob only when it's the current target object or not needed for future interactions
         if (im.GetCurrentInteraction().TargetObject == gameObject 
             || !blockedChannels.Contains(channel) 

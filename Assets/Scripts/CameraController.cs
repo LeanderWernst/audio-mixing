@@ -52,7 +52,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (cinemachineBrain.ActiveVirtualCamera.VirtualCameraGameObject == gameObject)
+        if (cinemachineBrain.ActiveVirtualCamera != null && cinemachineBrain.ActiveVirtualCamera.VirtualCameraGameObject == gameObject)
         {
             if (Input.GetMouseButton(1))
             {
