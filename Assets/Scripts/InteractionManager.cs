@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -105,7 +106,7 @@ public class InteractionManager : MonoBehaviour
 
         // Set the first interaction from the list as our current interaction and display its instruction in the ui.
         currentInteraction = interactions[interactionIndex];
-        headlineLabel.SetText(currentInteraction.Headline);
+        headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
         instructionLabel.SetText(currentInteraction.Instruction);
         helpLabel.SetText(currentInteraction.HelpMsg);
         helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
@@ -349,10 +350,10 @@ public class InteractionManager : MonoBehaviour
         currentInteraction = interactions[interactionIndex];
         StopAllCoroutines();
 
-        // only fade in the headline if it is new
-        if (!headlineLabel.text.Equals(currentInteraction.Headline))
+        // only fade in the headline if it is new and replace step numbers if necessary
+        if (!headlineLabel.text.Equals(ReplaceStepNumInHeadline(currentInteraction.Headline)))
         { 
-            SetTextWithFade(1f, headlineLabel, currentInteraction.Headline);
+            SetTextWithFade(1f, headlineLabel, ReplaceStepNumInHeadline(currentInteraction.Headline));
         }
         // fade in new instruction
         SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction, setNewAudio: true);
@@ -569,5 +570,33 @@ public class InteractionManager : MonoBehaviour
         snareWasPlayed = audioController.IsDrumActive("drum_snare");
         hihatWasPlayed = audioController.IsDrumActive("drum_hihat");
         drumsWerePlayed = audioController.IsDrumActive("all");
+    }
+
+    private string ReplaceStepNumInHeadline(string headline)
+    {
+        // if equalizer is skipped, step numbers need to be replaced
+        if (!applicationData.equalizerMode)
+        { 
+            //"Schritt (1/6)\nBassdrum pegeln";
+
+            // extract numbers in Schritt '(d/d)'
+            var match = Regex.Match(headline, @"\((\d+)\/(\d+)\)");
+            if (match.Success)
+            {
+                int firstInt = int.Parse(match.Groups[1].Value);
+                int secondInt = int.Parse(match.Groups[2].Value);
+
+                // adjust according to steps
+                if (firstInt > 3)
+                { 
+                    firstInt = firstInt - 3;
+                }
+                secondInt = secondInt - 3;
+
+                // replace values and return
+                return headline.Replace(match.Groups[0].Value, $"({firstInt}/{secondInt})");
+            }
+        }
+        return headline;
     }
 }
