@@ -5,9 +5,9 @@ using UnityEngine;
 public class ApplicationData : MonoBehaviour
 {
     public static ApplicationData instance; // Singleton
-    public bool equalizerMode;
-    public bool beginnerMode;
-    public bool speakInstructions;
+    public bool beginnerMode = false;
+    public bool equalizerMode = true;
+    public bool speakInstructions = true;
 
     private void Awake()
     {
@@ -20,5 +20,23 @@ public class ApplicationData : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void SetBeginnerOn(bool state)
+    {
+        beginnerMode = state;
+        Debug.Log("BeginnerMode: " + beginnerMode);
+    }
+
+    public void SetEqualizerOn(bool state)
+    {
+        equalizerMode = state;
+        Debug.Log("EqualizerMode: " + equalizerMode);
+    }
+
+    public void SetSpeechOn(bool state)
+    {
+        speakInstructions = state;
+        Debug.Log("Speech: " + speakInstructions);
     }
 }

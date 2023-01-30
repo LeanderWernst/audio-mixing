@@ -13,6 +13,7 @@ TagManager:
   - UIButton
   - InteractionManager
   - ChannelList
+  - ApplicationSettings
   layers:
   - Default
   - TransparentFX

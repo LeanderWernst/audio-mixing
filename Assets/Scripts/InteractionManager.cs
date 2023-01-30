@@ -9,6 +9,9 @@ using UnityEngine.UI;
 
 public class InteractionManager : MonoBehaviour
 {
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
+
     [Header("User Interface")]
     [SerializeField] private AudioController audioController;
     [SerializeField] private AudioSource audioSource;
@@ -48,6 +51,8 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private List<int> snareSoundSteps = new List<int> { 11, 13, 36, 38 };
     [SerializeField] private List<int> hihatSoundSteps = new List<int> { 17, 19, 45, 47 };
     [SerializeField] private List<int> pipSteps = new List<int> { 5, 11, 17 };
+    [SerializeField] private int eqStepsStart = 22;
+    [SerializeField] private int eqStepsEnd = 49;
     [SerializeField] private List<Interaction> interactions;
 
     [SerializeField] private UnityEvent OnCompleted;
@@ -64,7 +69,22 @@ public class InteractionManager : MonoBehaviour
 
     private Coroutine lastCoroutine; // keeping track of the latest Coroutine
 
-    private void Awake() => cam = Camera.main;
+    private void Awake()
+    {
+        cam = Camera.main;
+
+        // Read settings from gameobject if present.
+        // For debugging purposes, if scene was not started from menu, create settings object
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
+    }
+
 
     private void Start()
     {
@@ -93,7 +113,10 @@ public class InteractionManager : MonoBehaviour
         // error label does not need to be set, since it is set when an error occurs.
 
         // Wait 2 seconds until the first instruction sound is being played
-        StartCoroutine(WaitThenPlaySound(2f));
+        if (applicationData.speakInstructions)
+        { 
+            StartCoroutine(WaitThenPlaySound(2f));
+        }
     }
 
     private void Update()
@@ -304,6 +327,11 @@ public class InteractionManager : MonoBehaviour
 
         // move interaction index up
         interactionIndex++;
+        // skip equalizer steps if not selected in settings
+        if (!applicationData.equalizerMode && interactionIndex == eqStepsStart)
+        {
+            interactionIndex = eqStepsEnd + 1;
+        }
 
         // reset all flags indicating if sound was played in step
         ResetSoundWasPlaying();
@@ -379,7 +407,7 @@ public class InteractionManager : MonoBehaviour
             if (setNewAudio)
             {
                 audioSource.clip = currentInteraction.InstrAudio;
-                if (audioSource.clip != null)
+                if (audioSource.clip != null && applicationData.speakInstructions)
                     audioSource.Play();
             }
             while (tmpUGUI.color.a < 1.0f)
