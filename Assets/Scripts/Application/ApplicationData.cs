@@ -14,6 +14,7 @@ public class ApplicationData : MonoBehaviour
 
     private void Awake()
     {
+        // Create singleton instance, if not existent
         if (instance == null)
         {
             instance = this;
@@ -24,6 +25,10 @@ public class ApplicationData : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // use screen resolution of running system as application resolution
+        Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, Screen.fullScreen);
+
+        // find exit panel and hide
         exitScreen = GameObject.FindGameObjectWithTag("ExitPanel");
         exitScreen.SetActive(false);
     }
