@@ -243,7 +243,7 @@ AudioMixerController:
   - guid: 9b7102dfbdcc2314890eb43872c9ebc0
     name: Channel1Volume
   - guid: 3b506591ff92dd545910c675b049f9dc
-    name: BassCutOff
+    name: Channel1CutOff
   - guid: d3c0254cfdf36ef4680349ae624417c9
     name: Channel1KnobHiMidFreq
   - guid: 91bef5eae0ed2ec4db1db71511f0dfde
@@ -267,7 +267,7 @@ AudioMixerController:
   - guid: b368e26a3374941459003f8734270d9c
     name: Channel2Volume
   - guid: bbcf0a87dba1f4b43a76ea980005cc15
-    name: HihatCutOff
+    name: Channel2CutOff
   - guid: 75d43a7f107d0524698dd8fec9e271fb
     name: Channel2KnobLoMidGain
   - guid: a4ae506888640d04e84b23a0bbedb214
@@ -291,7 +291,7 @@ AudioMixerController:
   - guid: 9c0864a5f68e2304fb45f58118cdd275
     name: Channel3Volume
   - guid: ddde41c2f38799e41b97a3705d9b7ee1
-    name: SnareCutOff
+    name: Channel3CutOff
   - guid: 9a9c0886afcf08346ae1ccd6db36f43a
     name: Channel3KnobLoMidWidth
   - guid: 8c165307e34565d41bf612b97008ece6
