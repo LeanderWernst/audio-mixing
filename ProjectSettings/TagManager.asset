@@ -16,6 +16,7 @@ TagManager:
   - ApplicationSettings
   - ExitPanel
   - SettingsPanel
+  - ControlsPanel
   layers:
   - Default
   - TransparentFX
