@@ -16,6 +16,7 @@ public class ApplicationData : MonoBehaviour
     public float masterVolume = 0.88888889f;
     public float systemVolume = 0.88888889f;
 
+    private GameObject controlsPanel;
     private GameObject exitScreen;
     private GameObject settingsScreen;
     public SettingsPanel settingsPanel;
@@ -94,6 +95,23 @@ public class ApplicationData : MonoBehaviour
         }
     }
 
+    public void ToggleControlsPanel()
+    {
+        controlsPanel.SetActive(!controlsPanel.activeInHierarchy);
+    }
+
+    private void CheckControlsPanelInput()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            controlsPanel.SetActive(true);
+        }
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            controlsPanel.SetActive(false);
+        }
+    }
+
     public void QuitApplication()
     {
         // Compile depending on environment
@@ -120,6 +138,8 @@ public class ApplicationData : MonoBehaviour
         {
             ToggleSettingsScreen();
         }
+
+        CheckControlsPanelInput();
     }
 
     public void ChangeMasterVolume(float value) 
@@ -148,6 +168,9 @@ public class ApplicationData : MonoBehaviour
 
     public void UpdateReferences()
     {
+        // find controls panel
+        controlsPanel = GameObject.FindGameObjectWithTag("ControlsPanel");
+
         // find exit panel
         exitScreen = GameObject.FindGameObjectWithTag("ExitPanel");
 
@@ -178,5 +201,6 @@ public class ApplicationData : MonoBehaviour
     {
         exitScreen.SetActive(false);
         settingsScreen.SetActive(false);
+        controlsPanel.SetActive(false);
     }
 }
