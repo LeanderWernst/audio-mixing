@@ -27,6 +27,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI errorCountLabel = null;
     [SerializeField] private TextMeshProUGUI helpCountLabel = null;
 
+    [SerializeField] private GameObject finalScreen;
     [SerializeField] private TextMeshProUGUI totalErrorCountLabel;
     [SerializeField] private TextMeshProUGUI totalHelpCountLabel;
 
@@ -61,11 +62,11 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float completionCallbackDelay;
 
     public bool InteractionsCompleted => interactionIndex >= interactions.Count;
-    private int interactionIndex = 0; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
+    private int interactionIndex = 52; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
     private Interaction currentInteraction;
 
+    [SerializeField] private HintBehaviour hintBehaviour;
     private int errorCount;
-    private int helpCount;
     private bool helpUsedInThisStep = false;
     private bool bassWasPlayed, snareWasPlayed, hihatWasPlayed, drumsWerePlayed = false;
 
@@ -84,7 +85,7 @@ public class InteractionManager : MonoBehaviour
             applicationSettings.tag = "ApplicationSettings";
             applicationSettings.AddComponent<ApplicationData>();
         }
-        applicationData = applicationSettings.GetComponent<ApplicationData>();        
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
     }
 
 
@@ -95,7 +96,7 @@ public class InteractionManager : MonoBehaviour
         skipLabelPanel = skipLabel.GetComponentInParent<Image>();
         helpPanel = helpLabel.transform.parent.parent.gameObject;
         errorCountLabel.SetText(errorCount.ToString());
-        helpCountLabel.SetText(helpCount.ToString());
+        helpCountLabel.SetText(hintBehaviour.getHintCount().ToString());
 
         // warning if no interactions are defined in the interaction manager
         if (interactions.Count == 0)
@@ -136,24 +137,6 @@ public class InteractionManager : MonoBehaviour
                 CheckInteractionOrder(hit.transform.gameObject);
             }
         }
-
-        // Users can request help with the H key as long as we still have "open" interactions (the training is not completed).
-        /*if (Input.GetKeyDown(KeyCode.H) && !InteractionsCompleted)
-        {
-            // If your help counter is limited (because you display the help permanently after it was requested)
-            // then you can do this ...
-            if (!currentInteraction.HelpCounted)
-            {
-                helpCount++;
-                currentInteraction.HelpCounted = true;
-            }
-            // otherwise just do ...
-            // helpCount++;
-
-            //helpCountLabel.SetText("Hilfen: " + helpCount);
-
-            StartCoroutine(DisplayForDuration(helpLabel, currentInteraction.HelpMsg, 5));
-        }*/
 
         // Skip steps, when skippable or confirm action
         if (Input.GetKeyDown(KeyCode.Return) && currentInteraction.IsSkippable)
@@ -220,14 +203,6 @@ public class InteractionManager : MonoBehaviour
                 PlayFeedbackSound(true);
                 MoveToNextInteraction();
             }
-                
-
-            if (InteractionsCompleted)
-            {
-                // Code that should be executed at the end of the training goes here
-                StartCoroutine(DelayedTrainingCompletionCallback());
-                return;
-            }
         }
         else if (!selectedGameObject.Equals(speechFader) 
             && !selectedGameObject.Equals(masterFader) 
@@ -240,14 +215,6 @@ public class InteractionManager : MonoBehaviour
             errorCount++;
             errorCountLabel.SetText(errorCount.ToString());
         }
-    }
-
-    private IEnumerator DelayedTrainingCompletionCallback()
-    {
-        totalErrorCountLabel.SetText("Fehler: " + errorCount);
-        totalHelpCountLabel.SetText("Hilfen: " + helpCount);
-        yield return new WaitForSeconds(completionCallbackDelay);
-        OnCompleted?.Invoke();
     }
 
     private Coroutine coroutine;
@@ -338,7 +305,7 @@ public class InteractionManager : MonoBehaviour
         // Stop Audio
         if (audioSource.isPlaying)
             audioSource.Stop();
-        // Invoke Interaction function 'OnExecution' if defines
+        // Invoke Interaction function 'OnExecution' if defined
         currentInteraction.OnExecution?.Invoke();
 
         // move interaction index up
@@ -400,6 +367,20 @@ public class InteractionManager : MonoBehaviour
             StartCoroutine(FadeGraphicToZeroAlpha(1f, skipLabel));
             StartCoroutine(FadeGraphicToZeroAlpha(1f, skipLabelPanel));
         }
+
+        if (IsInFinalStep())
+        {
+            StartCoroutine(DelayedTrainingCompletionCallback());
+        }
+    }
+
+    private IEnumerator DelayedTrainingCompletionCallback()
+    {
+        totalErrorCountLabel.SetText(errorCount.ToString());
+        totalHelpCountLabel.SetText(hintBehaviour.getHintCount().ToString());
+        yield return new WaitForSeconds(completionCallbackDelay);
+        finalScreen.SetActive(true);
+        //OnCompleted?.Invoke();
     }
 
     private void PlayFeedbackSound(bool success)
