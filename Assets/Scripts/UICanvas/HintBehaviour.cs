@@ -11,6 +11,14 @@ public class HintBehaviour : MonoBehaviour
     [SerializeField] private InteractionManager interactionManager;
     private int hintCount = 0;
 
+    private Animator animator;
+    public bool animationPlayed;
+
+    private void Awake()
+    {
+        animator = gameObject.GetComponent<Animator>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +29,7 @@ public class HintBehaviour : MonoBehaviour
     void Update()
     {
         hideHelpOnEsc();
+        HighlightButtonWithErrorCountInStep(2); // highlight button after 2 errors in step
     }
 
     // add one to hintCount
@@ -60,10 +69,33 @@ public class HintBehaviour : MonoBehaviour
             errorPanel.SetActive(false);
             helpPanel.SetActive(true);
             addToHintCount();
+            StopAnimation();
         }
         else
         {
             helpPanel.SetActive(false);
         }
+    }
+
+    private void HighlightButtonWithErrorCountInStep(int countUntilTrigger)
+    {
+        if (interactionManager.errorCountInStep >= countUntilTrigger && !animationPlayed)
+        {
+            TriggerAnimation();
+            animationPlayed = true;
+        }
+    }
+
+    private void TriggerAnimation()
+    {
+        if (!animator.GetBool("highlightButtonOn"))
+        { 
+            animator.SetBool("highlightButtonOn", true);
+        }
+    }
+
+    public void StopAnimation()
+    {
+        animator.SetBool("highlightButtonOn", false);
     }
 }

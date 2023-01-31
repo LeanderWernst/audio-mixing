@@ -62,11 +62,13 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float completionCallbackDelay;
 
     public bool InteractionsCompleted => interactionIndex >= interactions.Count;
-    private int interactionIndex = 52; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
+    private int interactionIndex = 0; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
     private Interaction currentInteraction;
 
     [SerializeField] private HintBehaviour hintBehaviour;
     private int errorCount;
+    private int previousErrorCount;
+    public int errorCountInStep;
     private bool helpUsedInThisStep = false;
     private bool bassWasPlayed, snareWasPlayed, hihatWasPlayed, drumsWerePlayed = false;
 
@@ -156,6 +158,8 @@ public class InteractionManager : MonoBehaviour
         {
             CheckTargetRange();
         }
+
+        UpdateErrorCountInStepWhenErrorChanges();
     }
 
     private void DebugDrawRay()
@@ -318,6 +322,10 @@ public class InteractionManager : MonoBehaviour
 
         // reset all flags indicating if sound was played in step
         ResetSoundWasPlaying();
+
+        // reset errorCountInStep and hintBehaviour animation
+        errorCountInStep = 0;
+        hintBehaviour.animationPlayed = false;
 
         // if step requires master-meter show it, else hide it
         if (pipSteps.Contains(interactionIndex)) { pip.ToggleSmoothSlide(); }
@@ -606,5 +614,15 @@ public class InteractionManager : MonoBehaviour
     private bool IsInFinalStep()
     {
         return interactionIndex == interactions.Count - 1;
+    }
+
+    // put into update
+    private void UpdateErrorCountInStepWhenErrorChanges()
+    {
+        if (errorCount != previousErrorCount)
+        {
+            errorCountInStep++;
+            previousErrorCount = errorCount;
+        }
     }
 }
