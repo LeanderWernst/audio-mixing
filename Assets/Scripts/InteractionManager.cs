@@ -157,7 +157,17 @@ public class InteractionManager : MonoBehaviour
 
         // Skip steps, when skippable or confirm action
         if (Input.GetKeyDown(KeyCode.Return) && currentInteraction.IsSkippable)
+        {
+            if (!MandatorySoundWasPlayed())
+            {
+                PlayFeedbackSound(false);
+                DisplayErrForDuration(errorLabel, "Du solltest hören, was du mischst.", 5);
+                errorCount++;
+                errorCountLabel.SetText(errorCount.ToString());
+                return;
+            }
             MoveToNextInteraction();
+        }
         else if (Input.GetKeyDown(KeyCode.Return) // Check TargetRange if TargetRange was given
                 && currentInteraction.TargetValueMax != currentInteraction.TargetValueMin)
         {
@@ -219,7 +229,11 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
         }
-        else if (!selectedGameObject.Equals(speechFader) && !selectedGameObject.Equals(masterFader) && !selectedGameObject.Equals(channelList) && !FinalMixingIsActive())
+        else if (!selectedGameObject.Equals(speechFader) 
+            && !selectedGameObject.Equals(masterFader) 
+            && !selectedGameObject.Equals(channelList) 
+            && !FinalMixingIsActive()
+            && !IsInFinalStep())
         {
             PlayFeedbackSound(false);
             DisplayErrForDuration(errorLabel, currentInteraction.ErrElement, 5);
@@ -606,5 +620,10 @@ public class InteractionManager : MonoBehaviour
             }
         }
         return headline;
+    }
+
+    private bool IsInFinalStep()
+    {
+        return interactionIndex == interactions.Count - 1;
     }
 }
