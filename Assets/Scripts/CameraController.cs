@@ -64,10 +64,10 @@ public class CameraController : MonoBehaviour
                 // Rotate view
                 float rotationX = Input.GetAxis("Mouse X") * rotationSpeed;
                 float rotationY = Input.GetAxis("Mouse Y") * rotationSpeed;
-                base.transform.Rotate(-rotationY, rotationX, 0, Space.Self);
-                base.transform.rotation = Quaternion.Euler(
-                    base.transform.rotation.eulerAngles.x,
-                    base.transform.rotation.eulerAngles.y,
+                transform.Rotate(-rotationY, rotationX, 0, Space.Self);
+                transform.rotation = Quaternion.Euler(
+                    transform.rotation.eulerAngles.x,
+                    transform.rotation.eulerAngles.y,
                     0
                 );
             
