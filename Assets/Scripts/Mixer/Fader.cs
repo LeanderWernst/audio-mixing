@@ -124,7 +124,10 @@ public class Fader : MonoBehaviour
             valueStorage.SetValue(value, gameObject);
             audioController.SetFaderVolume(transform.name, channel, value);
 
-            ChangeVolumeInSettings();
+            if (!initialMove) // prevent audiovolume from being changed when value not yet set correctly
+            { 
+                ChangeVolumeInSettings();
+            }
         }
         else
         {
@@ -144,11 +147,13 @@ public class Fader : MonoBehaviour
     {
         if (channel == "Master")
         {
+            Debug.Log("MasterVol: " + value);
             applicationData.masterVolume = (value + 80) / 90;
             applicationData.settingsPanel.masterSlider.value = applicationData.masterVolume;
         }
         else if (channel == "StereoInput1")
         {
+            Debug.Log("SpeechVol: " + value);
             applicationData.systemVolume = (value + 80) / 90;
             applicationData.settingsPanel.systemSlider.value = applicationData.systemVolume;
         }
