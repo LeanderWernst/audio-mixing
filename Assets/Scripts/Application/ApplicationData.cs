@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ApplicationData : MonoBehaviour
@@ -16,12 +18,14 @@ public class ApplicationData : MonoBehaviour
     public float masterVolume = 0.88888889f;
     public float systemVolume = 0.88888889f;
 
-    private GameObject controlsPanel;
-    private GameObject exitScreen;
-    private GameObject settingsScreen;
-    private GameObject hintPanel;
-    private GameObject channelList;
-    public SettingsPanel settingsPanel;
+    [SerializeField] private GameObject controlsScreen;
+    [SerializeField] private GameObject settingsScreen;
+    [SerializeField] private GameObject exitScreen;
+    [SerializeField] private TextMeshProUGUI exitScreenHeadline;
+    [SerializeField] private GameObject exitScreenSubline;
+    [HideInInspector] public GameObject hintPanel;
+    [HideInInspector] public GameObject channelList;
+    [HideInInspector] public SettingsPanel settingsPanel;
     private Slider masterVolumeSlider;
     private Slider systemVolumeSlider;
     [HideInInspector] public GameObject masterFader;
@@ -48,6 +52,13 @@ public class ApplicationData : MonoBehaviour
 
         // Hide deactivated panels
         HidePanels();
+
+        //SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        UpdateReferences();
     }
 
     private void Start()
@@ -80,6 +91,18 @@ public class ApplicationData : MonoBehaviour
 
     public void ToggleExitScreen()
     {
+        var currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "StartMenu")
+        {
+            exitScreenHeadline.SetText("Anwendung beenden");
+            exitScreenSubline.SetActive(false);
+        }
+        else
+        {
+            exitScreenHeadline.SetText("Zurück zum Menü");
+            exitScreenSubline.SetActive(true);
+        }
+
         exitScreen.SetActive(!exitScreen.activeInHierarchy);
         if (settingsScreen.activeInHierarchy)
         {
@@ -98,18 +121,18 @@ public class ApplicationData : MonoBehaviour
 
     public void ToggleControlsPanel()
     {
-        controlsPanel.SetActive(!controlsPanel.activeInHierarchy);
+        controlsScreen.SetActive(!controlsScreen.activeInHierarchy);
     }
 
     private void CheckControlsPanelInput()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            controlsPanel.SetActive(true);
+            controlsScreen.SetActive(true);
         }
         if (Input.GetKeyUp(KeyCode.LeftControl))
         {
-            controlsPanel.SetActive(false);
+            controlsScreen.SetActive(false);
         }
     }
 
@@ -133,7 +156,23 @@ public class ApplicationData : MonoBehaviour
         }
     }
 
-    public void QuitApplication()
+    public void Quit()
+    {
+        var currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "StartMenu")
+        {
+            QuitApplication();
+        }
+        else
+        {
+            QuitToMenu();
+            if (exitScreen.activeInHierarchy)
+            {
+                exitScreen.SetActive(false);
+            }
+        }
+    }
+    private void QuitApplication()
     {
         // Compile depending on environment
         #if UNITY_EDITOR
@@ -143,7 +182,7 @@ public class ApplicationData : MonoBehaviour
         #endif
     }
 
-    public void QuitToMenu()
+    private void QuitToMenu()
     {
         SceneLoader.LoadScene("StartMenu");
     }
@@ -188,21 +227,9 @@ public class ApplicationData : MonoBehaviour
 
     public void UpdateReferences()
     {
-        // find controls panel
-        controlsPanel = GameObject.FindGameObjectWithTag("ControlsPanel");
-
-        // find exit panel
-        exitScreen = GameObject.FindGameObjectWithTag("ExitPanel");
-
-        // find settings panel
-        settingsScreen = GameObject.FindGameObjectWithTag("SettingsPanel");
-
-        hintPanel = GameObject.FindGameObjectWithTag("HelpPanel");
-        channelList = GameObject.FindGameObjectWithTag("ChannelListOverlay");
-
         // find volume sliders
-        masterVolumeSlider = GameObject.Find("MasterSlider").GetComponent<Slider>();
-        systemVolumeSlider = GameObject.Find("SystemSlider").GetComponent<Slider>();
+        masterVolumeSlider = settingsPanel.masterSlider;
+        systemVolumeSlider = settingsPanel.systemSlider;
         settingsPanel = settingsScreen.GetComponent<SettingsPanel>();
         settingsPanel.masterSlider = masterVolumeSlider;
         settingsPanel.systemSlider = systemVolumeSlider;
@@ -222,9 +249,6 @@ public class ApplicationData : MonoBehaviour
 
     public void HidePanels()
     {
-        exitScreen.SetActive(false);
-        settingsScreen.SetActive(false);
-        controlsPanel.SetActive(false);
         if (hintPanel != null & channelList != null)
         { 
             hintPanel.SetActive(false);

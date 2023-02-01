@@ -8,6 +8,9 @@ public class SceneStartup : MonoBehaviour
     private GameObject applicationSettings;
     private ApplicationData applicationData;
 
+    private GameObject hintPanel;
+    private GameObject channelList;
+
     private void Awake()
     {
         // Read settings from gameobject if present.
@@ -20,8 +23,14 @@ public class SceneStartup : MonoBehaviour
             applicationSettings.AddComponent<ApplicationData>();
         }
         applicationData = applicationSettings.GetComponent<ApplicationData>();
-        
-        // Update references
+
+
+        hintPanel = GameObject.FindGameObjectWithTag("HelpPanel");
+        channelList = GameObject.FindGameObjectWithTag("ChannelListOverlay");
+
+        // Update references in applicationData
+        applicationData.hintPanel = hintPanel;
+        applicationData.channelList = channelList;
         applicationData.UpdateReferences();
         applicationData.HidePanels();
     }
@@ -30,6 +39,7 @@ public class SceneStartup : MonoBehaviour
     {
         applicationData.ChangeMasterVolume(applicationData.masterVolume);
         applicationData.ChangeSystemVolume(applicationData.systemVolume);
+        
     }
 
     // Update is called once per frame

@@ -9,8 +9,8 @@ public class SettingsPanel : MonoBehaviour
     private GameObject applicationSettings;
     private ApplicationData applicationData;
     
-    [HideInInspector] public Slider masterSlider;
-    [HideInInspector] public Slider systemSlider;
+    public Slider masterSlider;
+    public Slider systemSlider;
 
     private void Awake()
     {

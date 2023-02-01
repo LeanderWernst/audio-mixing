@@ -4,9 +4,20 @@ using UnityEngine;
 
 public class DontDestroyOnLoad : MonoBehaviour
 {
+    public static DontDestroyOnLoad instance; // Singleton
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+
+        // Create singleton instance, if not existent
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
 

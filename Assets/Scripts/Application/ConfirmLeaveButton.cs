@@ -23,6 +23,6 @@ public class ConfirmLeaveButton : MonoBehaviour
     }
     private void Start()
     {
-        button.onClick.AddListener(delegate { applicationData.QuitToMenu(); });
+        button.onClick.AddListener(delegate { applicationData.Quit(); });
     }
 }
