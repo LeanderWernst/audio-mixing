@@ -37,11 +37,11 @@ public class Knob : MonoBehaviour
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
-        valueStorage = gameObject.GetComponent<ValueStorage>();
         im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
     }
     private void Start()
     {
+        valueStorage = gameObject.GetComponent<ValueStorage>();
         angle = transform.localEulerAngles.z;
         angle = angle > maxRotation ? angle - 360 : angle;
         knobType = GetKnobType();

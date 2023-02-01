@@ -17,7 +17,7 @@ public class SelectionManager : MonoBehaviour
     private float vtbMaxAlpha = 235f/255f;
 
     private int UILayer;
-    private enum Fade {Out = 0, In = 1};
+    public enum Fade {Out = 0, In = 1};
 
     private void Awake()
     {
@@ -111,7 +111,7 @@ public class SelectionManager : MonoBehaviour
                 // only highlight on click, when in selectableTags array, but ignore ChannelList
                 if (TransformWithTagIsMovable(selectableTags, selection) && !selection.CompareTag("ChannelList"))
                 {
-                    FadeValueText(Fade.In);
+                    FadeValueText(Fade.In, valueTextBackground, canvasValueText);
                     var clickedBefore = clickedObject;
                     if (clickedBefore != null)
                     {
@@ -137,7 +137,7 @@ public class SelectionManager : MonoBehaviour
                 }
                 else
                 {
-                    FadeValueText(Fade.Out);
+                    FadeValueText(Fade.Out, valueTextBackground, canvasValueText);
                     if (clickedObject != null)
                     { 
                         clickedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
@@ -159,12 +159,12 @@ public class SelectionManager : MonoBehaviour
         return System.Array.IndexOf(tagArray, transform.tag) != -1;
     }
 
-    private void FadeValueText(SelectionManager.Fade direction) 
+    public void FadeValueText(SelectionManager.Fade direction, Image valueTextBackground, TextMeshProUGUI valueText) 
     {
 
-        IEnumerator FadeTextToFullAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI)
+        IEnumerator FadeTextToFullAlpha(float timeInSeconds, Image valueTextBackground, TextMeshProUGUI tmpUGUI)
         {
-            yield return FadeTextToZeroAlpha(0.05f, canvasValueText);
+            yield return FadeTextToZeroAlpha(0.05f, valueTextBackground, canvasValueText);
             while (tmpUGUI.color.a < 1.0f)
             {
                 tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a + (Time.deltaTime / timeInSeconds));
@@ -174,7 +174,7 @@ public class SelectionManager : MonoBehaviour
             valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, vtbMaxAlpha);
         }
 
-        IEnumerator FadeTextToZeroAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI)
+        IEnumerator FadeTextToZeroAlpha(float timeInSeconds, Image valueTextBackground, TextMeshProUGUI tmpUGUI)
         {
             while (tmpUGUI.color.a > 0.0f)
             {
@@ -189,18 +189,18 @@ public class SelectionManager : MonoBehaviour
         {
             case Fade.Out:
                 StopAllCoroutines();
-                StartCoroutine(FadeTextToZeroAlpha(0.5f, canvasValueText));
+                StartCoroutine(FadeTextToZeroAlpha(0.5f, valueTextBackground, canvasValueText));
                 break;
             case Fade.In:
                 if (currentSelection != clickedObject) 
                 { 
                     StopAllCoroutines();
-                    StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
+                    StartCoroutine(FadeTextToFullAlpha(0.5f, valueTextBackground, canvasValueText));
                 }
                 break;
             default:
                 StopAllCoroutines();
-                StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
+                StartCoroutine(FadeTextToFullAlpha(0.5f, valueTextBackground, canvasValueText));
                 break;
         }
 

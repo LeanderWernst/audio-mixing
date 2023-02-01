@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class ApplicationData : MonoBehaviour
 {
     public static ApplicationData instance; // Singleton
+    public bool demoMode = false;
     [HideInInspector] public bool beginnerMode = false;
     [HideInInspector] public bool equalizerMode = true;
     [HideInInspector] public bool speakInstructions = true;
@@ -199,6 +200,20 @@ public class ApplicationData : MonoBehaviour
 
         // Check STRG for controls panel
         CheckControlsPanelInput();
+    }
+
+    public void LoadTraining(bool demoActivated)
+    {
+        demoMode = demoActivated;
+        Scene trainingScene = SceneManager.GetSceneByName("Training");
+        if (!trainingScene.IsValid())
+        {
+            SceneManager.LoadScene("Training", LoadSceneMode.Single);
+        }
+        else
+        {
+            SceneManager.SetActiveScene(trainingScene);
+        }
     }
 
     public void ChangeMasterVolume(float value) 

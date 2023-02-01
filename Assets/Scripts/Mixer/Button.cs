@@ -28,13 +28,13 @@ public class Button : MonoBehaviour
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
-        valueStorage = gameObject.GetComponent<ValueStorage>();
         im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
     }
 
     // Start is called before the first frame update
     private void Start()
     {
+        valueStorage = gameObject.GetComponent<ValueStorage>();
         startPosition = transform.position;
         endPosition = transform.TransformPoint(new Vector3(0, 0, -0.00057567f));
         hasLED = transform.parent != null && transform.parent.tag == LEDTag;

@@ -62,7 +62,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float completionCallbackDelay;
 
     public bool InteractionsCompleted => interactionIndex >= interactions.Count;
-    private int interactionIndex = 0; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
+    private int interactionIndex = 6; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
     private Interaction currentInteraction;
 
     [SerializeField] private HintBehaviour hintBehaviour;
@@ -309,8 +309,6 @@ public class InteractionManager : MonoBehaviour
         // Stop Audio
         if (audioSource.isPlaying)
             audioSource.Stop();
-        // Invoke Interaction function 'OnExecution' if defined
-        currentInteraction.OnExecution?.Invoke();
 
         // move interaction index up
         interactionIndex++;
@@ -338,6 +336,13 @@ public class InteractionManager : MonoBehaviour
         // set next interaction
         currentInteraction = interactions[interactionIndex];
         StopAllCoroutines();
+
+        // Get TargetValue: if range, calculate mean of range.
+        var targetValue = TargetValueHasRange() ? (currentInteraction.TargetValueMax + currentInteraction.TargetValueMin) / 2 : currentInteraction.TargetValue;
+        // Get animationTime: if 0, use 2f as default
+        var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
+        // Invoke Demo-Animation 'Animate' if defined
+        currentInteraction.Animate?.Invoke(targetValue, currentInteraction.animationTime);
 
         // only fade in the headline if it is new and replace step numbers if necessary
         if (!headlineLabel.text.Equals(ReplaceStepNumInHeadline(currentInteraction.Headline)))

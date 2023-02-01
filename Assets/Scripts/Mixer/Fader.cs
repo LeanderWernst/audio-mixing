@@ -12,7 +12,9 @@ public class Fader : MonoBehaviour
     [SerializeField] private float upperPosBoundary = 0.0236f;
     [SerializeField] private float lowerPosBoundary = 0.06782f;
     [SerializeField] private float sensitivityY = 0.05f;
-    
+
+    private Vector3 initialPosition;
+
     private PositionValueRelation[] faderPvr = FaderPvr.relation;
     public float value;
     private ValueStorage valueStorage;
@@ -30,7 +32,6 @@ public class Fader : MonoBehaviour
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
-        valueStorage = gameObject.GetComponent<ValueStorage>();
         im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
 
         applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
@@ -45,6 +46,7 @@ public class Fader : MonoBehaviour
 
     void Start()
     {
+        valueStorage = gameObject.GetComponent<ValueStorage>();
         audioController = GameObject.Find("PanelKeys").GetComponent<AudioController>();
         var parent = transform;
         while (!parent.CompareTag("Channel"))
@@ -53,6 +55,8 @@ public class Fader : MonoBehaviour
         }
         channel = parent.name;
         SlideFader(0, initialMove: true); // Initial "move" to get initial value from position
+
+        initialPosition = transform.localPosition;
     }
 
     // Update is called once per frame
@@ -61,6 +65,16 @@ public class Fader : MonoBehaviour
         if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0))
         {
             SlideFader(Input.mouseScrollDelta.y / 2);
+        }
+
+        // TEST
+        if (Input.GetKey(KeyCode.X))
+        {
+            SlideFader(new Vector3(GetNonLinearFaderPosition(0), transform.localPosition.y, transform.localPosition.z), 2f);
+        }
+        if (Input.GetKey(KeyCode.Y))
+        {
+            SetToInitialPosition();
         }
     }
 
@@ -105,6 +119,27 @@ public class Fader : MonoBehaviour
         var pos = transform.localPosition.x;
         return (pos - lowerBound) * (scaleMax - scaleMin) / (upperBound - lowerBound) + scaleMin;
 
+    }
+
+    public float GetNonLinearFaderPosition(float value)
+    {
+        foreach (var relation in faderPvr)
+        {
+            if (value <= relation.values[0] && value >= relation.values[1])
+            {
+                return GetFaderPosition(
+                    relation.positions[0], relation.positions[1],
+                    relation.values[0], relation.values[1],
+                    value
+                    );
+            }
+        }
+        return 0f;
+    }
+
+    public float GetFaderPosition(float upperBoundPos, float lowerBoundPos, float scaleMax, float scaleMin, float value)
+    {
+        return (value - scaleMin) * (upperBoundPos - lowerBoundPos) / (scaleMax - scaleMin) + lowerBoundPos;
     }
 
     private void SlideFader(float inputForce, bool initialMove = false)
@@ -157,6 +192,88 @@ public class Fader : MonoBehaviour
             applicationData.systemVolume = (value + 80) / 90;
             applicationData.settingsPanel.systemSlider.value = applicationData.systemVolume;
         }
+    }
+
+
+    //////////////////////////////////////////////////
+    // FUNCTIONS FOR DEMO MODE
+
+    // To be called from interaction in demo mode
+    public void AnimateFader(float targetValue, float animationTime)
+    { 
+        var targetPos = new Vector3(GetNonLinearFaderPosition(targetValue), transform.localPosition.y, transform.localPosition.z);
+        SlideFader(targetPos, animationTime);
+    }
+    
+    // To be called when going backwards
+    public void SetToInitialPosition()
+    {
+        StopAllCoroutines();
+        transform.localPosition = initialPosition;
+        value = GetNonLinearFaderValue(faderPvr);
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetFaderVolume(transform.name, channel, value);
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+    }
+
+    // To be called when going forwards
+    public void SetToTargetPosition(float targetValue)
+    {
+        StopAllCoroutines();
+        transform.localPosition = new Vector3(GetNonLinearFaderPosition(targetValue), transform.localPosition.y, transform.localPosition.z);
+        value = GetNonLinearFaderValue(faderPvr);
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetFaderVolume(transform.name, channel, value);
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+    }
+    
+    // To be called when watching at step
+    private void SlideFader(Vector3 targetPos, float timeToReachInSeconds)
+    {
+        StartCoroutine(AnimateToTargetPosition(targetPos, timeToReachInSeconds));
+    }
+
+    private IEnumerator AnimateToTargetPosition(Vector3 targetPos, float timeToReachInSeconds)
+    {
+        float elapsedTime = 0f;
+        Vector3 startPos = transform.localPosition;
+
+        // Turn on emission
+        gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
+        gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(1f);
+
+        while (elapsedTime < timeToReachInSeconds)
+        {
+            float t = elapsedTime / timeToReachInSeconds;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+            transform.localPosition = Vector3.Lerp(startPos, targetPos, t);
+
+            value = GetNonLinearFaderValue(faderPvr);
+            ChangeValueText();
+            valueStorage.SetValue(value, gameObject);
+            audioController.SetFaderVolume(transform.name, channel, value);
+            ChangeVolumeInSettings();
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = targetPos;
+
+        yield return new WaitForSeconds(0.5f);
+
+        transform.localPosition = initialPosition;
+        value = GetNonLinearFaderValue(faderPvr);
+        valueStorage.SetValue(value, gameObject);
+        ChangeValueText();
+        audioController.SetFaderVolume(transform.name, channel, value);
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(0.5f);
+
+        SlideFader(targetPos, timeToReachInSeconds);
     }
 
 }
