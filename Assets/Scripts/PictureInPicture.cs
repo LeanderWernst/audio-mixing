@@ -94,7 +94,7 @@ public class PictureInPicture : MonoBehaviour
     /**
      * This function toggles the pip camera to slide in or out the frame
      */
-    public void ToggleSmoothSlide()
+    public void ToggleSmoothSlide(float duration = 2f)
     {
         isHidden = !isHidden;
         if (!isHidden)
@@ -114,7 +114,7 @@ public class PictureInPicture : MonoBehaviour
         {
             StopCoroutine(coroutine);
         }
-        coroutine = StartCoroutine(SmoothSlidePipToNewX(pipX, 2f));
+        coroutine = StartCoroutine(SmoothSlidePipToNewX(pipX, duration));
     }
 
     IEnumerator SmoothSlidePipToNewX(float targetPipX, float duration)

@@ -348,6 +348,40 @@ public class AudioController : MonoBehaviour
         pbbSnare.ChangeButtonColor();
         pbbHihat.ChangeButtonColor();
     }
+
+    public void PlaySoundInDemo(string clip)
+    {
+        switch (clip)
+        {
+            case "drum_bass":
+                AudioSrcBass.clip = bassdrum;
+                break;
+            case "drum_hihat":
+                AudioSrcHihat.clip = hihat;
+                AudioSrcHihat.Play();
+                break;
+            case "drum_snare":
+                AudioSrcSnare.clip = snare;
+                AudioSrcSnare.Play();
+                break;
+            case "all":
+                AudioSrcSnare.clip = snareLoop;
+                AudioSrcBass.clip = bassdrumLoop;
+                AudioSrcHihat.clip = hihatLoop;
+                AudioSrcSnare.Play();
+                AudioSrcBass.Play();
+                AudioSrcHihat.Play();
+                break;
+        }
+    }
+
+    public void StopAllSounds()
+    {
+        AudioSrcSnare.Stop();
+        AudioSrcBass.Stop();
+        AudioSrcHihat.Stop();
+    }
+
     private void ListenToKeyboard()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))

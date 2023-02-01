@@ -276,4 +276,66 @@ public class Fader : MonoBehaviour
         SlideFader(targetPos, timeToReachInSeconds);
     }
 
+    /////////////////////
+    // To randomly move in mixing step (demo)
+    public void AnimateFaderRandomInOptimum(float _ignored, float animationTime)
+    {
+        var targetPos = new Vector3(GetNonLinearFaderPosition(Random.Range(-8, 0)), transform.localPosition.y, transform.localPosition.z);
+        SlideFaderRandom(targetPos, animationTime);
+    }
+
+    public void AnimateFaderRandom(float _ignored, float animationTime)
+    {
+        var targetPos = new Vector3(GetNonLinearFaderPosition(Random.Range(-6, 2)), transform.localPosition.y, transform.localPosition.z);
+        SlideFaderRandom(targetPos, animationTime);
+    }
+
+    private void SlideFaderRandom(Vector3 targetPos, float timeToReachInSeconds)
+    {
+        StartCoroutine(AnimateToTargetPositionRandom(targetPos, timeToReachInSeconds));
+    }
+
+    private IEnumerator AnimateToTargetPositionRandom(Vector3 targetPos, float timeToReachInSeconds)
+    {
+        float elapsedTime = 0f;
+        Vector3 startPos = transform.localPosition;
+
+        // Turn on emission
+        gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
+        gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(1f);
+
+        while (elapsedTime < timeToReachInSeconds)
+        {
+            float t = elapsedTime / timeToReachInSeconds;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+            transform.localPosition = Vector3.Lerp(startPos, targetPos, t);
+
+            value = GetNonLinearFaderValue(faderPvr);
+            ChangeValueText();
+            valueStorage.SetValue(value, gameObject);
+            audioController.SetFaderVolume(transform.name, channel, value);
+            ChangeVolumeInSettings();
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = targetPos;
+
+        yield return new WaitForSeconds(0.5f);
+
+        transform.localPosition = startPos;
+        value = GetNonLinearFaderValue(faderPvr);
+        valueStorage.SetValue(value, gameObject);
+        ChangeValueText();
+        audioController.SetFaderVolume(transform.name, channel, value);
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(0.5f);
+
+        SlideFaderRandom(targetPos, timeToReachInSeconds);
+    }
+
 }

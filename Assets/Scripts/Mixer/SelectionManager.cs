@@ -111,7 +111,7 @@ public class SelectionManager : MonoBehaviour
                 // only highlight on click, when in selectableTags array, but ignore ChannelList
                 if (TransformWithTagIsMovable(selectableTags, selection) && !selection.CompareTag("ChannelList"))
                 {
-                    FadeValueText(Fade.In, valueTextBackground, canvasValueText);
+                    FadeValueText(Fade.In);
                     var clickedBefore = clickedObject;
                     if (clickedBefore != null)
                     {
@@ -137,7 +137,7 @@ public class SelectionManager : MonoBehaviour
                 }
                 else
                 {
-                    FadeValueText(Fade.Out, valueTextBackground, canvasValueText);
+                    FadeValueText(Fade.Out);
                     if (clickedObject != null)
                     { 
                         clickedObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
@@ -159,7 +159,7 @@ public class SelectionManager : MonoBehaviour
         return System.Array.IndexOf(tagArray, transform.tag) != -1;
     }
 
-    public void FadeValueText(SelectionManager.Fade direction, Image valueTextBackground, TextMeshProUGUI valueText) 
+    public void FadeValueText(SelectionManager.Fade direction) 
     {
 
         IEnumerator FadeTextToFullAlpha(float timeInSeconds, Image valueTextBackground, TextMeshProUGUI tmpUGUI)

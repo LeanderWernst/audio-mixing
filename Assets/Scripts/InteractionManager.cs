@@ -13,6 +13,16 @@ public class InteractionManager : MonoBehaviour
     private GameObject applicationSettings;
     private ApplicationData applicationData;
 
+    [Header("UI Demo Mode")]
+    [SerializeField] private GameObject nextButton;
+    [SerializeField] private GameObject prevButton;
+    [SerializeField] private TextMeshProUGUI demoStepCount;
+    [SerializeField] private int demoStartStep;
+    [SerializeField] private int demoLastStep;
+    private int demoStep = 1;
+    private int demoStepsTotalCorrected;
+    [SerializeField] private SelectionManager selectionMan;
+
     [Header("User Interface")]
     [SerializeField] private AudioController audioController;
     [SerializeField] private AudioSource audioSource;
@@ -62,7 +72,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float completionCallbackDelay;
 
     public bool InteractionsCompleted => interactionIndex >= interactions.Count;
-    private int interactionIndex = 6; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
+    private int interactionIndex = 0; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
     private Interaction currentInteraction;
 
     [SerializeField] private HintBehaviour hintBehaviour;
@@ -93,13 +103,6 @@ public class InteractionManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("Start InteractionManager");
-        // UI init
-        skipLabelPanel = skipLabel.GetComponentInParent<Image>();
-        helpPanel = helpLabel.transform.parent.parent.gameObject;
-        errorCountLabel.SetText(errorCount.ToString());
-        helpCountLabel.SetText(hintBehaviour.getHintCount().ToString());
-
         // warning if no interactions are defined in the interaction manager
         if (interactions.Count == 0)
         {
@@ -107,20 +110,50 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        // Set the first interaction from the list as our current interaction and display its instruction in the ui.
-        currentInteraction = interactions[interactionIndex];
-        headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
-        instructionLabel.SetText(currentInteraction.Instruction);
-        helpLabel.SetText(currentInteraction.HelpMsg);
-        helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
-        audioSource.clip = currentInteraction.InstrAudio;
-        helpBonusButton.SetActive(currentInteraction.HelpMsgBonus != "");
-        // error label does not need to be set, since it is set when an error occurs.
+        interactionIndex = applicationData.demoMode ? demoStartStep : 0;
 
-        // Wait 2 seconds until the first instruction sound is being played
-        if (applicationData.speakInstructions)
-        { 
-            StartCoroutine(WaitThenPlaySound(2f));
+        // Set the first interaction from the list as our current interaction and 
+        currentInteraction = interactions[interactionIndex];
+
+        // START-ACTIONS FOR TRAINING MODE
+        if (!applicationData.demoMode)
+        {
+            // UI init
+            skipLabelPanel = skipLabel.GetComponentInParent<Image>();
+            helpPanel = helpLabel.transform.parent.parent.gameObject;
+            errorCountLabel.SetText(errorCount.ToString());
+            helpCountLabel.SetText(hintBehaviour.getHintCount().ToString());
+
+            // display instructions in the ui
+            headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
+            instructionLabel.SetText(currentInteraction.Instruction);
+            helpLabel.SetText(currentInteraction.HelpMsg);
+            helpLabelBonus.SetText(currentInteraction.HelpMsgBonus);
+            audioSource.clip = currentInteraction.InstrAudio;
+            helpBonusButton.SetActive(currentInteraction.HelpMsgBonus != "");
+            // error label does not need to be set, since it is set when an error occurs.
+
+            // Wait 2 seconds until the first instruction sound is being played
+            if (applicationData.speakInstructions)
+            { 
+                StartCoroutine(WaitThenPlaySound(2f));
+            }
+        }
+
+        // START-ACTIONS FOR DEMO MODE
+        else
+        {
+            CorrectDemoTotalStepCount();
+
+            headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
+            headlineLabel.color = new Color(255f, 255f, 255f, 255f);
+
+            instructionLabel.SetText(currentInteraction.altInstruction == "" ? currentInteraction.Instruction : currentInteraction.altInstruction);
+            instructionLabel.color = new Color(255f, 255f, 255f, 255f);
+
+            prevButton.SetActive(false);
+
+            demoStepCount.SetText(demoStep + "/" + demoStepsTotalCorrected);
         }
     }
 
@@ -163,6 +196,16 @@ public class InteractionManager : MonoBehaviour
             }
 
             UpdateErrorCountInStepWhenErrorChanges();
+        }
+
+        // Actions for Demo Mode
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            DemoStepForwards();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            DemoStepBackwards();
         }
     }
 
@@ -311,52 +354,145 @@ public class InteractionManager : MonoBehaviour
     // used for demo mode
     public void DemoStepForwards()
     {
-        if (IsInFinalStep())
+        if (demoStep < demoStepsTotalCorrected)
         {
-            return;
+            // Invoke Demo-Animation 'SetToTarget' if defined, so GameObject from before has final position
+            currentInteraction.SetToTarget?.Invoke(ReturnDemoTargetValue());
+
+            // Stop Audio
+            audioController.StopAllSounds();
+
+            // MOVE INTERACTIONS UP
+            interactionIndex++;
+            // skip skippable steps
+            while (!interactions[interactionIndex].UseInDemo && interactionIndex < demoLastStep)
+            { interactionIndex++; }
+            // skip equalizer steps if not selected in settings
+            if (!applicationData.equalizerMode && interactionIndex >= eqStepsStart && interactionIndex <= eqStepsEnd)
+            {
+                Debug.Log("EQEnd: " + eqStepsEnd);
+                interactionIndex = eqStepsEnd + 1;
+                while (!interactions[interactionIndex].UseInDemo && interactionIndex < demoLastStep)
+                { interactionIndex++; }
+            }
+            demoStep++;
+            Debug.Log("IntIndex: " + interactionIndex + " Step: " + demoStep + " Total: " + demoStepsTotalCorrected);
+
+            // activate prev button
+            if (demoStep == 2 && !prevButton.activeInHierarchy)
+            {
+                prevButton.SetActive(true);
+            }
+
+            // if in final action-step (excluding 'congratulations') disable button
+            if (demoStep == demoStepsTotalCorrected)
+            { nextButton.SetActive(false); }
+
+            // if step requires master-meter show it, else hide it
+            if (pipSteps.Contains(interactionIndex)) { pip.ToggleSmoothSlide(0.25f); }
+            else { if (pip.IsVisible()) { pip.ToggleSmoothSlide(0.25f); } }
+
+            // set next interaction
+            currentInteraction = interactions[interactionIndex];
+            StopAllCoroutines();
+
+            // SET TEXT
+            headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
+            headlineLabel.color = new Color(255f, 255f, 255f, 255f);
+
+            instructionLabel.SetText(currentInteraction.altInstruction == "" ? currentInteraction.Instruction : currentInteraction.altInstruction);
+            instructionLabel.color = new Color(255f, 255f, 255f, 255f);
+
+            demoStepCount.SetText(demoStep + "/" + demoStepsTotalCorrected);
+
+            // TODO: DEFINE CAMERA AND CHANGE PRIORITY TO THAT!
+
+            // Get TargetValue: if range, calculate mean of range.
+            var targetValue = ReturnDemoTargetValue();
+            // Get animationTime: if 0, use 2f as default
+            var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
+            // Invoke Demo-Animation 'Animate' if defined
+            currentInteraction.Animate?.Invoke(targetValue, animationTime);
+            selectionMan.FadeValueText(SelectionManager.Fade.In);
+            if (currentInteraction.DrumToBePlayed != "")
+            {
+                audioController.PlaySoundInDemo(currentInteraction.DrumToBePlayed);
+            }
         }
-
-        // Stop Audio
-        // TODO: STOP DRUM SOUNDS
-
-
-        // MOVE INTERACTIONS UP
-        interactionIndex++;
-        // skip equalizer steps if not selected in settings
-        if (!applicationData.equalizerMode && interactionIndex == eqStepsStart)
-        {
-            interactionIndex = eqStepsEnd + 1;
-        }
-        // set next interaction
-        currentInteraction = interactions[interactionIndex];
-        StopAllCoroutines();
-
-        // SET TEXT
-        headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
-        headlineLabel.color = new Color(255f, 255f, 255f, 255f);
-
-        instructionLabel.SetText(currentInteraction.altInstruction == "" ? currentInteraction.Instruction : currentInteraction.altInstruction);
-        instructionLabel.color = new Color(255f, 255f, 255f, 255f);
-
-        // Get TargetValue: if range, calculate mean of range.
-        var targetValue = TargetValueHasRange() ? (currentInteraction.TargetValueMax + currentInteraction.TargetValueMin) / 2 : currentInteraction.TargetValue;
-        // Get animationTime: if 0, use 2f as default
-        var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
-        // Invoke Demo-Animation 'Animate' if defined
-        currentInteraction.Animate?.Invoke(targetValue, currentInteraction.animationTime);
-
-        // if step is skippable fade in info panel, else fade out
-        if (currentInteraction.IsSkippable)
-        { 
-        }
-
-        
     }
 
     // used for demo mode
     public void DemoStepBackwards()
-    { 
-    
+    {
+        if (demoStep > 1)
+        {
+            // Invoke Demo-Animation 'SetToTarget' if defined, so GameObject from before has final position
+            currentInteraction.Reset?.Invoke();
+
+            // Stop Audio
+            audioController.StopAllSounds();
+
+            // MOVE INTERACTIONS UP
+            interactionIndex--;
+            // skip skippable steps
+            while (!interactions[interactionIndex].UseInDemo && interactionIndex > demoStartStep)
+            { 
+                interactionIndex--; 
+            }
+            // skip equalizer steps if not selected in settings
+            if (!applicationData.equalizerMode && interactionIndex >= eqStepsStart && interactionIndex <= eqStepsEnd)
+            {
+                Debug.Log("EQStart: " + eqStepsStart);
+                interactionIndex = eqStepsStart - 1;
+                while (!interactions[interactionIndex].UseInDemo && interactionIndex > demoStartStep)
+                {
+                    interactionIndex--;
+                }
+            }
+            demoStep--;
+            Debug.Log("IntIndex: " + interactionIndex + " Step: " + demoStep + " Total: " + demoStepsTotalCorrected);
+
+            // activate prev button
+            if (demoStep < demoStepsTotalCorrected && !nextButton.activeInHierarchy)
+            {
+                nextButton.SetActive(true);
+            }
+
+            // if in final action-step (excluding 'congratulations') disable button
+            if (demoStep == 1)
+            { prevButton.SetActive(false); }
+
+            // if step requires master-meter show it, else hide it
+            if (pipSteps.Contains(interactionIndex)) { pip.ToggleSmoothSlide(0.25f); }
+            else { if (pip.IsVisible()) { pip.ToggleSmoothSlide(0.25f); } }
+
+            // set next interaction
+            currentInteraction = interactions[interactionIndex];
+            StopAllCoroutines();
+
+            // SET TEXT
+            headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
+            headlineLabel.color = new Color(255f, 255f, 255f, 255f);
+
+            instructionLabel.SetText(currentInteraction.altInstruction == "" ? currentInteraction.Instruction : currentInteraction.altInstruction);
+            instructionLabel.color = new Color(255f, 255f, 255f, 255f);
+
+            demoStepCount.SetText(demoStep + "/" + demoStepsTotalCorrected);
+
+            // TODO: DEFINE CAMERA AND CHANGE PRIORITY TO THAT!
+
+            // Get TargetValue: if range, calculate mean of range.
+            var targetValue = ReturnDemoTargetValue();
+            // Get animationTime: if 0, use 2f as default
+            var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
+            // Invoke Demo-Animation 'Animate' if defined
+            currentInteraction.Animate?.Invoke(targetValue, animationTime);
+            selectionMan.FadeValueText(SelectionManager.Fade.In);
+            if (currentInteraction.DrumToBePlayed != "")
+            {
+                audioController.PlaySoundInDemo(currentInteraction.DrumToBePlayed);
+            }
+        }
     }
 
     // used for training mode
@@ -678,5 +814,42 @@ public class InteractionManager : MonoBehaviour
             errorCountInStep++;
             previousErrorCount = errorCount;
         }
+    }
+
+    ///////////////////////////
+    ///
+    private void CorrectDemoTotalStepCount()
+    {
+        var total = 0;
+
+        // Skip skippable steps
+        foreach (Interaction interaction in interactions)
+        {
+            if (interaction.UseInDemo)
+            {
+                total++;
+            }
+        }
+
+        // skip equalizer steps if not included
+        if (!applicationData.equalizerMode)
+        {
+            int subtract = 0; 
+            for (int i = eqStepsStart; i <= eqStepsEnd; i++)
+            {
+                if (interactions[i].UseInDemo)
+                {
+                    subtract++;
+                }
+            }
+            total = total - subtract; // subtract every eq step if used in demo mode
+        }
+
+        demoStepsTotalCorrected = total;
+    }
+
+    private float ReturnDemoTargetValue()
+    {
+        return TargetValueHasRange() ? (currentInteraction.TargetValueMax + currentInteraction.TargetValueMin) / 2 : currentInteraction.TargetValue;
     }
 }

@@ -46,6 +46,7 @@ public struct Interaction
     //public bool HelpCounted { get; set; }
 
     [Header("Demo")]
+    public bool UseInDemo;
     public CinemachineVirtualCamera vmCam;
     /*[Tooltip("'Fader', 'Knob', 'Button' or 'ChannelList'")]
     public String elementFamily;*/
