@@ -4,13 +4,30 @@ using UnityEngine;
 
 public class HideCanvasGroupInDemo : MonoBehaviour
 {
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
+    private void Awake()
+    {
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
-        CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup != null)
+        if (applicationData.demoMode)
         {
-            canvasGroup.alpha = 0;
+            CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 0;
+            }
         }
     }
 
