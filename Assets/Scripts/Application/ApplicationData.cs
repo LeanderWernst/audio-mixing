@@ -53,7 +53,7 @@ public class ApplicationData : MonoBehaviour
         // Hide deactivated panels
         HidePanels();
 
-        //SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
