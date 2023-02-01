@@ -19,6 +19,8 @@ public class ApplicationData : MonoBehaviour
     private GameObject controlsPanel;
     private GameObject exitScreen;
     private GameObject settingsScreen;
+    private GameObject hintPanel;
+    private GameObject channelList;
     public SettingsPanel settingsPanel;
     private Slider masterVolumeSlider;
     private Slider systemVolumeSlider;
@@ -39,14 +41,13 @@ public class ApplicationData : MonoBehaviour
         }
 
         // use screen resolution of running system as application resolution
-        Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, Screen.fullScreen);
+        //Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, Screen.fullScreen);
 
         // Find necessary objects
         UpdateReferences();
 
         // Hide deactivated panels
         HidePanels();
-
     }
 
     private void Start()
@@ -112,6 +113,26 @@ public class ApplicationData : MonoBehaviour
         }
     }
 
+    private void CheckExitPanelInput()
+    {
+        var active = exitScreen.activeInHierarchy;
+        // close exit panel on esc
+        if (Input.GetKeyDown(KeyCode.Escape) && active)
+        {
+            ToggleExitScreen();
+        }
+        // open exit panel on esc when no other panel is active
+        else if (Input.GetKeyDown(KeyCode.Escape) && !active && !settingsScreen.activeInHierarchy)
+        {
+            Debug.Log("HintPanel: " + (hintPanel != null) + " ChannelList: " + (channelList != null));
+            if (hintPanel != null & channelList != null && (hintPanel.activeInHierarchy || channelList.activeInHierarchy))
+            {
+                return;
+            }
+            ToggleExitScreen();
+        }
+    }
+
     public void QuitApplication()
     {
         // Compile depending on environment
@@ -129,16 +150,15 @@ public class ApplicationData : MonoBehaviour
 
     private void CheckInput()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && exitScreen.activeInHierarchy)
-        {
-            ToggleExitScreen();
-        }
+        CheckExitPanelInput();
 
+        // close seetings screen on esc
         if (Input.GetKeyDown(KeyCode.Escape) && settingsScreen.activeInHierarchy)
         {
             ToggleSettingsScreen();
         }
 
+        // Check STRG for controls panel
         CheckControlsPanelInput();
     }
 
@@ -177,6 +197,9 @@ public class ApplicationData : MonoBehaviour
         // find settings panel
         settingsScreen = GameObject.FindGameObjectWithTag("SettingsPanel");
 
+        hintPanel = GameObject.FindGameObjectWithTag("HelpPanel");
+        channelList = GameObject.FindGameObjectWithTag("ChannelListOverlay");
+
         // find volume sliders
         masterVolumeSlider = GameObject.Find("MasterSlider").GetComponent<Slider>();
         systemVolumeSlider = GameObject.Find("SystemSlider").GetComponent<Slider>();
@@ -202,5 +225,10 @@ public class ApplicationData : MonoBehaviour
         exitScreen.SetActive(false);
         settingsScreen.SetActive(false);
         controlsPanel.SetActive(false);
+        if (hintPanel != null & channelList != null)
+        { 
+            hintPanel.SetActive(false);
+            channelList.SetActive(false);
+        }
     }
 }

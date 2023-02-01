@@ -16,7 +16,7 @@ public class ChannelListBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        channelListUI.SetActive(false);
+        
     }
 
     // Start is called before the first frame update
