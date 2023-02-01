@@ -9,15 +9,15 @@ using UnityEngine.UI;
 
 public class ApplicationData : MonoBehaviour
 {
-    public static ApplicationData instance; // Singleton
-    public bool demoMode = false;
+    [HideInInspector] public static ApplicationData instance; // Singleton
+    [HideInInspector] public bool demoMode = false;
     [HideInInspector] public bool beginnerMode = false;
     [HideInInspector] public bool equalizerMode = true;
     [HideInInspector] public bool speakInstructions = true;
 
     [SerializeField] private AudioMixer audioMixer;
-    public float masterVolume = 0.88888889f;
-    public float systemVolume = 0.88888889f;
+    [HideInInspector] public float masterVolume = 0.88888889f;
+    [HideInInspector] public float systemVolume = 0.88888889f;
 
     [SerializeField] private GameObject controlsScreen;
     [SerializeField] private GameObject settingsScreen;
@@ -245,7 +245,8 @@ public class ApplicationData : MonoBehaviour
         // find volume sliders
         masterVolumeSlider = settingsPanel.masterSlider;
         systemVolumeSlider = settingsPanel.systemSlider;
-        settingsPanel = settingsScreen.GetComponent<SettingsPanel>();
+        if (settingsScreen != null)
+            settingsPanel = settingsScreen.GetComponent<SettingsPanel>();
         settingsPanel.masterSlider = masterVolumeSlider;
         settingsPanel.systemSlider = systemVolumeSlider;
 
