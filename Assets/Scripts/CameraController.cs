@@ -40,7 +40,7 @@ public class CameraController : MonoBehaviour
         camTransform = GetComponent<Transform>();
     }
 
-    void Start()
+    private void Start()
     {
         initialPosition = transform.position;
         initialRotation = transform.rotation;
@@ -50,7 +50,7 @@ public class CameraController : MonoBehaviour
         currentFov = cvCamera.m_Lens.FieldOfView;
     }
 
-    void Update()
+    private void LateUpdate()
     {
         if (cinemachineBrain.ActiveVirtualCamera != null && cinemachineBrain.ActiveVirtualCamera.VirtualCameraGameObject == gameObject)
         {
