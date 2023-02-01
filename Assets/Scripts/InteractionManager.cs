@@ -128,38 +128,42 @@ public class InteractionManager : MonoBehaviour
     {
         DebugDrawRay();
 
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        // Actions for Training Mode
+        if (!applicationData.demoMode)
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, 20.0f, layerMask))
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
             {
-                Debug.Log("Hit InteractionLayer");
-                CheckInteractionOrder(hit.transform.gameObject);
-            }
-        }
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
 
-        // Skip steps, when skippable or confirm action
-        if (Input.GetKeyDown(KeyCode.Return) && currentInteraction.IsSkippable)
-        {
-            if (!MandatorySoundWasPlayed())
+                if (Physics.Raycast(ray, out hit, 20.0f, layerMask))
+                {
+                    Debug.Log("Hit InteractionLayer");
+                    CheckInteractionOrder(hit.transform.gameObject);
+                }
+            }
+
+            // Skip steps, when skippable or confirm action
+            if (Input.GetKeyDown(KeyCode.Return) && currentInteraction.IsSkippable)
             {
-                PlayFeedbackSound(false);
-                DisplayErrForDuration(errorLabel, "Du solltest hören, was du mischst.", 5);
-                errorCount++;
-                errorCountLabel.SetText(errorCount.ToString());
-                return;
+                if (!MandatorySoundWasPlayed())
+                {
+                    PlayFeedbackSound(false);
+                    DisplayErrForDuration(errorLabel, "Du solltest hören, was du mischst.", 5);
+                    errorCount++;
+                    errorCountLabel.SetText(errorCount.ToString());
+                    return;
+                }
+                MoveToNextInteraction();
             }
-            MoveToNextInteraction();
-        }
-        else if (Input.GetKeyDown(KeyCode.Return) // Check TargetRange if TargetRange was given
-                && currentInteraction.TargetValueMax != currentInteraction.TargetValueMin)
-        {
-            CheckTargetRange();
-        }
+            else if (Input.GetKeyDown(KeyCode.Return) // Check TargetRange if TargetRange was given
+                    && currentInteraction.TargetValueMax != currentInteraction.TargetValueMin)
+            {
+                CheckTargetRange();
+            }
 
-        UpdateErrorCountInStepWhenErrorChanges();
+            UpdateErrorCountInStepWhenErrorChanges();
+        }
     }
 
     private void DebugDrawRay()
@@ -304,6 +308,58 @@ public class InteractionManager : MonoBehaviour
         return currentInteraction.TargetValueMax != currentInteraction.TargetValueMin;
     }
 
+    // used for demo mode
+    public void DemoStepForwards()
+    {
+        if (IsInFinalStep())
+        {
+            return;
+        }
+
+        // Stop Audio
+        // TODO: STOP DRUM SOUNDS
+
+
+        // MOVE INTERACTIONS UP
+        interactionIndex++;
+        // skip equalizer steps if not selected in settings
+        if (!applicationData.equalizerMode && interactionIndex == eqStepsStart)
+        {
+            interactionIndex = eqStepsEnd + 1;
+        }
+        // set next interaction
+        currentInteraction = interactions[interactionIndex];
+        StopAllCoroutines();
+
+        // SET TEXT
+        headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
+        headlineLabel.color = new Color(255f, 255f, 255f, 255f);
+
+        instructionLabel.SetText(currentInteraction.altInstruction == "" ? currentInteraction.Instruction : currentInteraction.altInstruction);
+        instructionLabel.color = new Color(255f, 255f, 255f, 255f);
+
+        // Get TargetValue: if range, calculate mean of range.
+        var targetValue = TargetValueHasRange() ? (currentInteraction.TargetValueMax + currentInteraction.TargetValueMin) / 2 : currentInteraction.TargetValue;
+        // Get animationTime: if 0, use 2f as default
+        var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
+        // Invoke Demo-Animation 'Animate' if defined
+        currentInteraction.Animate?.Invoke(targetValue, currentInteraction.animationTime);
+
+        // if step is skippable fade in info panel, else fade out
+        if (currentInteraction.IsSkippable)
+        { 
+        }
+
+        
+    }
+
+    // used for demo mode
+    public void DemoStepBackwards()
+    { 
+    
+    }
+
+    // used for training mode
     private void MoveToNextInteraction()
     {
         // Stop Audio
@@ -336,13 +392,6 @@ public class InteractionManager : MonoBehaviour
         // set next interaction
         currentInteraction = interactions[interactionIndex];
         StopAllCoroutines();
-
-        // Get TargetValue: if range, calculate mean of range.
-        var targetValue = TargetValueHasRange() ? (currentInteraction.TargetValueMax + currentInteraction.TargetValueMin) / 2 : currentInteraction.TargetValue;
-        // Get animationTime: if 0, use 2f as default
-        var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
-        // Invoke Demo-Animation 'Animate' if defined
-        currentInteraction.Animate?.Invoke(targetValue, currentInteraction.animationTime);
 
         // only fade in the headline if it is new and replace step numbers if necessary
         if (!headlineLabel.text.Equals(ReplaceStepNumInHeadline(currentInteraction.Headline)))
