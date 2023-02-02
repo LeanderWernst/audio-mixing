@@ -336,6 +336,7 @@ public class Knob : MonoBehaviour
         var targetPos = GetNonLinearKnobAngle(targetValue);
         Debug.Log("TargetValue:" + targetValue);
         Debug.Log("TargetPos:" + targetPos);
+        Debug.Log("Transform.localEuler:" + transform.localEulerAngles);
         TurnKnob(targetPos, animationTime);
     }
 
@@ -376,8 +377,8 @@ public class Knob : MonoBehaviour
         gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
 
         target = Mathf.Clamp(target, -105, 185);
-        if (target < 0)
-            target += 360;
+        /*if (target < 0)
+            target += 360;*/
 
         float current = transform.localEulerAngles.z;
         if (current >= 255 && current <= 360)
