@@ -8,6 +8,9 @@ using UnityEngine.UI;
 public class SelectionManager : MonoBehaviour
 {
 
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
+
     [SerializeField] private string[] selectableTags = new string[] { "Button", "Fader", "Knob", "ChannelList" };
 
     private Transform currentSelection;
@@ -23,6 +26,15 @@ public class SelectionManager : MonoBehaviour
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         valueTextBackground = GameObject.Find("ValueTextBackground").GetComponent<Image>();
+
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
     }
 
     // Start is called before the first frame update
@@ -34,12 +46,14 @@ public class SelectionManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
-        HighlightOnHover();
-
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        if (!applicationData.demoMode)
         { 
-            HighlightOnClick();
+            HighlightOnHover();
+
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            { 
+                HighlightOnClick();
+            }
         }
     }
 
