@@ -7,11 +7,16 @@ using UnityEngine.EventSystems;
 
 public class Knob : MonoBehaviour
 {
-	public bool isClicked = false;
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
+
+    public bool isClicked = false;
 
 	[SerializeField] private float minRotation = -105.0f;
 	[SerializeField] private float maxRotation = 185.0f;
 	[SerializeField] private float rotationSpeed = 250.0f;
+
+    private Vector3 initialPosition;
 
     private float minValue;
     private float maxValue;
@@ -38,6 +43,15 @@ public class Knob : MonoBehaviour
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
+
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
     }
     private void Start()
     {
@@ -63,6 +77,8 @@ public class Knob : MonoBehaviour
         // Read min max values
         minValue = knobPvr[0].values[0];
         maxValue = knobPvr[knobPvr.Length-1].values[1];
+
+        initialPosition = transform.localEulerAngles;
     }
 
     private void Update()
@@ -70,6 +86,16 @@ public class Knob : MonoBehaviour
         if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0)) 
         {
             TurnKnob(Input.mouseScrollDelta.y / 2);
+        }
+
+        // TEST //////////////////////////////////////////////////////
+        if (Input.GetKey(KeyCode.X))
+        {
+            AnimateKnob(1f, 2f);
+        }
+        if (Input.GetKey(KeyCode.Y))
+        {
+            SetToInitialPosition();
         }
     }
 
@@ -89,6 +115,9 @@ public class Knob : MonoBehaviour
 
     private void TurnKnob(float inputForce, bool initialMove = false)
     {
+
+        Debug.Log(transform.localEulerAngles.z);
+
         // Turn Knob only when it's the current target object or not needed for future interactions
         if (im.GetCurrentInteraction().TargetObject == gameObject 
             || !blockedChannels.Contains(channel) 
@@ -305,4 +334,101 @@ public class Knob : MonoBehaviour
         
         im.CheckInteractionOrder(gameObject);
     }
+
+    //////////////////////////////////////////////////
+    // FUNCTIONS FOR DEMO MODE
+
+    // To be called from interaction in demo mode
+    public void AnimateKnob(float targetValue, float animationTime)
+    {
+        //var targetPos = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, GetNonLinearKnobAngle(targetValue));
+        var targetPos = GetNonLinearKnobAngle(targetValue);
+        TurnKnob(targetPos, animationTime);
+    }
+
+    // To be called when going backwards
+    public void SetToInitialPosition()
+    {
+        StopAllCoroutines();
+        transform.localEulerAngles = initialPosition;
+        value = GetNonLinearKnobValue(knobPvr);
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetKnobValue(transform.name, channel, value);
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+    }
+
+    // To be called when going forwards
+    public void SetToTargetPosition(float targetValue)
+    {
+        StopAllCoroutines();
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, GetNonLinearKnobAngle(targetValue));
+        value = GetNonLinearKnobValue(knobPvr);
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetKnobValue(transform.name, channel, value);
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+    }
+
+    // To be called when watching at step
+
+    private void TurnKnob(float target, float timeToReachInSeconds)
+    {
+        //StopAllCoroutines();
+        StartCoroutine(TurnKnobRoutine(target, timeToReachInSeconds));
+    }
+
+    private IEnumerator TurnKnobRoutine(float target, float timeToReachInSeconds)
+    {
+        // Turn on emission
+        gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
+        gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+
+        target = Mathf.Clamp(target, -105, 185);
+        if (target < 0)
+            target += 360;
+
+        float current = transform.localEulerAngles.z;
+        if (current >= 255 && current <= 360)
+            current -= 360;
+
+        float delta = target - current;
+
+        if (current >= 0 && current <= 45 && target >= 255 && target <= 360)
+            delta = target - 360 - current;
+        else if (current >= 0 && current <= 45 && target >= 45 && target <= 185)
+            delta = target - current;
+        else if (current >= 45 && current <= 185 && target >= 45 && target <= 185)
+            delta = Mathf.Min(target - current, current - target + 360);
+        else if (current >= 45 && current <= 185 && target >= 255 && target <= 360)
+            delta = current - target;
+
+        float timeElapsed = 0;
+        while (timeElapsed < timeToReachInSeconds)
+        {
+            float t = timeElapsed / timeToReachInSeconds;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+            float angle = Mathf.Lerp(current, target, t);
+            angle = angle > maxRotation ? angle - 360 : angle;
+
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, target);
+
+        yield return new WaitForSeconds(0.5f);
+
+        transform.localEulerAngles = initialPosition;
+        value = GetNonLinearKnobValue(knobPvr);
+        ChangeValueText();
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetKnobValue(transform.name, channel, value);
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(0.5f);
+
+        TurnKnob(target, timeToReachInSeconds);
+    }
+
 }
