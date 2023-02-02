@@ -173,13 +173,13 @@ public class InteractionManager : MonoBehaviour
             //audioController.PlaySoundInDemo("all");
 
             // Get TargetValue: if range, calculate mean of range.
-            var targetValue = ReturnDemoTargetValue();
             // Get animationTime: if 0, use 2f as default
+            var targetValue = ReturnDemoTargetValue();
             var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
             // Invoke Demo-Animation 'Animate' if defined
             currentInteraction.Animate?.Invoke(targetValue, animationTime);
+            ShowValueInfoAfterTime(1f);
 
-            selectionMan.ShowValueInfo();
         }
     }
 
@@ -881,5 +881,16 @@ public class InteractionManager : MonoBehaviour
     private float ReturnDemoTargetValue()
     {
         return TargetValueHasRange() ? (currentInteraction.TargetValueMax + currentInteraction.TargetValueMin) / 2 : currentInteraction.TargetValue;
+    }
+
+    private void ShowValueInfoAfterTime(float seconds)
+    {
+        StartCoroutine(Wait(seconds));
+        selectionMan.ShowValueInfo();
+    }
+
+    IEnumerator Wait(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
     }
 }

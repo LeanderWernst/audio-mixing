@@ -105,9 +105,6 @@ public class Knob : MonoBehaviour
 
     private void TurnKnob(float inputForce, bool initialMove = false)
     {
-
-        Debug.Log(transform.localEulerAngles.z);
-
         // Turn Knob only when it's the current target object or not needed for future interactions
         if (im.GetCurrentInteraction().TargetObject == gameObject 
             || !blockedChannels.Contains(channel) 
