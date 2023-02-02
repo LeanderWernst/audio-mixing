@@ -140,6 +140,8 @@ public class InteractionManager : MonoBehaviour
             { 
                 StartCoroutine(WaitThenPlaySound(2f));
             }
+
+            tourController.DisableDemoCams();
         }
 
         // START-ACTIONS FOR DEMO MODE

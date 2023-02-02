@@ -44,6 +44,14 @@ public class TourController : MonoBehaviour
         }
     }
 
+    public void DisableDemoCams()
+    {
+        foreach (CinemachineVirtualCamera vCam in demoCams)
+        {
+            vCam.Priority = -1;
+        }
+    }
+
     public void SwitchToCam(string camName, GameObject lookAt = null)
     {
         foreach (CinemachineVirtualCamera vCam in demoCams)
