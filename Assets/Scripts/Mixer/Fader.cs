@@ -66,16 +66,6 @@ public class Fader : MonoBehaviour
         {
             SlideFader(Input.mouseScrollDelta.y / 2);
         }
-
-        // TEST
-        if (Input.GetKey(KeyCode.X))
-        {
-            SlideFader(new Vector3(GetNonLinearFaderPosition(0), transform.localPosition.y, transform.localPosition.z), 2f);
-        }
-        if (Input.GetKey(KeyCode.Y))
-        {
-            SetToInitialPosition();
-        }
     }
 
     void OnMouseDown()
