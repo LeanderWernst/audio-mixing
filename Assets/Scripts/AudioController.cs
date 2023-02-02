@@ -355,6 +355,7 @@ public class AudioController : MonoBehaviour
         {
             case "drum_bass":
                 AudioSrcBass.clip = bassdrum;
+                AudioSrcBass.Play();
                 break;
             case "drum_hihat":
                 AudioSrcHihat.clip = hihat;

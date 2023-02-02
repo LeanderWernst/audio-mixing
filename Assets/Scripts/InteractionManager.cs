@@ -112,12 +112,13 @@ public class InteractionManager : MonoBehaviour
 
         interactionIndex = applicationData.demoMode ? demoStartStep : 0;
 
-        // Set the first interaction from the list as our current interaction and 
-        currentInteraction = interactions[interactionIndex];
 
         // START-ACTIONS FOR TRAINING MODE
         if (!applicationData.demoMode)
         {
+            // Set the first interaction from the list as our current interaction and 
+            currentInteraction = interactions[interactionIndex];
+
             // UI init
             skipLabelPanel = skipLabel.GetComponentInParent<Image>();
             helpPanel = helpLabel.transform.parent.parent.gameObject;
@@ -143,6 +144,8 @@ public class InteractionManager : MonoBehaviour
         // START-ACTIONS FOR DEMO MODE
         else
         {
+            currentInteraction = interactions[demoStartStep];
+
             CorrectDemoTotalStepCount();
 
             headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
@@ -154,6 +157,18 @@ public class InteractionManager : MonoBehaviour
             prevButton.SetActive(false);
 
             demoStepCount.SetText(demoStep + "/" + demoStepsTotalCorrected);
+
+            if (currentInteraction.DrumToBePlayed != "")
+            {
+                audioController.PlaySoundInDemo(currentInteraction.DrumToBePlayed);
+            }
+
+            // Get TargetValue: if range, calculate mean of range.
+            var targetValue = ReturnDemoTargetValue();
+            // Get animationTime: if 0, use 2f as default
+            var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
+            // Invoke Demo-Animation 'Animate' if defined
+            currentInteraction.Animate?.Invoke(targetValue, animationTime);
         }
     }
 

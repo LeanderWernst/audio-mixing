@@ -98,11 +98,17 @@ public class Button : MonoBehaviour
             if (hasLED && isOn)
             {
                 transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
-                audioController.SetButtonOn(transform.name, channel);
             }
             else if (hasLED && !isOn)
             {
                 transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+            }
+            if (isOn)
+            {
+                audioController.SetButtonOn(transform.name, channel);
+            }
+            else
+            {
                 audioController.SetButtonOff(transform.name, channel);
             }
         }
@@ -194,7 +200,6 @@ public class Button : MonoBehaviour
         {
             float t = elapsedTime / timeToReachInSeconds;
             t = Mathf.Sin(t * Mathf.PI * 0.5f);
-            Debug.Log(t);
             // float currentValue = Mathf.Lerp(startValue, targetValue, t);
             if (targetValue == 1.0f)
             {
@@ -220,17 +225,6 @@ public class Button : MonoBehaviour
 
         isOn = targetValue == 1.0f ? true : false;
         canvasValueText.text = isOn ? "on" : "off";
-
-        /*if (hasLED && currentDemoTargetState)
-        {
-            transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
-            audioController.SetButtonOn(transform.name, channel);
-        }
-        else if (hasLED && !currentDemoTargetState)
-        {
-            transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-            audioController.SetButtonOff(transform.name, channel);
-        }*/
 
         yield return new WaitForSeconds(1f);
 
