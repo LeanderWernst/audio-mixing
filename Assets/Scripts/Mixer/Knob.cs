@@ -87,16 +87,6 @@ public class Knob : MonoBehaviour
         {
             TurnKnob(Input.mouseScrollDelta.y / 2);
         }
-
-        // TEST //////////////////////////////////////////////////////
-        if (Input.GetKey(KeyCode.X))
-        {
-            AnimateKnob(1f, 2f);
-        }
-        if (Input.GetKey(KeyCode.Y))
-        {
-            SetToInitialPosition();
-        }
     }
 
     void OnMouseDown()

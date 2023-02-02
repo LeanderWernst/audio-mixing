@@ -6,12 +6,18 @@ using UnityEngine.EventSystems;
 
 public class Button : MonoBehaviour
 {
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
+
     public bool isOn = false;
     private ValueStorage valueStorage;
     public bool isClicked = false;
     private bool isMoving = false;
     private bool hasLED = false;
     [SerializeField] private string LEDTag = "Light";
+
+    private Vector3 initialPosition;
+    private bool currentDemoTargetState;
 
     private Vector3 startPosition;
     private Vector3 endPosition;
@@ -29,6 +35,15 @@ public class Button : MonoBehaviour
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         im = GameObject.FindGameObjectWithTag("InteractionManager").GetComponent<InteractionManager>();
+
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
     }
 
     // Start is called before the first frame update
@@ -37,6 +52,8 @@ public class Button : MonoBehaviour
         valueStorage = gameObject.GetComponent<ValueStorage>();
         startPosition = transform.position;
         endPosition = transform.TransformPoint(new Vector3(0, 0, -0.00057567f));
+        // startPosition = transform.localPosition;
+        // endPosition = new Vector3(startPosition.x, startPosition.y, -0.00057567f);
         hasLED = transform.parent != null && transform.parent.tag == LEDTag;
         if (hasLED)
             transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
@@ -47,6 +64,8 @@ public class Button : MonoBehaviour
             parent = parent.parent;
         }
         channel = parent.name;
+
+        initialPosition = transform.localPosition;
     }
 
     // Update is called once per frame
@@ -92,4 +111,155 @@ public class Button : MonoBehaviour
             canvasValueText.text = isOn ? "on" : "off";
         }
     }
+
+    ///////////////////////////
+    /// Functions for demo mode
+    /// 
+
+    public void AnimateButton(float targetValue, float timeToReachInSeconds)
+    {
+        float startValue = isOn ? 1f : 0f;
+        StartCoroutine(AnimateToTargetValue(startValue, targetValue, timeToReachInSeconds));
+    }
+
+    // To be called when going backwards
+    public void SetToInitialPosition()
+    {
+        StopAllCoroutines();
+        if (currentDemoTargetState)
+        {
+            transform.localPosition = initialPosition;
+        }
+        else
+        {
+            transform.position = endPosition;
+        }
+        // transform.localPosition = currentDemoTargetState == true ? initialPosition : endPosition;
+        isOn = currentDemoTargetState == true ? false : true;
+        canvasValueText.text = isOn ? "on" : "off";
+        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+        if (currentDemoTargetState)
+        {
+            audioController.SetButtonOff(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
+        }
+        else
+        {
+            audioController.SetButtonOn(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
+        }
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+    }
+
+    // To be called when going forwards
+    public void SetToTargetPosition(float targetValue)
+    {
+        StopAllCoroutines();
+        if (currentDemoTargetState)
+        {
+            transform.position = endPosition;
+        }
+        else
+        {
+            transform.localPosition = initialPosition;
+        }
+        //transform.localPosition = currentDemoTargetState == true ? endPosition : initialPosition;
+        isOn = currentDemoTargetState == true ? true : false;
+        canvasValueText.text = isOn ? "on" : "off";
+        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+        if (currentDemoTargetState) 
+        { 
+            audioController.SetButtonOn(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
+        }
+        else { 
+            audioController.SetButtonOff(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
+        }
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+    }
+
+    private IEnumerator AnimateToTargetValue(float startValue, float targetValue, float timeToReachInSeconds)
+    {
+        float elapsedTime = 0f;
+        currentDemoTargetState = targetValue == 1 ? true : false;
+        
+        // Turn on emission
+        gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
+        gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(1f);
+
+        while (elapsedTime < timeToReachInSeconds)
+        {
+            float t = elapsedTime / timeToReachInSeconds;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+            Debug.Log(t);
+            // float currentValue = Mathf.Lerp(startValue, targetValue, t);
+            if (targetValue == 1.0f)
+            {
+                transform.position = Vector3.Lerp(startPosition, endPosition, t);
+                if (hasLED && t >= 0.5f)
+                {
+                    transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+                    audioController.SetButtonOn(transform.name, channel);
+                }
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(endPosition, startPosition, t);
+                if (hasLED && t >= 0.5f)
+                {
+                    transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+                    audioController.SetButtonOff(transform.name, channel);
+                }
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        isOn = targetValue == 1.0f ? true : false;
+        canvasValueText.text = isOn ? "on" : "off";
+
+        /*if (hasLED && currentDemoTargetState)
+        {
+            transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+            audioController.SetButtonOn(transform.name, channel);
+        }
+        else if (hasLED && !currentDemoTargetState)
+        {
+            transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+            audioController.SetButtonOff(transform.name, channel);
+        }*/
+
+        yield return new WaitForSeconds(1f);
+
+        if (currentDemoTargetState)
+        {
+            transform.localPosition = initialPosition;
+        }
+        else
+        {
+            transform.position = endPosition;
+        }
+        isOn = currentDemoTargetState == true ? false : true;
+        canvasValueText.text = isOn ? "on" : "off";
+        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+        if (currentDemoTargetState)
+        {
+            audioController.SetButtonOff(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
+        }
+        if (!currentDemoTargetState)
+        {
+            audioController.SetButtonOn(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
+        }
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(0.5f);
+
+        AnimateButton(targetValue, timeToReachInSeconds);
+    }
+
 }
