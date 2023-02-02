@@ -73,7 +73,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float completionCallbackDelay;
 
     public bool InteractionsCompleted => interactionIndex >= interactions.Count;
-    private int interactionIndex = 0; // >>>>>> CHANGE INDEX TO 0 OR DELETE WHEN DEBUGGING COMPLETE!
+    private int interactionIndex;
     private Interaction currentInteraction;
 
     [SerializeField] private HintBehaviour hintBehaviour;
@@ -111,7 +111,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        interactionIndex = applicationData.demoMode ? demoStartStep : 0;
+        interactionIndex = applicationData.demoMode ? demoStartStep : 0; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
 
 
         // START-ACTIONS FOR TRAINING MODE

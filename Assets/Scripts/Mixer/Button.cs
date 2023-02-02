@@ -44,6 +44,8 @@ public class Button : MonoBehaviour
             applicationSettings.AddComponent<ApplicationData>();
         }
         applicationData = applicationSettings.GetComponent<ApplicationData>();
+
+        audioController = GameObject.Find("PanelKeys").GetComponent<AudioController>();
     }
 
     // Start is called before the first frame update
@@ -57,7 +59,7 @@ public class Button : MonoBehaviour
         hasLED = transform.parent != null && transform.parent.tag == LEDTag;
         if (hasLED)
             transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-        audioController = GameObject.Find("PanelKeys").GetComponent<AudioController>();
+        
         var parent = transform;
         while (!parent.CompareTag("Channel"))
         {
@@ -128,7 +130,7 @@ public class Button : MonoBehaviour
         StartCoroutine(AnimateToTargetValue(startValue, targetValue, timeToReachInSeconds));
     }
 
-    // To be called when going backwards
+ /*   // To be called when going backwards
     public void SetToInitialPosition()
     {
         StopAllCoroutines();
@@ -155,25 +157,64 @@ public class Button : MonoBehaviour
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
         }
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+    }*/
+
+    // To be called when going backwards
+    public void SetToInitialPosition()
+    {
+        StopAllCoroutines();
+        if (!currentDemoTargetState)
+        {
+            transform.position = endPosition;
+            isOn = true;
+        }
+        else
+        {
+            transform.localPosition = initialPosition;
+            isOn = false;
+        }
+
+        canvasValueText.text = isOn ? "on" : "off";
+        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+
+        if (currentDemoTargetState)
+        {
+            audioController.SetButtonOn(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
+        }
+        else
+        {
+            audioController.SetButtonOff(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
+        }
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+
+        // Workaround to ensure the correct volume (defined in Inspector of InteractionManager)
+        if (im.GetCurrentInteraction().volumeBefore != 0)
+        {
+            audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeBefore, channel);
+        }
     }
 
     // To be called when going forwards
     public void SetToTargetPosition(float targetValue)
     {
         StopAllCoroutines();
-        if (currentDemoTargetState)
+        if (targetValue == 1f)
         {
             transform.position = endPosition;
+            isOn = true;
         }
         else
         {
             transform.localPosition = initialPosition;
+            isOn = false;
         }
-        //transform.localPosition = currentDemoTargetState == true ? endPosition : initialPosition;
-        isOn = currentDemoTargetState == true ? true : false;
+        
         canvasValueText.text = isOn ? "on" : "off";
         valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
-        if (currentDemoTargetState) 
+
+        if (targetValue == 1f) 
         { 
             audioController.SetButtonOn(transform.name, channel);
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
@@ -183,6 +224,12 @@ public class Button : MonoBehaviour
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
         }
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+
+        // Workaround to ensure the correct volume (defined in Inspector of InteractionManager)
+        if (im.GetCurrentInteraction().volumeAfter != 0)
+        {
+            audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeAfter, channel);
+        }
     }
 
     private IEnumerator AnimateToTargetValue(float startValue, float targetValue, float timeToReachInSeconds)
@@ -191,7 +238,23 @@ public class Button : MonoBehaviour
 
         float elapsedTime = 0f;
         currentDemoTargetState = targetValue == 1 ? true : false;
-        
+
+        if (currentDemoTargetState)
+        {
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
+            //audioController.SetButtonOff(transform.name, channel);
+        }
+        else 
+        {
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
+            //audioController.SetButtonOn(transform.name, channel);
+        }
+
+        if (im.GetCurrentInteraction().volumeBefore != 0)
+        {
+            audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeBefore, channel);
+        }
+
         // Turn on emission
         gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
         gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
@@ -206,9 +269,12 @@ public class Button : MonoBehaviour
             if (targetValue == 1.0f)
             {
                 transform.position = Vector3.Lerp(startPosition, endPosition, t);
-                if (hasLED && t >= 0.5f)
+                if (t >= 0.5f)
                 {
-                    transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+                    if (hasLED)
+                    {
+                        transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+                    }
                     audioController.SetButtonOn(transform.name, channel);
                     canvasValueText.text = "on";
                 }
@@ -216,9 +282,12 @@ public class Button : MonoBehaviour
             else
             {
                 transform.position = Vector3.Lerp(endPosition, startPosition, t);
-                if (hasLED && t >= 0.5f)
+                if (t >= 0.5f)
                 {
-                    transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+                    if (hasLED)
+                    {
+                        transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+                    }
                     audioController.SetButtonOff(transform.name, channel);
                     canvasValueText.text = "off";
                 }
@@ -253,6 +322,11 @@ public class Button : MonoBehaviour
         {
             audioController.SetButtonOn(transform.name, channel);
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
+        }
+
+        if (im.GetCurrentInteraction().volumeAfter != 0)
+        {
+            audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeAfter, channel);
         }
 
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");

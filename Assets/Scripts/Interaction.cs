@@ -55,6 +55,8 @@ public struct Interaction
     public String altInstruction;
     [Tooltip("The string of the drum as defined in the AudioController.")]
     public String DrumToBePlayed;
+    public float volumeBefore;
+    public float volumeAfter;
     [Tooltip("If TargetObject is empty, put here multiple objects that need to be highlighted.")]
     public GameObject[] TargetGameObjects;
     [Tooltip("Duration in seconds for animating the object")]

@@ -416,6 +416,21 @@ public class AudioController : MonoBehaviour
         }
     }
 
+    public void SetChannelToVolume(float volume, string channel)
+    {
+        switch (channel)
+        {
+            case "Channel1":
+                mixer.SetFloat("Channel1Volume", volume);
+                break;
+            case "Channel2":
+                mixer.SetFloat("Channel2Volume", volume);
+                break;
+            case "Channel3":
+                mixer.SetFloat("Channel3Volume", volume);
+                break;
+        }
+    }
 
     float ch1;
     float ch2;
@@ -425,10 +440,10 @@ public class AudioController : MonoBehaviour
     {
         ListenToKeyboard();
 
-        mixer.GetFloat("Channel1Volume", out ch1);
+        /*mixer.GetFloat("Channel1Volume", out ch1);
         mixer.GetFloat("Channel2Volume", out ch2);
         mixer.GetFloat("Channel3Volume", out ch3);
-        Debug.Log("Vol1: [" + ch1 + "]  Vol2: [" + ch2 + "]  Vol3: [" + ch3 + "]");
+        Debug.Log("Vol1: [" + ch1 + "]  Vol2: [" + ch2 + "]  Vol3: [" + ch3 + "]");*/
     }
 }
 
