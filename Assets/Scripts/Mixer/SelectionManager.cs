@@ -249,5 +249,21 @@ public class SelectionManager : MonoBehaviour
         return raysastResults;
     }
 
+    public void ShowValueInfo()
+    {
+        canvasValueText.color = new Color(canvasValueText.color.r, canvasValueText.color.g, canvasValueText.color.b, 255f);
+        valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, 255f);
+    }
+
+    public void HideValueInfo()
+    {
+        canvasValueText.color = new Color(canvasValueText.color.r, canvasValueText.color.g, canvasValueText.color.b, 0f);
+        valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, 0f);
+    }
+
+    public void SetValueText(string text)
+    {
+        canvasValueText.SetText(text);
+    }
 
 }

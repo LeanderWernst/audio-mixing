@@ -127,13 +127,16 @@ public class ApplicationData : MonoBehaviour
 
     private void CheckControlsPanelInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        if (!demoMode)
         {
-            controlsScreen.SetActive(true);
-        }
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            controlsScreen.SetActive(false);
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                controlsScreen.SetActive(true);
+            }
+            if (Input.GetKeyUp(KeyCode.LeftControl))
+            {
+                controlsScreen.SetActive(false);
+            }
         }
     }
 

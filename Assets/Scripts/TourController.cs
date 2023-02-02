@@ -8,6 +8,8 @@ public class TourController : MonoBehaviour
     public CinemachineVirtualCamera vCam0;
     public CinemachineVirtualCamera vCam1;
     public CinemachineVirtualCamera vCam2;
+
+    public CinemachineVirtualCamera[] demoCams;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +41,25 @@ public class TourController : MonoBehaviour
             default:
                 // do default
                 break;
+        }
+    }
+
+    public void SwitchToCam(string camName, GameObject lookAt = null)
+    {
+        foreach (CinemachineVirtualCamera vCam in demoCams)
+        {
+            if (vCam.name == camName)
+            {
+                vCam.Priority = 1;
+                if (lookAt != null)
+                {
+                    vCam.LookAt = lookAt.transform;
+                }
+            }
+            else
+            {
+                vCam.Priority = -1;
+            }
         }
     }
 

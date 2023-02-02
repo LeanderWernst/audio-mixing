@@ -22,6 +22,7 @@ public class InteractionManager : MonoBehaviour
     private int demoStep = 1;
     private int demoStepsTotalCorrected;
     [SerializeField] private SelectionManager selectionMan;
+    [SerializeField] private TourController tourController;
 
     [Header("User Interface")]
     [SerializeField] private AudioController audioController;
@@ -148,11 +149,15 @@ public class InteractionManager : MonoBehaviour
 
             CorrectDemoTotalStepCount();
 
+            tourController.SwitchToCam(currentInteraction.vmCam.name, currentInteraction.TargetObject);
+
             headlineLabel.SetText(ReplaceStepNumInHeadline(currentInteraction.Headline));
             headlineLabel.color = new Color(255f, 255f, 255f, 255f);
 
             instructionLabel.SetText(currentInteraction.altInstruction == "" ? currentInteraction.Instruction : currentInteraction.altInstruction);
             instructionLabel.color = new Color(255f, 255f, 255f, 255f);
+
+            selectionMan.SetValueText("off");
 
             prevButton.SetActive(false);
 
@@ -163,12 +168,16 @@ public class InteractionManager : MonoBehaviour
                 audioController.PlaySoundInDemo(currentInteraction.DrumToBePlayed);
             }
 
+            //audioController.PlaySoundInDemo("all");
+
             // Get TargetValue: if range, calculate mean of range.
             var targetValue = ReturnDemoTargetValue();
             // Get animationTime: if 0, use 2f as default
             var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
             // Invoke Demo-Animation 'Animate' if defined
             currentInteraction.Animate?.Invoke(targetValue, animationTime);
+
+            selectionMan.ShowValueInfo();
         }
     }
 
@@ -212,15 +221,17 @@ public class InteractionManager : MonoBehaviour
 
             UpdateErrorCountInStepWhenErrorChanges();
         }
-
-        // Actions for Demo Mode
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        else
         {
-            DemoStepForwards();
-        }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            DemoStepBackwards();
+            // Actions for Demo Mode
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                DemoStepForwards();
+            }
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                DemoStepBackwards();
+            }
         }
     }
 
@@ -420,7 +431,8 @@ public class InteractionManager : MonoBehaviour
 
             demoStepCount.SetText(demoStep + "/" + demoStepsTotalCorrected);
 
-            // TODO: DEFINE CAMERA AND CHANGE PRIORITY TO THAT!
+            // Switch camera and look at target object
+            tourController.SwitchToCam(currentInteraction.vmCam.name, currentInteraction.TargetObject);
 
             // Get TargetValue: if range, calculate mean of range.
             var targetValue = ReturnDemoTargetValue();
@@ -428,7 +440,7 @@ public class InteractionManager : MonoBehaviour
             var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
             // Invoke Demo-Animation 'Animate' if defined
             currentInteraction.Animate?.Invoke(targetValue, animationTime);
-            selectionMan.FadeValueText(SelectionManager.Fade.In);
+
             if (currentInteraction.DrumToBePlayed != "")
             {
                 audioController.PlaySoundInDemo(currentInteraction.DrumToBePlayed);
@@ -494,7 +506,8 @@ public class InteractionManager : MonoBehaviour
 
             demoStepCount.SetText(demoStep + "/" + demoStepsTotalCorrected);
 
-            // TODO: DEFINE CAMERA AND CHANGE PRIORITY TO THAT!
+            // Switch camera and look at target object
+            tourController.SwitchToCam(currentInteraction.vmCam.name, currentInteraction.TargetObject);
 
             // Get TargetValue: if range, calculate mean of range.
             var targetValue = ReturnDemoTargetValue();
@@ -502,7 +515,7 @@ public class InteractionManager : MonoBehaviour
             var animationTime = currentInteraction.animationTime == 0 ? 2f : currentInteraction.animationTime;
             // Invoke Demo-Animation 'Animate' if defined
             currentInteraction.Animate?.Invoke(targetValue, animationTime);
-            selectionMan.FadeValueText(SelectionManager.Fade.In);
+
             if (currentInteraction.DrumToBePlayed != "")
             {
                 audioController.PlaySoundInDemo(currentInteraction.DrumToBePlayed);

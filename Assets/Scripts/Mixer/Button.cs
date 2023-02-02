@@ -187,6 +187,8 @@ public class Button : MonoBehaviour
 
     private IEnumerator AnimateToTargetValue(float startValue, float targetValue, float timeToReachInSeconds)
     {
+        canvasValueText.text = isOn ? "on" : "off";
+
         float elapsedTime = 0f;
         currentDemoTargetState = targetValue == 1 ? true : false;
         
@@ -208,6 +210,7 @@ public class Button : MonoBehaviour
                 {
                     transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
                     audioController.SetButtonOn(transform.name, channel);
+                    canvasValueText.text = "on";
                 }
             }
             else
@@ -217,6 +220,7 @@ public class Button : MonoBehaviour
                 {
                     transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
                     audioController.SetButtonOff(transform.name, channel);
+                    canvasValueText.text = "off";
                 }
             }
             elapsedTime += Time.deltaTime;
@@ -239,6 +243,7 @@ public class Button : MonoBehaviour
         isOn = currentDemoTargetState == true ? false : true;
         canvasValueText.text = isOn ? "on" : "off";
         valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+
         if (currentDemoTargetState)
         {
             audioController.SetButtonOff(transform.name, channel);
@@ -249,6 +254,7 @@ public class Button : MonoBehaviour
             audioController.SetButtonOn(transform.name, channel);
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
         }
+
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
         yield return new WaitForSeconds(0.5f);

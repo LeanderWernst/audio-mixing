@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
+
     private CinemachineVirtualCamera cvCamera;
     [SerializeField] private float zoomSpeed = 20f;
     [SerializeField] private float panSpeed = 6f;
@@ -38,6 +41,15 @@ public class CameraController : MonoBehaviour
         cvCamera = GetComponent<CinemachineVirtualCamera>();
         cinemachineBrain = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CinemachineBrain>();
         camTransform = GetComponent<Transform>();
+
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
     }
 
     private void Start()
@@ -52,7 +64,9 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (cinemachineBrain.ActiveVirtualCamera != null && cinemachineBrain.ActiveVirtualCamera.VirtualCameraGameObject == gameObject)
+        if (!applicationData.demoMode 
+            &&cinemachineBrain.ActiveVirtualCamera != null 
+            && cinemachineBrain.ActiveVirtualCamera.VirtualCameraGameObject == gameObject)
         {
             if (Input.GetMouseButton(1))
             {

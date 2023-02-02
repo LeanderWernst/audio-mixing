@@ -219,9 +219,10 @@ public class Knob : MonoBehaviour
             if (correspondingValue >= relation.values[0] && correspondingValue <= relation.values[1])
             {
                 var knobAngle = GetKnobAngle(correspondingValue, relation.values[0], relation.values[1], relation.positions[0], relation.positions[1]);
-                if (knobAngle < 0)
+                Debug.Log("KnobAngleFromPVR: " + knobAngle);
+                /*if (knobAngle < 0)
                     return 360 + knobAngle;
-                else
+                else*/
                     return knobAngle;
             }
         }
@@ -333,6 +334,8 @@ public class Knob : MonoBehaviour
     {
         //var targetPos = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, GetNonLinearKnobAngle(targetValue));
         var targetPos = GetNonLinearKnobAngle(targetValue);
+        Debug.Log("TargetValue:" + targetValue);
+        Debug.Log("TargetPos:" + targetPos);
         TurnKnob(targetPos, animationTime);
     }
 
@@ -400,6 +403,11 @@ public class Knob : MonoBehaviour
             angle = angle > maxRotation ? angle - 360 : angle;
 
             transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, angle);
+
+            value = GetNonLinearKnobValue(knobPvr);
+            ChangeValueText();
+            valueStorage.SetValue(value, gameObject);
+            audioController.SetKnobValue(transform.name, channel, value);
 
             timeElapsed += Time.deltaTime;
             yield return null;
