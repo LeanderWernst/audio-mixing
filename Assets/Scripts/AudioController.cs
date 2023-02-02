@@ -239,20 +239,6 @@ public class AudioController : MonoBehaviour
                     case "StereoInput1":
                         mixer.SetFloat("StereoInput1Volume", oldFaderStereoInput1);
                         break;
-                    case "Button80Hz":
-                        switch (channel)
-                        {
-                            case "Channel1":
-                                mixer.SetFloat("Channel1CutOff", 0);
-                                break;
-                            case "Channel2":
-                                mixer.SetFloat("Channel2CutOff", 0);
-                                break;
-                            case "Channel3":
-                                mixer.SetFloat("Channel3CutOff", 0);
-                                break;
-                        }
-                        break;
                 }
                 break;
 
@@ -260,6 +246,20 @@ public class AudioController : MonoBehaviour
                 {
                     leftMeter.soloMode = false;
                     rightMeter.soloMode = false;
+                }
+                break;
+            case "Button80Hz":
+                switch (channel)
+                {
+                    case "Channel1":
+                        mixer.SetFloat("Channel1CutOff", 0);
+                        break;
+                    case "Channel2":
+                        mixer.SetFloat("Channel2CutOff", 0);
+                        break;
+                    case "Channel3":
+                        mixer.SetFloat("Channel3CutOff", 0);
+                        break;
                 }
                 break;
         }
@@ -416,10 +416,19 @@ public class AudioController : MonoBehaviour
         }
     }
 
+
+    float ch1;
+    float ch2;
+    float ch3;
     // Update is called once per frame
     void Update()
     {
         ListenToKeyboard();
+
+        mixer.GetFloat("Channel1Volume", out ch1);
+        mixer.GetFloat("Channel2Volume", out ch2);
+        mixer.GetFloat("Channel3Volume", out ch3);
+        Debug.Log("Vol1: [" + ch1 + "]  Vol2: [" + ch2 + "]  Vol3: [" + ch3 + "]");
     }
 }
 
