@@ -555,6 +555,7 @@ public class InteractionManager : MonoBehaviour
         else { if (pip.IsVisible()) { pip.ToggleSmoothSlide(); } }
 
         // reset helpUsedInThisStep to count help again, hide helpPanel
+        hintBehaviour.StopAnimation();
         helpUsedInThisStep = false;
         helpPanel.SetActive(false);
 
