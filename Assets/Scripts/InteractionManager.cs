@@ -532,6 +532,9 @@ public class InteractionManager : MonoBehaviour
         if (audioSource.isPlaying)
             audioSource.Stop();
 
+        // disable error panel
+        errorLabel.transform.parent.gameObject.SetActive(false);
+
         // move interaction index up
         interactionIndex++;
         // skip equalizer steps if not selected in settings
