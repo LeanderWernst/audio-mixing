@@ -16,7 +16,7 @@ public class SelectionManager : MonoBehaviour
     private Transform currentSelection;
     private Transform clickedObject;
     private TextMeshProUGUI canvasValueText;
-    private Image valueTextBackground;
+    public Image valueTextBackground;
     private float vtbMaxAlpha = 235f/255f;
 
     private int UILayer;

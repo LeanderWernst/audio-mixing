@@ -473,6 +473,12 @@ public class InteractionManager : MonoBehaviour
                 prevButton.SetActive(true);
             }
 
+            // if not in mixing step, activate value text canvas
+            if (FinalMixingIsActive() && selectionMan.valueTextBackground.gameObject.activeInHierarchy)
+            {
+                selectionMan.valueTextBackground.gameObject.SetActive(false);
+            }
+
             // if in final action-step (excluding 'congratulations') disable button
             if (demoStep == demoStepsTotalCorrected)
             { nextButton.SetActive(false); }
@@ -542,10 +548,16 @@ public class InteractionManager : MonoBehaviour
             demoStep--;
             Debug.Log("IntIndex: " + interactionIndex + " Step: " + demoStep + " Total: " + demoStepsTotalCorrected);
 
-            // activate prev button
+            // activate next button
             if (demoStep < demoStepsTotalCorrected && !nextButton.activeInHierarchy)
             {
                 nextButton.SetActive(true);
+            }
+
+            // if not in mixing step, activate value text canvas
+            if (!FinalMixingIsActive() && !selectionMan.valueTextBackground.gameObject.activeInHierarchy)
+            {
+                selectionMan.valueTextBackground.gameObject.SetActive(true);
             }
 
             // if in final action-step (excluding 'congratulations') disable button
