@@ -226,13 +226,23 @@ public class Fader : MonoBehaviour
     private IEnumerator AnimateToTargetPosition(Vector3 targetPos, float timeToReachInSeconds)
     {
         float elapsedTime = 0f;
+
+        // start from initial position & state
+        transform.localPosition = initialPosition;
+        value = GetNonLinearFaderValue(faderPvr);
+        valueStorage.SetValue(value, gameObject);
+        ChangeValueText();
+        audioController.SetFaderVolume(transform.name, channel, value);
+        
         Vector3 startPos = transform.localPosition;
+
+        yield return new WaitForSeconds(0.5f);
 
         // Turn on emission
         gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
         gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         while (elapsedTime < timeToReachInSeconds)
         {
@@ -252,16 +262,11 @@ public class Fader : MonoBehaviour
 
         transform.localPosition = targetPos;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
-        transform.localPosition = initialPosition;
-        value = GetNonLinearFaderValue(faderPvr);
-        valueStorage.SetValue(value, gameObject);
-        ChangeValueText();
-        audioController.SetFaderVolume(transform.name, channel, value);
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         SlideFader(targetPos, timeToReachInSeconds);
     }
@@ -294,7 +299,7 @@ public class Fader : MonoBehaviour
         gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
         gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         while (elapsedTime < timeToReachInSeconds)
         {
@@ -314,14 +319,17 @@ public class Fader : MonoBehaviour
 
         transform.localPosition = targetPos;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
+
+        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
+
+        //yield return new WaitForSeconds(0.5f);
 
         transform.localPosition = startPos;
         value = GetNonLinearFaderValue(faderPvr);
         valueStorage.SetValue(value, gameObject);
         ChangeValueText();
         audioController.SetFaderVolume(transform.name, channel, value);
-        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
         yield return new WaitForSeconds(0.5f);
 

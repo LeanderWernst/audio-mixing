@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -46,6 +47,10 @@ public class InteractionManager : MonoBehaviour
     private Image skipLabelPanel;
     [SerializeField] private AudioClip soundWrong;
     [SerializeField] private AudioClip soundCorrect;
+    // Mini Confirmation sounds for steps with multiple target objects
+    [SerializeField] private AudioClip soundWrongVal;
+    [SerializeField] private AudioClip soundCorrVal;
+    [SerializeField] private AudioClip finalWin;
 
     [SerializeField] private PictureInPicture pip;
 
@@ -111,7 +116,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        interactionIndex = applicationData.demoMode ? demoStartStep : 52; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
+        interactionIndex = applicationData.demoMode ? demoStartStep : 0; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
 
 
         // START-ACTIONS FOR TRAINING MODE
@@ -260,7 +265,7 @@ public class InteractionManager : MonoBehaviour
         if (!selectedGameObject)
             return;
 
-        if (selectedGameObject.Equals(currentInteraction.TargetObject))
+        if (selectedGameObject.Equals(currentInteraction.TargetObject) || ObjectIsInTargetObjects(selectedGameObject))
         {
             Debug.Log("Hit correct Object");
 
@@ -275,14 +280,52 @@ public class InteractionManager : MonoBehaviour
                 FadeGraphic(1f, skipLabelPanel);
             }
 
-            // When min & max value is set, we need to check the value by pressing Return instead of 
+            // Attention: When min & max value is set, we need to check the value by pressing Return instead of 
             // just checking the target value
-            if (ObjectHasTargetValue() && currentInteraction.TargetValueMax == currentInteraction.TargetValueMin)
+            if (ObjectHasTargetValue() && currentInteraction.TargetValueMax == currentInteraction.TargetValueMin && !HasMultipleTargetObj())
             {
                 PlayFeedbackSound(true);
                 MoveToNextInteraction();
             }
-        }
+            else if (HasMultipleTargetObj())
+            {
+                // Feedback sound
+                float clickedObjValue = selectedGameObject.GetComponent<ValueStorage>().GetValue();
+                int index = Array.IndexOf(currentInteraction.TargetGameObjects, selectedGameObject);
+                if (index > -1)
+                {
+                    AudioSource tempAudioSource = gameObject.AddComponent<AudioSource>();
+                    if (ValuesAreEqualWithTolerance(clickedObjValue, currentInteraction.TargetValues[index]))
+                    {
+                        tempAudioSource.clip = soundCorrVal;
+                        tempAudioSource.Play();
+                    }
+                    else
+                    {
+                        tempAudioSource.clip = soundWrongVal;
+                        tempAudioSource.Play();
+                    }
+                    Destroy(tempAudioSource, tempAudioSource.clip.length);
+                }
+
+                // Check all values
+                int targetValueCount = currentInteraction.TargetValues.Length;
+                int correctValues = 0;
+                for (int i = 0; i < targetValueCount; i++)
+                {
+                    float objValue = currentInteraction.TargetGameObjects[i].GetComponent<ValueStorage>().GetValue();
+                    if (ValuesAreEqualWithTolerance(objValue, currentInteraction.TargetValues[i]))
+                    {
+                        correctValues++;
+                    }
+                }
+                if (correctValues == targetValueCount)
+                {
+                    PlayFeedbackSound(true);
+                    MoveToNextInteraction();
+                }
+            }
+        }   
         else if (!selectedGameObject.Equals(speechFader) 
             && !selectedGameObject.Equals(masterFader) 
             && !selectedGameObject.Equals(channelList) 
@@ -294,6 +337,19 @@ public class InteractionManager : MonoBehaviour
             errorCount++;
             errorCountLabel.SetText(errorCount.ToString());
         }
+    }
+
+    public bool ObjectIsInTargetObjects(GameObject go)
+    {
+        if (HasMultipleTargetObj())
+        {
+            foreach (GameObject target in currentInteraction.TargetGameObjects)
+            {
+                if (go.Equals(target)) { return true; }
+            }
+            return false;
+        }
+        return false;
     }
 
     private Coroutine coroutine;
@@ -370,6 +426,11 @@ public class InteractionManager : MonoBehaviour
             return Mathf.Approximately(currentInteraction.TargetObject.GetComponent<ValueStorage>().GetValue(), currentInteraction.TargetValue);
         else
             return false;
+    }
+
+    private bool ValuesAreEqualWithTolerance(float value1, float value2)
+    {
+        return Mathf.Approximately(value1, value2);
     }
 
     // Checks if the target value of the current interaction is within a range
@@ -619,7 +680,11 @@ public class InteractionManager : MonoBehaviour
     {
         totalErrorCountLabel.SetText(errorCount.ToString());
         totalHelpCountLabel.SetText(hintBehaviour.getHintCount().ToString());
+        AudioSource tempAudioSource = gameObject.AddComponent<AudioSource>();
+        tempAudioSource.clip = finalWin;
+        tempAudioSource.Play();
         yield return new WaitForSeconds(completionCallbackDelay);
+        Destroy(tempAudioSource, tempAudioSource.clip.length);
         finalScreen.SetActive(true);
         //OnCompleted?.Invoke();
     }
@@ -859,6 +924,11 @@ public class InteractionManager : MonoBehaviour
     private bool IsInFinalStep()
     {
         return interactionIndex == interactions.Count - 1;
+    }
+
+    private bool HasMultipleTargetObj()
+    {
+        return currentInteraction.TargetObject == null && currentInteraction.TargetGameObjects.Length > 0;
     }
 
     // put into update
