@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class SceneStartup : MonoBehaviour
@@ -11,6 +12,8 @@ public class SceneStartup : MonoBehaviour
 
     private GameObject hintPanel;
     private GameObject channelList;
+
+    [SerializeField] private AudioMixer mixer;
 
     private void Awake()
     {
@@ -40,7 +43,11 @@ public class SceneStartup : MonoBehaviour
     {
         applicationData.ChangeMasterVolume(applicationData.masterVolume);
         applicationData.ChangeSystemVolume(applicationData.systemVolume);
-        
+
+        // Set Channel volumes to -80 to correspond to fader start positions
+        mixer.SetFloat("Channel1Volume", -80);
+        mixer.SetFloat("Channel2Volume", -80);
+        mixer.SetFloat("Channel3Volume", -80);
     }
 
     // Update is called once per frame
