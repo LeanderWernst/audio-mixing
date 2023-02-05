@@ -26,7 +26,7 @@ public class InteractionManager : MonoBehaviour
 
     [Header("User Interface")]
     [SerializeField] private AudioController audioController;
-    [SerializeField] private AudioSource audioSource;
+    public AudioSource audioSource;
     [SerializeField] private TextMeshProUGUI headlineLabel;
     [SerializeField] private TextMeshProUGUI instructionLabel;
     [SerializeField] private TextMeshProUGUI errorLabel;
