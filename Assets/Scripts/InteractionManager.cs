@@ -50,6 +50,7 @@ public class InteractionManager : MonoBehaviour
     // Mini Confirmation sounds for steps with multiple target objects
     [SerializeField] private AudioClip soundWrongVal;
     [SerializeField] private AudioClip soundCorrVal;
+    [SerializeField] private AudioClip finalWin;
 
     [SerializeField] private PictureInPicture pip;
 
@@ -679,7 +680,11 @@ public class InteractionManager : MonoBehaviour
     {
         totalErrorCountLabel.SetText(errorCount.ToString());
         totalHelpCountLabel.SetText(hintBehaviour.getHintCount().ToString());
+        AudioSource tempAudioSource = gameObject.AddComponent<AudioSource>();
+        tempAudioSource.clip = finalWin;
+        tempAudioSource.Play();
         yield return new WaitForSeconds(completionCallbackDelay);
+        Destroy(tempAudioSource, tempAudioSource.clip.length);
         finalScreen.SetActive(true);
         //OnCompleted?.Invoke();
     }
