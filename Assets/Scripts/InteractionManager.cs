@@ -645,7 +645,14 @@ public class InteractionManager : MonoBehaviour
             {
                 audioSource.clip = currentInteraction.InstrAudio;
                 if (audioSource.clip != null && applicationData.speakInstructions)
+                { 
                     audioSource.Play();
+                    // if step is skippable & speech is on, wait for audio to finish, then move on automatically
+                    if (currentInteraction.IsSkippable && applicationData.speakInstructions)
+                    {
+                        StartCoroutine(WaitForVoiceToFinish());
+                    }
+                }
             }
             while (tmpUGUI.color.a < 1.0f)
             {
@@ -696,6 +703,11 @@ public class InteractionManager : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         if (audioSource.clip != null)
             audioSource.Play();
+        // if step is skippable & speech is on, wait for audio to finish, then move on automatically
+        if (currentInteraction.IsSkippable && applicationData.speakInstructions)
+        {
+            StartCoroutine(WaitForVoiceToFinish());
+        }
     }
 
     void StopAllCoroutinesByName(string name)
@@ -847,6 +859,20 @@ public class InteractionManager : MonoBehaviour
         {
             errorCountInStep++;
             previousErrorCount = errorCount;
+        }
+    }
+
+    // wait for audiosource to stop playing, then move to next interaction
+    IEnumerator WaitForVoiceToFinish()
+    {
+        if (interactionIndex != mixingStep)
+        {
+            yield return new WaitForSeconds(0.5f); // wait half a second
+            while (audioSource.isPlaying)
+            {
+                yield return null;
+            }
+            MoveToNextInteraction();
         }
     }
 
