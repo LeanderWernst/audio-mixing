@@ -59,6 +59,7 @@ public struct Interaction
     public float volumeAfter;
     [Tooltip("If TargetObject is empty, put here multiple objects that need to be highlighted.")]
     public GameObject[] TargetGameObjects;
+    public float[] TargetValues;
     [Tooltip("Duration in seconds for animating the object")]
     public float animationTime;
     public DemoAnimate Animate;

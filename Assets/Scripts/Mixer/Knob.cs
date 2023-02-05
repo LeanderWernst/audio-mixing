@@ -106,7 +106,8 @@ public class Knob : MonoBehaviour
     private void TurnKnob(float inputForce, bool initialMove = false)
     {
         // Turn Knob only when it's the current target object or not needed for future interactions
-        if (im.GetCurrentInteraction().TargetObject == gameObject 
+        if (im.GetCurrentInteraction().TargetObject == gameObject
+            || im.ObjectIsInTargetObjects(gameObject) 
             || !blockedChannels.Contains(channel) 
             || initialMove
             || im.FinalMixingIsActive())
@@ -130,7 +131,7 @@ public class Knob : MonoBehaviour
         // is close to the target angle (value). If so, move the GO to the angle 
         // and call the CheckInteractionOrder() of Interaction Manager.
         // This way it's not neccessary to hit the target value exactly.
-        if (im.GetCurrentInteraction().TargetObject == gameObject // GO is target GO
+        if ((im.GetCurrentInteraction().TargetObject == gameObject || im.ObjectIsInTargetObjects(gameObject)) // GO is target GO
             && Mathf.Abs(GetNonLinearKnobAngle(im.GetCurrentInteraction().TargetValue) - transform.localEulerAngles.z) <= movementTolerance // Target Angle is in close range
             && im.GetCurrentInteraction().TargetValueMax == im.GetCurrentInteraction().TargetValueMin // Target is depending on an exact value not a range
             && Mathf.Abs(Input.GetAxis("Mouse Y")) <= 0.10f && Mathf.Abs(Input.mouseScrollDelta.y) <= 1f) // don't react on too forcefull input  
