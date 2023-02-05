@@ -130,35 +130,6 @@ public class Button : MonoBehaviour
         StartCoroutine(AnimateToTargetValue(startValue, targetValue, timeToReachInSeconds));
     }
 
- /*   // To be called when going backwards
-    public void SetToInitialPosition()
-    {
-        StopAllCoroutines();
-        if (currentDemoTargetState)
-        {
-            transform.localPosition = initialPosition;
-        }
-        else
-        {
-            transform.position = endPosition;
-        }
-        // transform.localPosition = currentDemoTargetState == true ? initialPosition : endPosition;
-        isOn = currentDemoTargetState == true ? false : true;
-        canvasValueText.text = isOn ? "on" : "off";
-        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
-        if (currentDemoTargetState)
-        {
-            audioController.SetButtonOff(transform.name, channel);
-            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
-        }
-        else
-        {
-            audioController.SetButtonOn(transform.name, channel);
-            if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
-        }
-        gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
-    }*/
-
     // To be called when going backwards
     public void SetToInitialPosition()
     {
@@ -316,7 +287,7 @@ public class Button : MonoBehaviour
 
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         AnimateButton(targetValue, timeToReachInSeconds);
     }

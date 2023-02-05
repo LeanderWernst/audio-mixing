@@ -428,7 +428,7 @@ public class Knob : MonoBehaviour
 
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         TurnKnob(target, timeToReachInSeconds);
     }

@@ -266,7 +266,7 @@ public class Fader : MonoBehaviour
 
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         SlideFader(targetPos, timeToReachInSeconds);
     }
@@ -323,7 +323,7 @@ public class Fader : MonoBehaviour
 
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         transform.localPosition = startPos;
         value = GetNonLinearFaderValue(faderPvr);
