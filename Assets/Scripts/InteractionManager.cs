@@ -111,7 +111,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        interactionIndex = applicationData.demoMode ? demoStartStep : 0; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
+        interactionIndex = applicationData.demoMode ? demoStartStep : 52; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
 
 
         // START-ACTIONS FOR TRAINING MODE
@@ -578,6 +578,15 @@ public class InteractionManager : MonoBehaviour
         if (!helpBonusButton.activeInHierarchy)
         {
             helpLabelBonus.gameObject.SetActive(false); // deactivate bonus, when button is not available
+        }
+
+        if (currentInteraction.HelpMsg == "" && hintBehaviour.gameObject.activeInHierarchy)
+        {
+            hintBehaviour.gameObject.SetActive(false);
+        }
+        else if (!hintBehaviour.gameObject.activeInHierarchy)
+        {
+            hintBehaviour.gameObject.SetActive(true);
         }
 
         // if step is skippable fade in info panel, else fade out
