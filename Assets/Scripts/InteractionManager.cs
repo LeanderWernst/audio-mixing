@@ -787,7 +787,7 @@ public class InteractionManager : MonoBehaviour
     IEnumerator WaitThenPlaySound(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        if (audioSource.clip != null)
+        if (audioSource.clip != null && applicationData.speakInstructions)
             audioSource.Play();
         // if step is skippable & speech is on, wait for audio to finish, then move on automatically
         if (currentInteraction.IsSkippable && applicationData.speakInstructions)
