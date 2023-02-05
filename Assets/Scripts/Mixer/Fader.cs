@@ -135,8 +135,7 @@ public class Fader : MonoBehaviour
     private void SlideFader(float inputForce, bool initialMove = false)
     {
         // Slide Fader only when it's the current target object or not needed for future interactions
-        if (im.GetCurrentInteraction().TargetObject == gameObject
-            || im.ObjectIsInTargetObjects(gameObject) 
+        if (im.GetCurrentInteraction().TargetObject == gameObject 
             || !blockedChannels.Contains(channel) 
             || initialMove
             || im.FinalMixingIsActive())
