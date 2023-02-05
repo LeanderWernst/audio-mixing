@@ -234,32 +234,45 @@ public class Button : MonoBehaviour
 
     private IEnumerator AnimateToTargetValue(float startValue, float targetValue, float timeToReachInSeconds)
     {
-        canvasValueText.text = isOn ? "on" : "off";
-
         float elapsedTime = 0f;
         currentDemoTargetState = targetValue == 1 ? true : false;
 
+        // set to initial position & state
         if (currentDemoTargetState)
         {
-            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
-            //audioController.SetButtonOff(transform.name, channel);
+            transform.localPosition = initialPosition;
         }
-        else 
+        else
         {
+            transform.position = endPosition;
+        }
+        isOn = currentDemoTargetState == true ? false : true;
+        canvasValueText.text = isOn ? "on" : "off";
+        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
+
+        if (currentDemoTargetState)
+        {
+            audioController.SetButtonOff(transform.name, channel);
+            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
+        }
+        if (!currentDemoTargetState)
+        {
+            audioController.SetButtonOn(transform.name, channel);
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
-            //audioController.SetButtonOn(transform.name, channel);
         }
 
-        if (im.GetCurrentInteraction().volumeBefore != 0)
+        if (im.GetCurrentInteraction().volumeAfter != 0)
         {
             audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeBefore, channel);
         }
+
+        yield return new WaitForSeconds(0.5f);
 
         // Turn on emission
         gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
         gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         while (elapsedTime < timeToReachInSeconds)
         {
@@ -300,34 +313,6 @@ public class Button : MonoBehaviour
         canvasValueText.text = isOn ? "on" : "off";
 
         yield return new WaitForSeconds(1f);
-
-        if (currentDemoTargetState)
-        {
-            transform.localPosition = initialPosition;
-        }
-        else
-        {
-            transform.position = endPosition;
-        }
-        isOn = currentDemoTargetState == true ? false : true;
-        canvasValueText.text = isOn ? "on" : "off";
-        valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
-
-        if (currentDemoTargetState)
-        {
-            audioController.SetButtonOff(transform.name, channel);
-            if (hasLED) { transform.parent.GetComponent<Renderer>().material.DisableKeyword("_EMISSION"); }
-        }
-        if (!currentDemoTargetState)
-        {
-            audioController.SetButtonOn(transform.name, channel);
-            if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
-        }
-
-        if (im.GetCurrentInteraction().volumeAfter != 0)
-        {
-            audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeAfter, channel);
-        }
 
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 

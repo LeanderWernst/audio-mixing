@@ -369,9 +369,20 @@ public class Knob : MonoBehaviour
 
     private IEnumerator TurnKnobRoutine(float target, float timeToReachInSeconds)
     {
+        // Start from initial position
+        transform.localEulerAngles = initialPosition;
+        value = GetNonLinearKnobValue(knobPvr);
+        ChangeValueText();
+        valueStorage.SetValue(value, gameObject);
+        audioController.SetKnobValue(transform.name, channel, value);
+
+        yield return new WaitForSeconds(0.5f);
+
         // Turn on emission
         gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
         gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
+
+        yield return new WaitForSeconds(0.5f);
 
         target = Mathf.Clamp(target, -105, 185);
         /*if (target < 0)
@@ -413,13 +424,8 @@ public class Knob : MonoBehaviour
 
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, target);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
-        transform.localEulerAngles = initialPosition;
-        value = GetNonLinearKnobValue(knobPvr);
-        ChangeValueText();
-        valueStorage.SetValue(value, gameObject);
-        audioController.SetKnobValue(transform.name, channel, value);
         gameObject.GetComponent<Renderer>().material.DisableKeyword("_EMISSION");
 
         yield return new WaitForSeconds(0.5f);
