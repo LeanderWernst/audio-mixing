@@ -177,7 +177,7 @@ public class Button : MonoBehaviour
         canvasValueText.text = isOn ? "on" : "off";
         valueStorage.SetValue(isOn ? 1f : 0f, gameObject);
 
-        if (currentDemoTargetState)
+        if (!currentDemoTargetState)
         {
             audioController.SetButtonOn(transform.name, channel);
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
