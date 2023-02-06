@@ -52,6 +52,11 @@ public class AudioController : MonoBehaviour
             audioMixerGroupStereo = audioMixerGroups[0];
             Debug.Log("Found AudioMixerGroup: " + audioMixerGroupStereo.name);
         }
+
+        // Set HiPass off
+        mixer.SetFloat("Channel1CutOff", 0);
+        mixer.SetFloat("Channel2CutOff", 0);
+        mixer.SetFloat("Channel3CutOff", 0);
     }
     private float ConvertValuesToNewScale(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
     {
