@@ -11,6 +11,7 @@ public class AudioController : MonoBehaviour
     public AudioLevel audioLevel;
     public SoundMeterBigLeft leftMeter;
     public SoundMeterBigRight rightMeter;
+    public NewLEDMeter monoMeter;
     [SerializeField] private PlayButtonBehaviour pbbBassdrum;
     [SerializeField] private PlayButtonBehaviour pbbSnare;
     [SerializeField] private PlayButtonBehaviour pbbHihat;
@@ -190,16 +191,19 @@ public class AudioController : MonoBehaviour
                         audioLevel.SetAudioSource(AudioSrcBass);
                         leftMeter.soloMode = true;
                         rightMeter.soloMode = true;
+                        monoMeter.soloMode = true;
                         break;
                     case "Channel2":
                         audioLevel.SetAudioSource(AudioSrcSnare);
                         leftMeter.soloMode = true;
                         rightMeter.soloMode = true;
+                        monoMeter.soloMode = true;
                         break;
                     case "Channel3":
                         audioLevel.SetAudioSource(AudioSrcHihat);
                         leftMeter.soloMode = true;
                         rightMeter.soloMode = true;
+                        monoMeter.soloMode = true;
                         break;
                 }
                 break;
@@ -246,6 +250,7 @@ public class AudioController : MonoBehaviour
                 {
                     leftMeter.soloMode = false;
                     rightMeter.soloMode = false;
+                    monoMeter.soloMode = false;
                 }
                 break;
             case "Button80Hz":

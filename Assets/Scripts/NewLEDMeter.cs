@@ -20,6 +20,8 @@ public class NewLEDMeter : MonoBehaviour
     public AudioLevel audioLevel;
     float timeElapsed;
     float interval;
+
+    public bool soloMode;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,41 +42,45 @@ public class NewLEDMeter : MonoBehaviour
     void SwitchLed()
  
     {
-        var dbValue = audioLevel.GetVolume();
-        if (dbValue > 18)  LED1.status = false;
+        float level;
+
+        if (soloMode) level = audioLevel.GetVolume();
+        else level = audioLevel.GetLevelRight();
+
+        if (level > 18)  LED1.status = false;
         else LED1.status = true;
 
-        if (dbValue > 12) LED2.status = false;
+        if (level > 12) LED2.status = false;
         else LED2.status = true;
 
-        if (dbValue > 6) LED3.status = false;
+        if (level > 6) LED3.status = false;
         else LED3.status = true;
 
-        if (dbValue > 0) LED4.status = false;
+        if (level > 0) LED4.status = false;
         else LED4.status = true;
 
-        if (dbValue > -3) LED5.status = false; 
+        if (level > -3) LED5.status = false; 
         else LED5.status = true;
 
-        if (dbValue > -6) LED6.status = false; 
+        if (level > -6) LED6.status = false; 
         else LED6.status = true;
 
-        if (dbValue > -9) LED7.status = false;
+        if (level > -9) LED7.status = false;
         else LED7.status = true;
 
-        if (dbValue > -12) LED8.status = false;
+        if (level > -12) LED8.status = false;
         else LED8.status = true;
 
-        if (dbValue > -15) LED9.status = false;
+        if (level > -15) LED9.status = false;
         else LED9.status = true;
 
-        if (dbValue > -18) LED10.status = false;
+        if (level > -18) LED10.status = false;
         else LED10.status = true;
 
-        if (dbValue > -21) LED11.status = false;
+        if (level > -21) LED11.status = false;
         else LED11.status = true;
 
-        if (dbValue > -24) LED12.status = false;
+        if (level > -24) LED12.status = false;
         else LED12.status = true;
     }
 }
