@@ -24,7 +24,79 @@ public class AudioController : MonoBehaviour
     private float knobGainMax = 2f;
     private float knobGainMin = 0.5f;
 
-    public AudioMixerGroup audioMixerGroupStereo;
+    [HideInInspector] public AudioMixerGroup audioMixerGroupStereo;
+
+    // EQ Button References
+    [SerializeField] Button ch1EqButton;
+    [SerializeField] Button ch2EqButton;
+    [SerializeField] Button ch3EqButton;
+
+    // EQ Saving Variables
+    private float ch1TrebleGainOff = 1f; 
+    private float ch1TrebleFreqOff = 7500f;
+    private float ch1HiMidGainOff = 1f;
+    private float ch1HiMidFreqOff = 2000f;
+    private float ch1HiMidWidthOff = 0.45f;
+    private float ch1LoMidWidthOff = 0.45f;
+    private float ch1LoMidGainOff = 1f;
+    private float ch1LoMidFreqOff = 550f;
+    private float ch1BassGainOff = 1f;
+    private float ch1BassFreqOff = 75f;
+
+    private float ch2TrebleGainOff = 1f;
+    private float ch2TrebleFreqOff = 7500f;
+    private float ch2HiMidGainOff = 1f;
+    private float ch2HiMidFreqOff = 2000f;
+    private float ch2HiMidWidthOff = 0.45f;
+    private float ch2LoMidWidthOff = 0.45f;
+    private float ch2LoMidGainOff = 1f;
+    private float ch2LoMidFreqOff = 550f;
+    private float ch2BassGainOff = 1f;
+    private float ch2BassFreqOff = 75f;
+
+    private float ch3TrebleGainOff = 1f;
+    private float ch3TrebleFreqOff = 7500f;
+    private float ch3HiMidGainOff = 1f;
+    private float ch3HiMidFreqOff = 2000f;
+    private float ch3HiMidWidthOff = 0.45f;
+    private float ch3LoMidWidthOff = 0.45f;
+    private float ch3LoMidGainOff = 1f;
+    private float ch3LoMidFreqOff = 550f;
+    private float ch3BassGainOff = 1f;
+    private float ch3BassFreqOff = 75f;
+
+    private float ch1TrebleGainOn;
+    private float ch1TrebleFreqOn;
+    private float ch1HiMidGainOn;
+    private float ch1HiMidFreqOn;
+    private float ch1HiMidWidthOn;
+    private float ch1LoMidWidthOn;
+    private float ch1LoMidGainOn;
+    private float ch1LoMidFreqOn;
+    private float ch1BassGainOn;
+    private float ch1BassFreqOn;
+
+    private float ch2TrebleGainOn;
+    private float ch2TrebleFreqOn;
+    private float ch2HiMidGainOn;
+    private float ch2HiMidFreqOn;
+    private float ch2HiMidWidthOn;
+    private float ch2LoMidWidthOn;
+    private float ch2LoMidGainOn;
+    private float ch2LoMidFreqOn;
+    private float ch2BassGainOn;
+    private float ch2BassFreqOn;
+
+    private float ch3TrebleGainOn;
+    private float ch3TrebleFreqOn;
+    private float ch3HiMidGainOn;
+    private float ch3HiMidFreqOn;
+    private float ch3HiMidWidthOn;
+    private float ch3LoMidWidthOn;
+    private float ch3LoMidGainOn;
+    private float ch3LoMidFreqOn;
+    private float ch3BassGainOn;
+    private float ch3BassFreqOn;
 
     private InteractionManager im;
     private void Awake()
@@ -114,43 +186,215 @@ public class AudioController : MonoBehaviour
                     break;
                 case "KnobTrebleGain":
                     value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
-                    mixer.SetFloat(channel + knob, value);
+                    // if eq is on, change value, otherwise store value only
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1TrebleGainOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2TrebleGainOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3TrebleGainOn = value;
+                            break;
+                    }
                     break;
                 case "KnobTrebleFreq":
                     value = ConvertValuesToNewScale(value, 2, 20, 2000, 20000);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1TrebleFreqOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2TrebleFreqOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3TrebleFreqOn = value;
+                            break;
+                    }
                     break;
                 case "KnobHiMidGain":
                     value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1HiMidGainOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2HiMidGainOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3HiMidGainOn = value;
+                            break;
+                    }
                     break;
                 case "KnobHiMidFreq":
                     value = ConvertValuesToNewScale(value, 0.4f, 8, 400, 8000);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1HiMidFreqOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2HiMidFreqOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3HiMidFreqOn = value;
+                            break;
+                    }
                     break;
                 case "KnobHiMidWidth":
                     value = ConvertValuesToNewScale(value, 0.1f, 2, 0.2f, 2);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1HiMidWidthOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2HiMidWidthOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3HiMidWidthOn = value;
+                            break;
+                    }
                     break;
                 case "KnobLoMidGain":
                     value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
                     mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1LoMidGainOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2LoMidGainOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3LoMidGainOn = value;
+                            break;
+                    }
                     break;
                 case "KnobLoMidFreq":
                     value = ConvertValuesToNewScale(value, 0.1f, 2, 100, 2000);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1LoMidFreqOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2LoMidFreqOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3LoMidFreqOn = value;
+                            break;
+                    }
                     break;
                 case "KnobLoMidWidth":
                     value = ConvertValuesToNewScale(value, 0.1f, 2, 0.2f, 2);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1LoMidWidthOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2LoMidWidthOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3LoMidWidthOn = value;
+                            break;
+                    }
                     break;
                 case "KnobBassGain":
                     value = ConvertValuesToNewScale(value, -15, 15, knobGainMin, knobGainMax);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1BassGainOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2BassGainOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3BassGainOn = value;
+                            break;
+                    }
                     break;
                 case "KnobBassFreq":
                     value = ConvertValuesToNewScale(value, 0.02f, 0.2f, 20, 200);
-                    mixer.SetFloat(channel + knob, value);
+                    switch (channel)
+                    {
+                        case "Channel1":
+                            if (ch1EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch1BassFreqOn = value;
+                            break;
+                        case "Channel2":
+                            if (ch2EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch2BassFreqOn = value;
+                            break;
+                        case "Channel3":
+                            if (ch3EqButton.isOn)
+                                mixer.SetFloat(channel + knob, value);
+                            ch3BassFreqOn = value;
+                            break;
+                    }
                     break;
                 case "KnobPanControl":
                     switch (channel)
@@ -236,6 +480,47 @@ public class AudioController : MonoBehaviour
                         break;
                 }
                 break;
+            case "ButtonEq":
+                switch (channel)
+                {
+                    case "Channel1":
+                        mixer.SetFloat("Channel1KnobTrebleGain", ch1TrebleGainOn);
+                        mixer.SetFloat("Channel1KnobTrebleFreq", ch1TrebleFreqOn);
+                        mixer.SetFloat("Channel1KnobHiMidGain", ch1HiMidGainOn);
+                        mixer.SetFloat("Channel1KnobHiMidFreq", ch1HiMidFreqOn);
+                        mixer.SetFloat("Channel1KnobHiMidWidth", ch1HiMidWidthOn);
+                        mixer.SetFloat("Channel1KnobLoMidWidth", ch1LoMidWidthOn);
+                        mixer.SetFloat("Channel1KnobLoMidGain", ch1LoMidGainOn);
+                        mixer.SetFloat("Channel1KnobLoMidFreq", ch1LoMidFreqOn);
+                        mixer.SetFloat("Channel1KnobBassGain", ch1BassGainOn);
+                        mixer.SetFloat("Channel1KnobBassFreq", ch1BassFreqOn);
+                        break;
+                    case "Channel2":
+                        mixer.SetFloat("Channel2KnobTrebleGain", ch2TrebleGainOn);
+                        mixer.SetFloat("Channel2KnobTrebleFreq", ch2TrebleFreqOn);
+                        mixer.SetFloat("Channel2KnobHiMidGain", ch2HiMidGainOn);
+                        mixer.SetFloat("Channel2KnobHiMidFreq", ch2HiMidFreqOn);
+                        mixer.SetFloat("Channel2KnobHiMidWidth", ch2HiMidWidthOn);
+                        mixer.SetFloat("Channel2KnobLoMidWidth", ch2LoMidWidthOn);
+                        mixer.SetFloat("Channel2KnobLoMidGain", ch2LoMidGainOn);
+                        mixer.SetFloat("Channel2KnobLoMidFreq", ch2LoMidFreqOn);
+                        mixer.SetFloat("Channel2KnobBassGain", ch2BassGainOn);
+                        mixer.SetFloat("Channel2KnobBassFreq", ch2BassFreqOn);
+                        break;
+                    case "Channel3":
+                        mixer.SetFloat("Channel3KnobTrebleGain", ch3TrebleGainOn);
+                        mixer.SetFloat("Channel3KnobTrebleFreq", ch3TrebleFreqOn);
+                        mixer.SetFloat("Channel3KnobHiMidGain", ch3HiMidGainOn);
+                        mixer.SetFloat("Channel3KnobHiMidFreq", ch3HiMidFreqOn);
+                        mixer.SetFloat("Channel3KnobHiMidWidth", ch3HiMidWidthOn);
+                        mixer.SetFloat("Channel3KnobLoMidWidth", ch3LoMidWidthOn);
+                        mixer.SetFloat("Channel3KnobLoMidGain", ch3LoMidGainOn);
+                        mixer.SetFloat("Channel3KnobLoMidFreq", ch3LoMidFreqOn);
+                        mixer.SetFloat("Channel3KnobBassGain", ch3BassGainOn);
+                        mixer.SetFloat("Channel3KnobBassFreq", ch3BassFreqOn);
+                        break;
+                }
+                break;
         }
   
     }
@@ -279,6 +564,47 @@ public class AudioController : MonoBehaviour
                         break;
                     case "Channel3":
                         mixer.SetFloat("Channel3CutOff", 0);
+                        break;
+                }
+                break;
+            case "ButtonEq":
+                switch (channel)
+                {
+                    case "Channel1":
+                        mixer.SetFloat("Channel1KnobTrebleGain", ch1TrebleGainOff);
+                        mixer.SetFloat("Channel1KnobTrebleFreq", ch1TrebleFreqOff);
+                        mixer.SetFloat("Channel1KnobHiMidGain", ch1HiMidGainOff);
+                        mixer.SetFloat("Channel1KnobHiMidFreq", ch1HiMidFreqOff);
+                        mixer.SetFloat("Channel1KnobHiMidWidth", ch1HiMidWidthOff);
+                        mixer.SetFloat("Channel1KnobLoMidWidth", ch1LoMidWidthOff);
+                        mixer.SetFloat("Channel1KnobLoMidGain", ch1LoMidGainOff);
+                        mixer.SetFloat("Channel1KnobLoMidFreq", ch1LoMidFreqOff);
+                        mixer.SetFloat("Channel1KnobBassGain", ch1BassGainOff);
+                        mixer.SetFloat("Channel1KnobBassFreq", ch1BassFreqOff);
+                        break;
+                    case "Channel2":
+                        mixer.SetFloat("Channel2KnobTrebleGain", ch2TrebleGainOff);
+                        mixer.SetFloat("Channel2KnobTrebleFreq", ch2TrebleFreqOff);
+                        mixer.SetFloat("Channel2KnobHiMidGain", ch2HiMidGainOff);
+                        mixer.SetFloat("Channel2KnobHiMidFreq", ch2HiMidFreqOff);
+                        mixer.SetFloat("Channel2KnobHiMidWidth", ch2HiMidWidthOff);
+                        mixer.SetFloat("Channel2KnobLoMidWidth", ch2LoMidWidthOff);
+                        mixer.SetFloat("Channel2KnobLoMidGain", ch2LoMidGainOff);
+                        mixer.SetFloat("Channel2KnobLoMidFreq", ch2LoMidFreqOff);
+                        mixer.SetFloat("Channel2KnobBassGain", ch2BassGainOff);
+                        mixer.SetFloat("Channel2KnobBassFreq", ch2BassFreqOff);
+                        break;
+                    case "Channel3":
+                        mixer.SetFloat("Channel3KnobTrebleGain", ch3TrebleGainOff);
+                        mixer.SetFloat("Channel3KnobTrebleFreq", ch3TrebleFreqOff);
+                        mixer.SetFloat("Channel3KnobHiMidGain", ch3HiMidGainOff);
+                        mixer.SetFloat("Channel3KnobHiMidFreq", ch3HiMidFreqOff);
+                        mixer.SetFloat("Channel3KnobHiMidWidth", ch3HiMidWidthOff);
+                        mixer.SetFloat("Channel3KnobLoMidWidth", ch3LoMidWidthOff);
+                        mixer.SetFloat("Channel3KnobLoMidGain", ch3LoMidGainOff);
+                        mixer.SetFloat("Channel3KnobLoMidFreq", ch3LoMidFreqOff);
+                        mixer.SetFloat("Channel3KnobBassGain", ch3BassGainOff);
+                        mixer.SetFloat("Channel3KnobBassFreq", ch3BassFreqOff);
                         break;
                 }
                 break;
