@@ -17,7 +17,7 @@ public class ApplicationData : MonoBehaviour
 
     [SerializeField] private AudioMixer audioMixer;
     [HideInInspector] public float masterVolume = 0.88888889f;
-    [HideInInspector] public float systemVolume = 0.88888889f;
+    [HideInInspector] public float systemVolume = 0.822206f;
 
     [SerializeField] private GameObject controlsScreen;
     [SerializeField] private GameObject settingsScreen;

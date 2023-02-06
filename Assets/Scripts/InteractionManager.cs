@@ -116,8 +116,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        interactionIndex = applicationData.demoMode ? demoStartStep : 50; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
-
+        interactionIndex = applicationData.demoMode ? demoStartStep : 0; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
 
         // START-ACTIONS FOR TRAINING MODE
         if (!applicationData.demoMode)
@@ -295,6 +294,7 @@ public class InteractionManager : MonoBehaviour
                 if (index > -1)
                 {
                     AudioSource tempAudioSource = gameObject.AddComponent<AudioSource>();
+                    tempAudioSource.outputAudioMixerGroup = audioController.audioMixerGroupStereo;
                     if (ValuesAreEqualWithTolerance(clickedObjValue, currentInteraction.TargetValues[index]))
                     {
                         tempAudioSource.clip = soundCorrVal;
@@ -693,6 +693,7 @@ public class InteractionManager : MonoBehaviour
         totalErrorCountLabel.SetText(errorCount.ToString());
         totalHelpCountLabel.SetText(hintBehaviour.getHintCount().ToString());
         AudioSource tempAudioSource = gameObject.AddComponent<AudioSource>();
+        tempAudioSource.outputAudioMixerGroup = audioController.audioMixerGroupStereo;
         tempAudioSource.clip = finalWin;
         tempAudioSource.Play();
         yield return new WaitForSeconds(completionCallbackDelay);
@@ -705,6 +706,7 @@ public class InteractionManager : MonoBehaviour
     {
         audioSource.Stop();
         AudioSource tempAudioSource = gameObject.AddComponent<AudioSource>();
+        tempAudioSource.outputAudioMixerGroup = audioController.audioMixerGroupStereo;
         if (success)
         {
             tempAudioSource.clip = soundCorrect;

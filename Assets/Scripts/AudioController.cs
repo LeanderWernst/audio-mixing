@@ -24,6 +24,8 @@ public class AudioController : MonoBehaviour
     private float knobGainMax = 2f;
     private float knobGainMin = 0.5f;
 
+    public AudioMixerGroup audioMixerGroupStereo;
+
     private InteractionManager im;
     private void Awake()
     {
@@ -42,6 +44,14 @@ public class AudioController : MonoBehaviour
         AudioSrcSnare.clip = snare;
         AudioSrcBass.clip = bassdrum;
         AudioSrcHihat.clip = hihat;
+
+        AudioMixerGroup[] audioMixerGroups = mixer.FindMatchingGroups("Stereo1");
+
+        if (audioMixerGroups.Length > 0)
+        {
+            audioMixerGroupStereo = audioMixerGroups[0];
+            Debug.Log("Found AudioMixerGroup: " + audioMixerGroupStereo.name);
+        }
     }
     private float ConvertValuesToNewScale(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
     {
