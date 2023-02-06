@@ -234,7 +234,7 @@ public class Button : MonoBehaviour
             if (hasLED) { transform.parent.GetComponent<Renderer>().material.EnableKeyword("_EMISSION"); }
         }
 
-        if (im.GetCurrentInteraction().volumeAfter != 0)
+        if (im.GetCurrentInteraction().volumeBefore != 0)
         {
             audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeBefore, channel);
         }
@@ -263,6 +263,11 @@ public class Button : MonoBehaviour
                     }
                     audioController.SetButtonOn(transform.name, channel);
                     canvasValueText.text = "on";
+
+                    if (im.GetCurrentInteraction().volumeAfter != 0)
+                    {
+                        audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeAfter, channel);
+                    }
                 }
             }
             else
@@ -276,6 +281,11 @@ public class Button : MonoBehaviour
                     }
                     audioController.SetButtonOff(transform.name, channel);
                     canvasValueText.text = "off";
+
+                    if (im.GetCurrentInteraction().volumeAfter != 0)
+                    {
+                        audioController.SetChannelToVolume(im.GetCurrentInteraction().volumeAfter, channel);
+                    }
                 }
             }
             elapsedTime += Time.deltaTime;
