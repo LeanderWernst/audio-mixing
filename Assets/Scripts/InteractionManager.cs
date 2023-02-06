@@ -116,7 +116,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        interactionIndex = applicationData.demoMode ? demoStartStep : 0; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
+        interactionIndex = applicationData.demoMode ? demoStartStep : 50; // >>>>>> CHANGE INDEX TO 0 WHEN DEBUGGING COMPLETE!
 
 
         // START-ACTIONS FOR TRAINING MODE
@@ -933,7 +933,7 @@ public class InteractionManager : MonoBehaviour
         return headline;
     }
 
-    private bool IsInFinalStep()
+    public bool IsInFinalStep()
     {
         return interactionIndex == interactions.Count - 1;
     }

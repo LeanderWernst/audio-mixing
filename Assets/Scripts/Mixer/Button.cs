@@ -91,7 +91,8 @@ public class Button : MonoBehaviour
         if (im.GetCurrentInteraction().TargetObject == gameObject 
             || im.ObjectIsInTargetObjects(gameObject) 
             || !blockedChannels.Contains(channel) 
-            || im.FinalMixingIsActive() 
+            || im.FinalMixingIsActive()
+            || im.IsInFinalStep()
             && !EventSystem.current.IsPointerOverGameObject())
         {
             isOn = !isOn;

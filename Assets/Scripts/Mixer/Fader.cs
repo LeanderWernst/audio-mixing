@@ -138,7 +138,8 @@ public class Fader : MonoBehaviour
         if (im.GetCurrentInteraction().TargetObject == gameObject 
             || !blockedChannels.Contains(channel) 
             || initialMove
-            || im.FinalMixingIsActive())
+            || im.FinalMixingIsActive()
+            || im.IsInFinalStep())
         {
             verticalMovement = inputForce * sensitivityY * Time.deltaTime;
             float posX = transform.localPosition.x - verticalMovement;

@@ -109,7 +109,8 @@ public class Knob : MonoBehaviour
         if (im.GetCurrentInteraction().TargetObject == gameObject 
             || !blockedChannels.Contains(channel) 
             || initialMove
-            || im.FinalMixingIsActive())
+            || im.FinalMixingIsActive()
+            || im.IsInFinalStep())
         {
             angle += inputForce * rotationSpeed * Time.deltaTime;
             angle = Mathf.Clamp(angle, minRotation, maxRotation);
