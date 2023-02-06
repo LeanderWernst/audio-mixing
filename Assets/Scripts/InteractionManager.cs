@@ -208,7 +208,7 @@ public class InteractionManager : MonoBehaviour
             }
 
             // Skip steps, when skippable or confirm action
-            if (Input.GetKeyDown(KeyCode.Return) && currentInteraction.IsSkippable)
+            if (Input.GetKeyDown(KeyCode.Space) && currentInteraction.IsSkippable)
             {
                 if (!MandatorySoundWasPlayed())
                 {
@@ -220,7 +220,7 @@ public class InteractionManager : MonoBehaviour
                 }
                 MoveToNextInteraction();
             }
-            else if (Input.GetKeyDown(KeyCode.Return) // Check TargetRange if TargetRange was given
+            else if (Input.GetKeyDown(KeyCode.Space) // Check TargetRange if TargetRange was given
                     && currentInteraction.TargetValueMax != currentInteraction.TargetValueMin)
             {
                 CheckTargetRange();
@@ -273,10 +273,10 @@ public class InteractionManager : MonoBehaviour
             errorLabel.transform.parent.gameObject.SetActive(false);
             errorLabel.text = "";
 
-            // Show 'ENTER' message when hitting an object that needs confirmation
+            // Show 'LEERTASTE' message when hitting an object that needs confirmation
             if (TargetValueHasRange() && interactionIndex != mixingStep)
             {
-                SetTextWithFade(1f, skipLabel, "Drücke ENTER zum Bestätigen");
+                SetTextWithFade(1f, skipLabel, "Drücke LEERTASTE zum Bestätigen");
                 FadeGraphic(1f, skipLabelPanel);
             }
 
@@ -667,12 +667,12 @@ public class InteractionManager : MonoBehaviour
         {
             if (interactionIndex == mixingStep)
             {
-                SetTextWithFade(1f, skipLabel, "Drücke ENTER zum Bestätigen", delay: 3f);
+                SetTextWithFade(1f, skipLabel, "Drücke LEERTASTE zum Bestätigen", delay: 3f);
                 FadeGraphic(1f, skipLabelPanel, delay: 3f);
             }
             else
             {
-                SetTextWithFade(1f, skipLabel, "Drücke ENTER, um fortzufahren", delay: 3f);
+                SetTextWithFade(1f, skipLabel, "Drücke LEERTASTE, um fortzufahren", delay: 3f);
                 FadeGraphic(1f, skipLabelPanel, delay: 3f);
             }
         }

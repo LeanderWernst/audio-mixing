@@ -18,7 +18,7 @@ public class DemoSetTarget : UnityEvent<float> { }
 public struct Interaction
 {
     [Header("Training & Demo")]
-    [Tooltip("If true, the interaction can be skipped with ENTER.")]
+    [Tooltip("If true, the interaction can be skipped with LEERTASTE.")]
     public bool IsSkippable;
     [Tooltip("The target object to be clicked for this interaction.")]
     public GameObject TargetObject;

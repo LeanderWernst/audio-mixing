@@ -22,7 +22,7 @@ public class UIButtonBehaviour : MonoBehaviour
         cb = button.colors;
         normalColor = cb.selectedColor;
 
-        // prevent button from being triggered by ENTER key
+        // prevent button from being triggered by LEERTASTE key
         selectable = GetComponent<Selectable>();
         selectable.navigation = new Navigation();
     }

@@ -396,7 +396,7 @@ public class AudioController : MonoBehaviour
             PlaySound("drum_snare");
         else if (Input.GetKeyDown(KeyCode.Alpha3))
             PlaySound("drum_hihat");
-        else if (Input.GetKeyDown(KeyCode.Space))
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
             PlaySound("all");
     }
     public void SetChannelLevel(string channel, float level)
