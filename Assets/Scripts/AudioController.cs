@@ -21,8 +21,8 @@ public class AudioController : MonoBehaviour
     private float oldFader2Value;
     private float oldFader3Value;
     private float oldFaderStereoInput1;
-    private float knobGainMax = 2f;
-    private float knobGainMin = 0.5f;
+    private float knobGainMax = 1.65f;
+    private float knobGainMin = 0.35f;
 
     [HideInInspector] public AudioMixerGroup audioMixerGroupStereo;
 
