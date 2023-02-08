@@ -959,6 +959,27 @@ public class InteractionManager : MonoBehaviour
         }
     }
 
+    // skip or confirm
+    public void SkipOrConfirmStep()
+    {
+        if (currentInteraction.IsSkippable)
+        {
+            if (!MandatorySoundWasPlayed())
+            {
+                PlayFeedbackSound(false);
+                DisplayErrForDuration(errorLabel, "Du solltest hören, was du mischst.", 5);
+                errorCount++;
+                errorCountLabel.SetText(errorCount.ToString());
+                return;
+            }
+            MoveToNextInteraction();
+        }
+        else if (TargetValueHasRange())
+        {
+            CheckTargetRange();
+        }
+    }
+
     // wait for audiosource to stop playing, then move to next interaction
     IEnumerator WaitForVoiceToFinish()
     {
