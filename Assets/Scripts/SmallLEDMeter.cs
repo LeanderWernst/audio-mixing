@@ -24,6 +24,7 @@ public class SmallLEDMeter : MonoBehaviour
         while (timeElapsed >= interval)
         {
             timeElapsed -= interval;
+            if (audioLevel != null)
             SwitchLed();
         }
     }

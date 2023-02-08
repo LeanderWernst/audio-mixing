@@ -11,12 +11,13 @@ public class MixerMovementHandler : MonoBehaviour
     private GameObject[] faders;
     private GameObject[] buttons;
     private GameObject[] knobs;
-
+    private GameObject channelList;
     private void Awake()
     {
         faders = GameObject.FindGameObjectsWithTag(faderTag);
         buttons = GameObject.FindGameObjectsWithTag(buttonTag);
         knobs = GameObject.FindGameObjectsWithTag(knobTag);
+        channelList = GameObject.FindGameObjectWithTag("ChannelList");
 
         MovementHandler();
 
@@ -40,18 +41,19 @@ public class MixerMovementHandler : MonoBehaviour
         foreach (GameObject fader in faders) 
         {
             fader.AddComponent<ValueStorage>();
-            fader.AddComponent<Fader>();
+            //fader.AddComponent<Fader>();
         }
         foreach (GameObject button in buttons)
         {
             button.AddComponent<ValueStorage>();
-            button.AddComponent<Button>();
+            //button.AddComponent<Button>();
         }
         foreach (GameObject knob in knobs)
         {
             knob.AddComponent<ValueStorage>();
-            knob.AddComponent<Knob>();
+            //knob.AddComponent<Knob>();
         }
+        channelList.AddComponent<ValueStorage>();
     }
 
     

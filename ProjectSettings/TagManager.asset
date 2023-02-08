@@ -11,15 +11,24 @@ TagManager:
   - ValueText
   - Channel
   - UIButton
+  - InteractionManager
+  - ChannelList
+  - ApplicationSettings
+  - ExitPanel
+  - SettingsPanel
+  - ControlsPanel
+  - HelpPanel
+  - FinalScreen
+  - ChannelListOverlay
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - InteractionElements
   - Water
   - UI
   - Lights
-  - 
+  - GlassWindow
   - 
   - 
   - 

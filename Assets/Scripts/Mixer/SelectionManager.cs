@@ -8,21 +8,33 @@ using UnityEngine.UI;
 public class SelectionManager : MonoBehaviour
 {
 
-    [SerializeField] private string[] selectableTags = new string[] { "Button", "Fader", "Knob" };
+    private GameObject applicationSettings;
+    private ApplicationData applicationData;
+
+    [SerializeField] private string[] selectableTags = new string[] { "Button", "Fader", "Knob", "ChannelList" };
 
     private Transform currentSelection;
     private Transform clickedObject;
     private TextMeshProUGUI canvasValueText;
-    private Image valueTextBackground;
+    public Image valueTextBackground;
     private float vtbMaxAlpha = 235f/255f;
 
     private int UILayer;
-    private enum Fade {Out = 0, In = 1};
+    public enum Fade {Out = 0, In = 1};
 
     private void Awake()
     {
         canvasValueText = GameObject.FindGameObjectWithTag("ValueText").GetComponent<TextMeshProUGUI>();
         valueTextBackground = GameObject.Find("ValueTextBackground").GetComponent<Image>();
+
+        applicationSettings = GameObject.FindGameObjectWithTag("ApplicationSettings");
+        if (applicationSettings == null)
+        {
+            applicationSettings = new GameObject("ApplicationSettings");
+            applicationSettings.tag = "ApplicationSettings";
+            applicationSettings.AddComponent<ApplicationData>();
+        }
+        applicationData = applicationSettings.GetComponent<ApplicationData>();
     }
 
     // Start is called before the first frame update
@@ -34,10 +46,15 @@ public class SelectionManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        HighlightOnHover();
-        
-        if (Input.GetMouseButtonDown(0))
-            HighlightOnClick();
+        if (!applicationData.demoMode)
+        { 
+            HighlightOnHover();
+
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            { 
+                HighlightOnClick();
+            }
+        }
     }
 
     private void OnMouseUp()
@@ -47,7 +64,7 @@ public class SelectionManager : MonoBehaviour
 
     void HighlightOnHover() 
     {
-        if (!IsPointerOverUIElement())
+        if (!EventSystem.current.IsPointerOverGameObject()) // if mouse is not over UI
         {
             if (!Input.GetMouseButton(0))
             {
@@ -83,11 +100,20 @@ public class SelectionManager : MonoBehaviour
                 }
             }
         }
+        else // turn off emission on currentSelection when pointer is over UI
+        {
+            if (currentSelection != null)
+            {
+                var selectionRenderer = currentSelection.GetComponent<Renderer>();
+                selectionRenderer.material.DisableKeyword("_EMISSION");
+                currentSelection = null;
+            }
+        }
     }
 
     void HighlightOnClick()
     {
-        if (!IsPointerOverUIElement())
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -96,7 +122,8 @@ public class SelectionManager : MonoBehaviour
             {
                 Debug.DrawLine(ray.origin, hit.point, Color.red); // DEBUG
                 var selection = hit.transform;
-                if (TransformWithTagIsMovable(selectableTags, selection))
+                // only highlight on click, when in selectableTags array, but ignore ChannelList
+                if (TransformWithTagIsMovable(selectableTags, selection) && !selection.CompareTag("ChannelList"))
                 {
                     FadeValueText(Fade.In);
                     var clickedBefore = clickedObject;
@@ -146,12 +173,12 @@ public class SelectionManager : MonoBehaviour
         return System.Array.IndexOf(tagArray, transform.tag) != -1;
     }
 
-    private void FadeValueText(SelectionManager.Fade direction) 
+    public void FadeValueText(SelectionManager.Fade direction) 
     {
 
-        IEnumerator FadeTextToFullAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI)
+        IEnumerator FadeTextToFullAlpha(float timeInSeconds, Image valueTextBackground, TextMeshProUGUI tmpUGUI)
         {
-            yield return FadeTextToZeroAlpha(0.05f, canvasValueText);
+            yield return FadeTextToZeroAlpha(0.05f, valueTextBackground, canvasValueText);
             while (tmpUGUI.color.a < 1.0f)
             {
                 tmpUGUI.color = new Color(tmpUGUI.color.r, tmpUGUI.color.g, tmpUGUI.color.b, tmpUGUI.color.a + (Time.deltaTime / timeInSeconds));
@@ -161,7 +188,7 @@ public class SelectionManager : MonoBehaviour
             valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, vtbMaxAlpha);
         }
 
-        IEnumerator FadeTextToZeroAlpha(float timeInSeconds, TextMeshProUGUI tmpUGUI)
+        IEnumerator FadeTextToZeroAlpha(float timeInSeconds, Image valueTextBackground, TextMeshProUGUI tmpUGUI)
         {
             while (tmpUGUI.color.a > 0.0f)
             {
@@ -176,18 +203,18 @@ public class SelectionManager : MonoBehaviour
         {
             case Fade.Out:
                 StopAllCoroutines();
-                StartCoroutine(FadeTextToZeroAlpha(0.5f, canvasValueText));
+                StartCoroutine(FadeTextToZeroAlpha(0.5f, valueTextBackground, canvasValueText));
                 break;
             case Fade.In:
                 if (currentSelection != clickedObject) 
                 { 
                     StopAllCoroutines();
-                    StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
+                    StartCoroutine(FadeTextToFullAlpha(0.5f, valueTextBackground, canvasValueText));
                 }
                 break;
             default:
                 StopAllCoroutines();
-                StartCoroutine(FadeTextToFullAlpha(0.5f, canvasValueText));
+                StartCoroutine(FadeTextToFullAlpha(0.5f, valueTextBackground, canvasValueText));
                 break;
         }
 
@@ -222,5 +249,21 @@ public class SelectionManager : MonoBehaviour
         return raysastResults;
     }
 
+    public void ShowValueInfo()
+    {
+        canvasValueText.color = new Color(canvasValueText.color.r, canvasValueText.color.g, canvasValueText.color.b, 255f);
+        valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, 255f);
+    }
+
+    public void HideValueInfo()
+    {
+        canvasValueText.color = new Color(canvasValueText.color.r, canvasValueText.color.g, canvasValueText.color.b, 0f);
+        valueTextBackground.color = new Color(valueTextBackground.color.r, valueTextBackground.color.g, valueTextBackground.color.b, 0f);
+    }
+
+    public void SetValueText(string text)
+    {
+        canvasValueText.SetText(text);
+    }
 
 }
