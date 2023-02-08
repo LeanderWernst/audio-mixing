@@ -641,6 +641,10 @@ public class InteractionManager : MonoBehaviour
         { 
             SetTextWithFade(1f, headlineLabel, ReplaceStepNumInHeadline(currentInteraction.Headline));
         }
+        else if (headlineLabel.color.a < 1.0f)
+        {
+            headlineLabel.color =  new Color(headlineLabel.color.r, headlineLabel.color.g, headlineLabel.color.b, 1.0f);
+        }
         // fade in new instruction
         SetTextWithFade(1f, instructionLabel, currentInteraction.Instruction, setNewAudio: true);
 
