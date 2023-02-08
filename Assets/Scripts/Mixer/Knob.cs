@@ -83,7 +83,7 @@ public class Knob : MonoBehaviour
 
     private void Update()
     {
-        if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0)) 
+        if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0) && !Input.GetMouseButton(1)) 
         {
             TurnKnob(Input.mouseScrollDelta.y / 2);
         }

@@ -62,7 +62,7 @@ public class Fader : MonoBehaviour
     // Update is called once per frame
     void Update () 
     {
-        if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0))
+        if (isClicked && (Input.mouseScrollDelta.y > 0 || Input.mouseScrollDelta.y < 0) && !Input.GetMouseButton(1))
         {
             SlideFader(Input.mouseScrollDelta.y / 2);
         }
